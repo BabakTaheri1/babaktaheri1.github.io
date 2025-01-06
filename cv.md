@@ -17,7 +17,7 @@ comments: false
   margin-bottom: 1.5em;
   max-width: 2000px;
   line-height: 1.5;
-  font-size: 0.8em;
+  font-size: 0.9em;
 ">
   <h2 style="margin-top: 0; color: #333; font-size: 1.2em;">Education</h2>
 
@@ -77,7 +77,7 @@ comments: false
   margin-bottom: 1.5em;
   max-width: 2000px;
   line-height: 1.5;
-  font-size: 0.8em;
+  font-size: 0.9em;
 ">
   <h2 style="margin-top: 0; color: #333; font-size: 1.2em;">Experience</h2>
 
