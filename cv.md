@@ -216,7 +216,7 @@ comments: false
       </span>
     </li>
     <li style="margin-bottom: 0.5em;">
-      <strong>Ranked 1st in the class of 2017</strong> in the Department of Electrical Engineering among nearly 200 entrants of 2013, in terms of cumulative GPA.
+      <strong>Ranked 1st in the class of 2017 in the Department of Electrical Engineering among nearly 200 entrants of 2013, in terms of cumulative GPA.</strong> 
     </li>
     <li style="margin-bottom: 0.5em;">
       <strong>Direct admission to M.Sc. program at Sharif University of Technology as an exceptional talent, based on B.Sc. top GPA and rank</strong> 
