@@ -196,10 +196,32 @@ comments: false
 ">
   <h2 style="margin-top: 0; color: #333; font-size: 1.5em;">Selected Honors & Awards</h2>
   <ul style="list-style: none; margin: 0; padding-left: 2em; color: #666;">
-    <li>Awarded the Dominion Energy Inclusion, Equity and Diversity Scholarship (July 2024).</li>
-    <li>Awarded the Dominion Energy Inclusion, Equity and Diversity Scholarship (August 2023).</li>
-    <li>Awarded the Georgia Tech ECE Chaddick Fellowship (February 2020).</li>
-    <li>Ranked 1st in the class of 2017 in the Department of Electrical Engineering among nearly 200 entrants of 2013, in terms of cumulative GPA.</li>
-    <li>Direct admission to M.Sc. program at Sharif University of Technology as an exceptional talent, based on B.Sc. top GPA and rank (April 2017).</li>
+    <li style="margin-bottom: 0.5em;">
+      <strong>Awarded the Dominion Energy Inclusion, Equity and Diversity Scholarship</strong> 
+      <span style="font-size: 0.85em; font-style: italic; color: #999;">
+        (July 2024)
+      </span>
+    </li>
+    <li style="margin-bottom: 0.5em;">
+      <strong>Awarded the Dominion Energy Inclusion, Equity and Diversity Scholarship</strong> 
+      <span style="font-size: 0.85em; font-style: italic; color: #999;">
+        (August 2023)
+      </span>
+    </li>
+    <li style="margin-bottom: 0.5em;">
+      <strong>Awarded the Georgia Tech ECE Chaddick Fellowship</strong> 
+      <span style="font-size: 0.85em; font-style: italic; color: #999;">
+        (February 2020)
+      </span>
+    </li>
+    <li style="margin-bottom: 0.5em;">
+      <strong>Ranked 1st in the class of 2017</strong> in the Department of Electrical Engineering among nearly 200 entrants of 2013, in terms of cumulative GPA.
+    </li>
+    <li style="margin-bottom: 0.5em;">
+      <strong>Direct admission to M.Sc. program at Sharif University of Technology</strong> as an exceptional talent, based on B.Sc. top GPA and rank 
+      <span style="font-size: 0.85em; font-style: italic; color: #999;">
+        (April 2017)
+      </span>
+    </li>
   </ul>
 </div>
