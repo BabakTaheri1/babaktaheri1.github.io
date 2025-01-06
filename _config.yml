@@ -28,7 +28,7 @@ bing_verify:
 links:
   - title: Curriculum
     url: /cv/
- - title: Publications
+  - title: Publications
     url: /publications/
  # - title: Code
  #   url: /code/
