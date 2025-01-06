@@ -5,107 +5,113 @@
 </head>
 
 <body class="page">
-<div style="
-  background: #fdfdfd;
-  padding: 1.5em;
-  border: 1px solid #eee;
-  border-radius: 10px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.07);
-  font-family: Arial, sans-serif;
-  margin-bottom: 1.5em;
-  max-width: 900px;
-  line-height: 1.5;
-  font-size: 0.9em;
-">
-  <h2 style="margin-top: 0; color: #333; font-size: 1.2em;">Publications</h2>
-  <ul style="list-style: none; margin: 0; padding: 0; color: #555;">
+<style>
+/*********************************
+ The list of publication items
+ *********************************/
+/* The list of items */
+.biblist { }
 
-    <li style="margin-bottom: 1em;">
-      Babak Taheri and Daniel K. Molzahn, 
-      "<strong>AC-Informed DC Optimal Transmission Switching Problems via Parameter Optimization</strong>", submitted.
-    </li>
-    <li style="margin-bottom: 1em;">
-      Babak Taheri and Daniel K. Molzahn, 
-      "<strong>Improving the Accuracy of DC Optimal Power Flow Formulations via Parameter Optimization</strong>", submitted.
-    </li>
-    <li style="margin-bottom: 1em;">
-      Babak Taheri, Rahul. K. Gupta, and Daniel K. Molzahn, 
-      "<strong>Optimizing Parameters of the LinDistFlow Power Flow Approximation for Distribution Systems</strong>", submitted.
-    </li>
-    <li style="margin-bottom: 1em;">
-      Babak Taheri and Daniel K. Molzahn, 
-      "<strong>Optimizing Parameters of the DC Power Flow</strong>", presented at 
-      <em>23rd Power Systems Computation Conference (PSCC)</em>, Paris, France, June 4-7, 2024, 
-      <em>Electric Power Systems Research</em>.
-    </li>
-    <li style="margin-bottom: 1em;">
-      Babak Taheri and Daniel K. Molzahn, 
-      "<strong>AC Power Flow Feasibility Restoration via a State Estimation-Based Post-Processing Algorithm</strong>", 
-      presented at <em>23rd Power Systems Computation Conference (PSCC)</em>, Paris, France, June 4-7, 2024, 
-      <em>Electric Power Systems Research</em>.
-    </li>
-    <li style="margin-bottom: 1em;">
-      Babak Taheri and D. K. Molzahn, 
-      "<strong>AC Power Flow Informed Parameter Learning for DC Power Flow Network Equivalents</strong>", 
-      <em>2024 IEEE Texas Power and Energy Conference (TPEC)</em>, College Station, TX, USA, 2024, pp. 1-6.
-    </li>
-    <li style="margin-bottom: 1em;">
-      Ali Jalilian, Babak Taheri, and Daniel K. Molzahn, 
-      "<strong>Co-Optimization of Damage Assessment and Restoration: A Resilience-Driven Dynamic Crew Allocation for Power Distribution Systems</strong>", 
-      to appear in <em>IEEE Transactions on Power Systems</em>.
-    </li>
-    <li style="margin-bottom: 1em;">
-      Babak Taheri and Daniel K. Molzahn, 
-      "<strong>Restoring AC Power Flow Feasibility for Solutions to Relaxed and Approximated Optimal Power Flow Problems</strong>", 
-      <em>2023 American Control Conference (ACC)</em>, San Diego, CA, USA, 2023, pp. 4463-4470.
-    </li>
-    <li style="margin-bottom: 1em;">
-      Babak Taheri, Daniel K. Molzahn, and Santiago Grijalva, 
-      "<strong>Improving Distribution System Resilience by Undergrounding Lines and Deploying Mobile Generators</strong>", 
-      <em>Electric Power Systems Research</em>, vol. 214, Part A, no. 108804, January 2023.
-    </li>
-    <li style="margin-bottom: 1em;">
-      Babak Taheri and Amir Safdarian, 
-      "<strong>Tie-Line Planning for Resilience Enhancement in Unbalanced Distribution Networks</strong>", 
-      <em>IET Generation, Transmission & Distribution</em>, 2021.
-    </li>
-    <li style="margin-bottom: 1em;">
-      Babak Taheri, Amir Safdarian, Moein Moeini-Aghtaie, and Matti Lehtonen, 
-      "<strong>Distribution System Resilience Enhancement via Mobile Emergency Generators</strong>", 
-      <em>IEEE Transactions on Power Delivery</em>, 2020.
-    </li>
-    <li style="margin-bottom: 1em;">
-      Babak Taheri, Amir Safdarian, Moein Moeini-Aghtaie, and Matti Lehtonen, 
-      "<strong>Enhancing Resilience Level of Power Distribution Systems Using Proactive Operational Actions</strong>", 
-      <em>IEEE Access</em>, 2019.
-    </li>
-    <li style="margin-bottom: 1em;">
-      Babak Taheri, Amir Safdarian, Moein Moeini-Aghtaie, and Matti Lehtonen, 
-      "<strong>Distribution Systems Resilience Enhancement via Pre- and Post-Event Actions</strong>", 
-      <em>IET Smart Grid</em>, 2019.
-    </li>
-    <li style="margin-bottom: 1em;">
-      Ali Jalilian, Babak Taheri, Amir Safdarian, 
-      "<strong>Optimal Allocation of Human and Mobile Energy Resources in Fault Management of Power Distribution Systems</strong>", 
-      <em>Journal of Iranian Association of Electrical and Electronics Engineers</em>, 2020.
-    </li>
-    <li style="margin-bottom: 1em;">
-      Babak Taheri, Ali Jalilian, Amir Safdarian, Moein Moeini-Aghtaie, and Matti Lehtonen, 
-      "<strong>Toward Operational Resilience of Smart Energy Networks in Complex Infrastructures</strong>", 
-      <em>Optimization, Learning, and Control for Interdependent Complex Networks</em>, Springer, Cham, 2020.
-    </li>
-    <li style="margin-bottom: 1em;">
-      Babak Taheri, Ali Jalilian, and Amir Safdarian, 
-      "<strong>Hardening Strategy to Boost Resilience of Distribution Systems via Harnessing a Proactive Operation Model</strong>", 
-      <em>Smart Grid Conference 2019</em>, Tehran, Iran.
-    </li>
-    <li style="margin-bottom: 1em;">
-      Ali Jalilian, Babak Taheri, and Amir Safdarian, 
-      "<strong>Optimal Switch Placement in Power Distribution Systems with Complex Configurations</strong>", 
-      <em>Smart Grid Conference 2019</em>, Tehran, Iran.
-    </li>
+/* The item */
+.biblist li { }
 
-  </ul>
+/* You can define custom styles for plstyle field here. */
+
+/*************************************
+ The box that contains BibTeX code
+ *************************************/
+div.noshow { display: none; }
+div.bibtex {
+	margin-right: 0%;
+	margin-top: 1.2em;
+	margin-bottom: 1em;
+	border: 1px solid silver;
+	padding: 0em 1em;
+	background: #ffffee;
+}
+div.bibtex pre { font-size: 75%; overflow: auto; width: 100%; padding: 0em 0em; }
+</style>
+
+<script type="text/javascript">
+/* Toggle Display of BibTeX */
+function toggleBibtex(articleid) {
+    var bib = document.getElementById('bib_'+articleid);
+    if (bib) {
+        if(bib.className.indexOf('bibtex') != -1) {
+            bib.className.indexOf('noshow') == -1 ? bib.className = 'bibtex noshow' : bib.className = 'bibtex';
+        }
+    } else {
+        return;
+    }
+}
+</script>
+
+{% include _browser-upgrade.html %}
+{% include _navigation.html %}
+
+<div id="main" role="main">
+  <div class="article-author-side">
+    {% include _author-bio.html %}
+  </div>
+  <article>
+    <h1>My Publications</h1>
+    <div class="article-wrap">
+      <h4 style="margin-bottom:0px;padding-top:10px;">Publications</h4>
+      <ul class="biblist">
+        <li><p>
+          Babak Taheri and Daniel K. Molzahn, <b>AC-Informed DC Optimal Transmission Switching Problems via Parameter Optimization</b>, submitted.
+        </p></li>
+        <li><p>
+          Babak Taheri and Daniel K. Molzahn, <b>Improving the Accuracy of DC Optimal Power Flow Formulations via Parameter Optimization</b>, submitted.
+        </p></li>
+        <li><p>
+          Babak Taheri, Rahul K. Gupta, and Daniel K. Molzahn, <b>Optimizing Parameters of the LinDistFlow Power Flow Approximation for Distribution Systems</b>, submitted.
+        </p></li>
+        <li><p>
+          Babak Taheri and Daniel K. Molzahn, <b>Optimizing Parameters of the DC Power Flow</b>, presented at <i>23rd Power Systems Computation Conference (PSCC)</i>, Paris, France, June 4-7, 2024, <i>Electric Power Systems Research</i>.
+        </p></li>
+        <li><p>
+          Babak Taheri and Daniel K. Molzahn, <b>AC Power Flow Feasibility Restoration via a State Estimation-Based Post-Processing Algorithm</b>, presented at <i>23rd Power Systems Computation Conference (PSCC)</i>, Paris, France, June 4-7, 2024, <i>Electric Power Systems Research</i>.
+        </p></li>
+        <li><p>
+          Babak Taheri and D. K. Molzahn, <b>AC Power Flow Informed Parameter Learning for DC Power Flow Network Equivalents</b>, <i>2024 IEEE Texas Power and Energy Conference (TPEC)</i>, College Station, TX, USA, 2024, pp. 1-6.
+        </p></li>
+        <li><p>
+          Ali Jalilian, Babak Taheri, and Daniel K. Molzahn, <b>Co-Optimization of Damage Assessment and Restoration: A Resilience-Driven Dynamic Crew Allocation for Power Distribution Systems</b>, to appear in <i>IEEE Transactions on Power Systems</i>.
+        </p></li>
+        <li><p>
+          Babak Taheri and Daniel K. Molzahn, <b>Restoring AC Power Flow Feasibility for Solutions to Relaxed and Approximated Optimal Power Flow Problems</b>, <i>2023 American Control Conference (ACC)</i>, San Diego, CA, USA, 2023, pp. 4463-4470.
+        </p></li>
+        <li><p>
+          Babak Taheri, Daniel K. Molzahn, and Santiago Grijalva, <b>Improving Distribution System Resilience by Undergrounding Lines and Deploying Mobile Generators</b>, <i>Electric Power Systems Research</i>, vol. 214, Part A, no. 108804, January 2023.
+        </p></li>
+        <li><p>
+          Babak Taheri and Amir Safdarian, <b>Tie-Line Planning for Resilience Enhancement in Unbalanced Distribution Networks</b>, <i>IET Generation, Transmission & Distribution</i>, 2021.
+        </p></li>
+        <li><p>
+          Babak Taheri, Amir Safdarian, Moein Moeini-Aghtaie, and Matti Lehtonen, <b>Distribution System Resilience Enhancement via Mobile Emergency Generators</b>, <i>IEEE Transactions on Power Delivery</i>, 2020.
+        </p></li>
+        <li><p>
+          Babak Taheri, Amir Safdarian, Moein Moeini-Aghtaie, and Matti Lehtonen, <b>Enhancing Resilience Level of Power Distribution Systems Using Proactive Operational Actions</b>, <i>IEEE Access</i>, 2019.
+        </p></li>
+        <li><p>
+          Babak Taheri, Amir Safdarian, Moein Moeini-Aghtaie, and Matti Lehtonen, <b>Distribution Systems Resilience Enhancement via Pre- and Post-Event Actions</b>, <i>IET Smart Grid</i>, 2019.
+        </p></li>
+        <li><p>
+          Ali Jalilian, Babak Taheri, Amir Safdarian, <b>Optimal Allocation of Human and Mobile Energy Resources in Fault Management of Power Distribution Systems</b>, <i>Journal of Iranian Association of Electrical and Electronics Engineers</i>, 2020.
+        </p></li>
+        <li><p>
+          Babak Taheri, Ali Jalilian, Amir Safdarian, Moein Moeini-Aghtaie, and Matti Lehtonen, <b>Toward Operational Resilience of Smart Energy Networks in Complex Infrastructures</b>, in M. H. Amini (Eds.), <i>Optimization, Learning, and Control for Interdependent Complex Networks</i>, Springer, Cham, 2020.
+        </p></li>
+        <li><p>
+          Babak Taheri, Ali Jalilian, and Amir Safdarian, <b>Hardening Strategy to Boost Resilience of Distribution Systems via Harnessing a Proactive Operation Model</b>, <i>Smart Grid Conference 2019</i>, Tehran, Iran.
+        </p></li>
+        <li><p>
+          Ali Jalilian, Babak Taheri, and Amir Safdarian, <b>Optimal Switch Placement in Power Distribution Systems with Complex Configurations</b>, <i>Smart Grid Conference 2019</i>, Tehran, Iran.
+        </p></li>
+      </ul>
+    </div>
+  </article>
 </div>
 
 <div class="footer-wrap">
@@ -115,6 +121,5 @@
 </div>
 
 {% include _scripts.html %}
-
 </body>
 </html>
