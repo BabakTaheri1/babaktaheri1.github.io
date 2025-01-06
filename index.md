@@ -15,8 +15,9 @@ I recently completed my PhD in the School of Electrical and Computer Engineering
 <br />
 My passion lies in harnessing the power of mathematical optimization and machine learning techniques to foster a more reliable, resilient, affordable, and sustainable energy future. Outside of my work in research and education, I enjoy hiking, traveling, camping, watching movies, and playing soccer and volleyball.
 
+<br />
 
-<!-- Simple, left-aligned "Latest News & Announcements" section -->
+
 <div style="margin: 1em 0; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); overflow: hidden;">
   <!-- Section Heading -->
   <div>
