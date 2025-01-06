@@ -19,11 +19,11 @@ comments: false
   line-height: 1.5;
   font-size: 0.9em;
 ">
-  <h2 style="margin-top: 0; color: #333; font-size: 1.2em;">Education</h2>
+  <h2 style="margin-top: 0; color: #333; font-size: 1.5em;">Education</h2>
 
   <!-- Georgia Tech -->
   <div style="margin-bottom: 1.5em;">
-    <h3 style="margin: 0; color: #555; font-size: 1em;">Georgia Institute of Technology 
+    <h3 style="margin: 0; color: #555; font-size: 1.2em;">Georgia Institute of Technology 
       <span style="font-weight: normal; color: #999;">(Atlanta, GA)</span>
     </h3>
     <p style="margin: 0.5em 0 0; color: #666;">
