@@ -15,6 +15,8 @@ comments: false
   box-shadow: 0 2px 6px rgba(0,0,0,0.07);
   font-family: Arial, sans-serif;
   margin-bottom: 1.5em;
+  max-width: 900px;
+  line-height: 1.6;
 ">
   <h2 style="margin-top: 0; color: #333;">Education</h2>
 
@@ -27,7 +29,7 @@ comments: false
       <strong>Ph.D. in Electrical & Computer Engineering</strong> 
       <span style="font-size: 0.85em; font-style: italic; color: #999;">(Aug. 2021 – Dec. 2024)</span>
     </p>
-    <ul style="list-style: disc; margin: 0.5em 0 0 2em; color: #666;">
+    <ul style="list-style: none; margin: 0.5em 0 0; color: #666;">
       <li style="margin-bottom: 0.5em;">Dissertation: <q>Improving Power System Approximations Through Machine Learning–Inspired Optimization Methods</q></li>
       <li style="margin-bottom: 0.5em;">Advisor: Dr. Daniel K. Molzahn</li>
     </ul>
@@ -72,6 +74,8 @@ comments: false
   box-shadow: 0 2px 6px rgba(0,0,0,0.07);
   font-family: Arial, sans-serif;
   margin-bottom: 1.5em;
+  max-width: 900px;
+  line-height: 1.6;
 ">
   <h2 style="margin-top: 0; color: #333;">Experience</h2>
 
