@@ -180,3 +180,26 @@ comments: false
     </div>
   </div>
 </div>
+
+
+<div style="
+  background: #fdfdfd;
+  padding: 1.5em;
+  border: 1px solid #eee;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.07);
+  font-family: Arial, sans-serif;
+  margin-bottom: 1.5em;
+  max-width: 2000px;
+  line-height: 1.5;
+  font-size: 0.9em;
+">
+  <h2 style="margin-top: 0; color: #333; font-size: 1.5em;">Selected Honors & Awards</h2>
+  <ul style="list-style: none; margin: 0; padding-left: 2em; color: #666;">
+    <li>Awarded the Dominion Energy Inclusion, Equity and Diversity Scholarship (July 2024).</li>
+    <li>Awarded the Dominion Energy Inclusion, Equity and Diversity Scholarship (August 2023).</li>
+    <li>Awarded the Georgia Tech ECE Chaddick Fellowship (February 2020).</li>
+    <li>Ranked 1st in the class of 2017 in the Department of Electrical Engineering among nearly 200 entrants of 2013, in terms of cumulative GPA.</li>
+    <li>Direct admission to M.Sc. program at Sharif University of Technology as an exceptional talent, based on B.Sc. top GPA and rank (April 2017).</li>
+  </ul>
+</div>
