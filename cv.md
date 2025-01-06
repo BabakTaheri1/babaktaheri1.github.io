@@ -15,7 +15,7 @@ comments: false
   box-shadow: 0 2px 6px rgba(0,0,0,0.07);
   font-family: Arial, sans-serif;
   margin-bottom: 1.5em;
-  max-width: 1000px;
+  max-width: 1200px;
   line-height: 1.6;
   font-size: 0.8em;
 ">
@@ -75,7 +75,7 @@ comments: false
   box-shadow: 0 2px 6px rgba(0,0,0,0.07);
   font-family: Arial, sans-serif;
   margin-bottom: 1.5em;
-  max-width: 1000px;
+  max-width: 1200px;
   line-height: 1.6;
   font-size: 0.8em;
 ">
