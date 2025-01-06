@@ -196,7 +196,7 @@ comments: false
   font-size: 0.9em;
 ">
   <h2 style="margin-top: 0; color: #333; font-size: 1.5em;">Selected Honors & Awards</h2>
-  <ul style="list-style: none; margin: 0; padding-left: 2em; color: #666;">
+  <ul style="list-style: disc; margin: 0; padding-left: 2em; color: #666;">
     <li style="margin-bottom: 0.5em;">
       <strong>Awarded the Dominion Energy Inclusion, Equity and Diversity Scholarship</strong> 
       <span style="font-size: 0.85em; font-style: italic; color: #999;">
@@ -216,7 +216,7 @@ comments: false
       </span>
     </li>
     <li style="margin-bottom: 0.5em;">
-      <strong>Ranked 1st in the class of 2017 in the Department of Electrical Engineering among nearly 200 entrants of 2013, in terms of cumulative GPA.</strong> 
+      <strong>Ranked 1st in the class of 2017 in the Department of Electrical Engineering among nearly 200 entrants of 2013, in terms of cumulative GPA</strong>.
     </li>
     <li style="margin-bottom: 0.5em;">
       <strong>Direct admission to M.Sc. program at Sharif University of Technology as an exceptional talent, based on B.Sc. top GPA and rank</strong> 
