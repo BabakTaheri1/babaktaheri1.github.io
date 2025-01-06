@@ -10,7 +10,7 @@ disqus_shortname: babaktaheri1
 owner:
   name:           Babak Taheri
   avatar:         IMG_7881.png
-  bio:            I'm from a small town near Girona, Catalunya. Currently in Zürich, Switzerland. Passionate about computer vision, technology, running, and mountains.
+  #bio:            .
   email:          babaktaheri77@gmail.com
   # Social networking links are used in author-bio sidebar. Update and remove as you like.
   #twitter: jponttuset
@@ -36,7 +36,7 @@ links:
     url: /blog/
 
 # http://en.wikipedia.org/wiki/List_of_tz_database_time_zones
-timezone:    Europe/Zurich
+timezone:    USA/NewYork
 future:      true
 #pygments:    true
 highlighter: rouge
