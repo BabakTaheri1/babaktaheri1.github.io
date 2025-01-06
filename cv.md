@@ -17,6 +17,7 @@ comments: false
   margin-bottom: 1.5em;
   max-width: 1000px;
   line-height: 1.6;
+  font-size: 0.9em;
 ">
   <h2 style="margin-top: 0; color: #333;">Education</h2>
 
