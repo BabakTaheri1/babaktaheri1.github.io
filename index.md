@@ -1,7 +1,7 @@
 ---
 layout: home2
 title: Me in a Nutshell
-description: "Jordi Pont-Tuset's website"
+description: "Babak Taheri's website"
 tags: [Jekyll, theme, responsive, blog, template]
 image:
   feature: trees.jpg
