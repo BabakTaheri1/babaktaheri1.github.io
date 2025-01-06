@@ -27,28 +27,30 @@ comments: false
       Georgia Institute of Technology 
       <span style="font-weight: normal; color: #999;">(Atlanta, GA)</span>
     </h3>
-    <p style="margin: 0.5em 0 0; color: #666;">
-      <strong>Ph.D. in Electrical & Computer Engineering</strong> 
-      <span style="font-size: 0.85em; font-style: italic; color: #999;">
-        (Aug. 2021 – Dec. 2024)
-      </span>
-    </p>
-    <ul style="list-style: none; margin: 0.5em 0 0; padding-left: 2em; color: #666;">
-      <li>Dissertation: <q>Improving Power System Approximations Through Machine Learning–Inspired Optimization Methods</q></li>
-      <li>Advisor: Dr. Daniel K. Molzahn</li>
-    </ul>
-    <p style="margin: 0.5em 0 0; color: #666;">
-      <strong>Minor in Industrial & Systems Engineering (ISyE)</strong> 
-      <span style="font-size: 0.85em; font-style: italic; color: #999;">
-        (Aug. 2022 – May 2024)
-      </span>
-    </p>
-    <p style="margin: 0.5em 0 0; color: #666;">
-      <strong>M.Sc. in Electrical & Computer Engineering</strong> 
-      <span style="font-size: 0.85em; font-style: italic; color: #999;">
-        (Aug. 2021 – May 2024)
-      </span>
-    </p>
+    <div style="margin-left: 2em;">
+      <p style="margin: 0.5em 0 0; color: #666;">
+        <strong>Ph.D. in Electrical & Computer Engineering</strong> 
+        <span style="font-size: 0.85em; font-style: italic; color: #999;">
+          (Aug. 2021 – Dec. 2024)
+        </span>
+      </p>
+      <ul style="list-style: none; margin: 0.5em 0 0; padding-left: 2em; color: #666;">
+        <li>Dissertation: <q>Improving Power System Approximations Through Machine Learning–Inspired Optimization Methods</q></li>
+        <li>Advisor: Dr. Daniel K. Molzahn</li>
+      </ul>
+      <p style="margin: 0.5em 0 0; color: #666;">
+        <strong>Minor in Industrial & Systems Engineering (ISyE)</strong> 
+        <span style="font-size: 0.85em; font-style: italic; color: #999;">
+          (Aug. 2022 – May 2024)
+        </span>
+      </p>
+      <p style="margin: 0.5em 0 0; color: #666;">
+        <strong>M.Sc. in Electrical & Computer Engineering</strong> 
+        <span style="font-size: 0.85em; font-style: italic; color: #999;">
+          (Aug. 2021 – May 2024)
+        </span>
+      </p>
+    </div>
   </div>
 
   <!-- Sharif University -->
@@ -57,12 +59,14 @@ comments: false
       Sharif University of Technology 
       <span style="font-weight: normal; color: #999;">(Tehran)</span>
     </h3>
-    <p style="margin: 0.5em 0 0; color: #666;">
-      <strong>M.Sc. in Electrical Engineering</strong> 
-      <span style="font-size: 0.85em; font-style: italic; color: #999;">
-        (Sep. 2017 – May 2019)
-      </span>
-    </p>
+    <div style="margin-left: 2em;">
+      <p style="margin: 0.5em 0 0; color: #666;">
+        <strong>M.Sc. in Electrical Engineering</strong> 
+        <span style="font-size: 0.85em; font-style: italic; color: #999;">
+          (Sep. 2017 – May 2019)
+        </span>
+      </p>
+    </div>
   </div>
 
   <!-- University of Tabriz -->
@@ -71,12 +75,14 @@ comments: false
       University of Tabriz 
       <span style="font-weight: normal; color: #999;">(Tabriz)</span>
     </h3>
-    <p style="margin: 0.5em 0 0; color: #666;">
-      <strong>B.Sc. in Electrical Engineering</strong> 
-      <span style="font-size: 0.85em; font-style: italic; color: #999;">
-        (Sep. 2013 – Jun. 2017)
-      </span>
-    </p>
+    <div style="margin-left: 2em;">
+      <p style="margin: 0.5em 0 0; color: #666;">
+        <strong>B.Sc. in Electrical Engineering</strong> 
+        <span style="font-size: 0.85em; font-style: italic; color: #999;">
+          (Sep. 2013 – Jun. 2017)
+        </span>
+      </p>
+    </div>
   </div>
 </div>
 
@@ -100,12 +106,14 @@ comments: false
       Dominion Energy 
       <span style="font-weight: normal; color: #999;">(Richmond, VA)</span>
     </h3>
-    <p style="margin: 0.5em 0 0; color: #666;">
-      <strong>Graduate Intern, Electric Transmission Strategic Initiatives</strong> 
-      <span style="font-size: 0.85em; font-style: italic; color: #999;">
-        (May 2024 – Aug. 2024)
-      </span>
-    </p>
+    <div style="margin-left: 2em;">
+      <p style="margin: 0.5em 0 0; color: #666;">
+        <strong>Graduate Intern, Electric Transmission Strategic Initiatives</strong> 
+        <span style="font-size: 0.85em; font-style: italic; color: #999;">
+          (May 2024 – Aug. 2024)
+        </span>
+      </p>
+    </div>
   </div>
 
   <!-- NERC -->
@@ -114,12 +122,14 @@ comments: false
       North American Electric Reliability Corporation (NERC) 
       <span style="font-weight: normal; color: #999;">(Atlanta, GA)</span>
     </h3>
-    <p style="margin: 0.5em 0 0; color: #666;">
-      <strong>Graduate Intern, Advanced System Analytics & Modeling</strong> 
-      <span style="font-size: 0.85em; font-style: italic; color: #999;">
-        (Jan. 2024 – May 2024)
-      </span>
-    </p>
+    <div style="margin-left: 2em;">
+      <p style="margin: 0.5em 0 0; color: #666;">
+        <strong>Graduate Intern, Advanced System Analytics & Modeling</strong> 
+        <span style="font-size: 0.85em; font-style: italic; color: #999;">
+          (Jan. 2024 – May 2024)
+        </span>
+      </p>
+    </div>
   </div>
 
   <!-- Dominion Energy (Planning – Modeling) -->
@@ -128,12 +138,14 @@ comments: false
       Dominion Energy 
       <span style="font-weight: normal; color: #999;">(Richmond, VA)</span>
     </h3>
-    <p style="margin: 0.5em 0 0; color: #666;">
-      <strong>Graduate Intern, Electric Transmission Planning – Modeling</strong> 
-      <span style="font-size: 0.85em; font-style: italic; color: #999;">
-        (May 2023 – Aug. 2023)
-      </span>
-    </p>
+    <div style="margin-left: 2em;">
+      <p style="margin: 0.5em 0 0; color: #666;">
+        <strong>Graduate Intern, Electric Transmission Planning – Modeling</strong> 
+        <span style="font-size: 0.85em; font-style: italic; color: #999;">
+          (May 2023 – Aug. 2023)
+        </span>
+      </p>
+    </div>
   </div>
 
   <!-- Georgia Tech -->
@@ -142,12 +154,14 @@ comments: false
       Georgia Institute of Technology 
       <span style="font-weight: normal; color: #999;">(Atlanta, GA)</span>
     </h3>
-    <p style="margin: 0.5em 0 0; color: #666;">
-      <strong>Graduate Research and Teaching Assistant</strong> 
-      <span style="font-size: 0.85em; font-style: italic; color: #999;">
-        (Aug. 2021 – Dec. 2024)
-      </span>
-    </p>
+    <div style="margin-left: 2em;">
+      <p style="margin: 0.5em 0 0; color: #666;">
+        <strong>Graduate Research and Teaching Assistant</strong> 
+        <span style="font-size: 0.85em; font-style: italic; color: #999;">
+          (Aug. 2021 – Dec. 2024)
+        </span>
+      </p>
+    </div>
   </div>
 
   <!-- Sharif University -->
@@ -156,11 +170,13 @@ comments: false
       Sharif University of Technology 
       <span style="font-weight: normal; color: #999;">(Tehran)</span>
     </h3>
-    <p style="margin: 0.5em 0 0; color: #666;">
-      <strong>Graduate Research and Teaching Assistant</strong> 
-      <span style="font-size: 0.85em; font-style: italic; color: #999;">
-        (Sep. 2017 – May 2021)
-      </span>
-    </p>
+    <div style="margin-left: 2em;">
+      <p style="margin: 0.5em 0 0; color: #666;">
+        <strong>Graduate Research and Teaching Assistant</strong> 
+        <span style="font-size: 0.85em; font-style: italic; color: #999;">
+          (Sep. 2017 – May 2021)
+        </span>
+      </p>
+    </div>
   </div>
 </div>
