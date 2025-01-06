@@ -23,9 +23,9 @@ comments: false
 
   <!-- Georgia Tech -->
   <div style="margin-bottom: 1.5em;">
-    <h3 style="margin: 0; color: #555; font-size: 1em;">Georgia Institute of Technology 
+    <h4 style="margin: 0; color: #555; font-size: 1em;">Georgia Institute of Technology 
       <span style="font-weight: normal; color: #999;">(Atlanta, GA)</span>
-    </h3>
+    </h4>
     <p style="margin: 0.5em 0 0; color: #666;">
       <strong>Ph.D. in Electrical & Computer Engineering</strong> 
       <span style="font-size: 0.85em; font-style: italic; color: #999;">(Aug. 2021 – Dec. 2024)</span>
