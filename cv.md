@@ -46,7 +46,7 @@ comments: false
 
   <!-- Sharif University -->
   <div style="margin-bottom: 1.5em;">
-    <h3 style="margin: 0; color: #555; font-size: 1em;">Sharif University of Technology 
+    <h3 style="margin: 0; color: #555; font-size: 1.2em;">Sharif University of Technology 
       <span style="font-weight: normal; color: #999;">(Tehran)</span>
     </h3>
     <p style="margin: 0.5em 0 0; color: #666;">
@@ -57,7 +57,7 @@ comments: false
 
   <!-- University of Tabriz -->
   <div>
-    <h3 style="margin: 0; color: #555; font-size: 1em;">University of Tabriz 
+    <h3 style="margin: 0; color: #555; font-size: 1.2em;">University of Tabriz 
       <span style="font-weight: normal; color: #999;">(Tabriz)</span>
     </h3>
     <p style="margin: 0.5em 0 0; color: #666;">
@@ -79,11 +79,11 @@ comments: false
   line-height: 1.5;
   font-size: 0.9em;
 ">
-  <h2 style="margin-top: 0; color: #333; font-size: 1.2em;">Experience</h2>
+  <h2 style="margin-top: 0; color: #333; font-size: 1.5em;">Experience</h2>
 
   <!-- Dominion Energy (Strategic Initiatives) -->
   <div style="margin-bottom: 1.5em;">
-    <h3 style="margin: 0; color: #555; font-size: 1em;">Dominion Energy 
+    <h3 style="margin: 0; color: #555; font-size: 1.2em;">Dominion Energy 
       <span style="font-weight: normal; color: #999;">(Richmond, VA)</span>
     </h3>
     <p style="margin: 0.5em 0 0; color: #666;">
@@ -94,7 +94,7 @@ comments: false
 
   <!-- NERC -->
   <div style="margin-bottom: 1.5em;">
-    <h3 style="margin: 0; color: #555; font-size: 1em;">North American Electric Reliability Corporation (NERC) 
+    <h3 style="margin: 0; color: #555; font-size: 1.2em;">North American Electric Reliability Corporation (NERC) 
       <span style="font-weight: normal; color: #999;">(Atlanta, GA)</span>
     </h3>
     <p style="margin: 0.5em 0 0; color: #666;">
@@ -105,7 +105,7 @@ comments: false
 
   <!-- Dominion Energy (Planning – Modeling) -->
   <div style="margin-bottom: 1.5em;">
-    <h3 style="margin: 0; color: #555; font-size: 1em;">Dominion Energy 
+    <h3 style="margin: 0; color: #555; font-size: 1.2em;">Dominion Energy 
       <span style="font-weight: normal; color: #999;">(Richmond, VA)</span>
     </h3>
     <p style="margin: 0.5em 0 0; color: #666;">
@@ -116,7 +116,7 @@ comments: false
 
   <!-- Georgia Tech -->
   <div style="margin-bottom: 1.5em;">
-    <h3 style="margin: 0; color: #555; font-size: 1em;">Georgia Institute of Technology 
+    <h3 style="margin: 0; color: #555; font-size: 1.2em;">Georgia Institute of Technology 
       <span style="font-weight: normal; color: #999;">(Atlanta, GA)</span>
     </h3>
     <p style="margin: 0.5em 0 0; color: #666;">
@@ -127,7 +127,7 @@ comments: false
 
   <!-- Sharif University -->
   <div>
-    <h3 style="margin: 0; color: #555; font-size: 1em;">Sharif University of Technology 
+    <h3 style="margin: 0; color: #555; font-size: 1.2em;">Sharif University of Technology 
       <span style="font-weight: normal; color: #999;">(Tehran)</span>
     </h3>
     <p style="margin: 0.5em 0 0; color: #666;">
