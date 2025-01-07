@@ -157,7 +157,7 @@ comments: false
     </h3>
     <div style="margin-left: 2em;">
       <p style="margin: 0.5em 0 0; color: #666;">
-        <strong>Graduate Intern, Electric Transmission Planning – Modeling</strong> 
+        <strong>Graduate Intern, Electric Transmission Planning</strong> 
         <span style="font-size: 0.75em; font-style: italic; color: #999;">
           (May – Aug. 2023)
         </span>
