@@ -13,7 +13,7 @@ I am a research scientist at <a href="https://www.hitachienergy.com/us/en" targe
 I recently completed my PhD in the School of Electrical and Computer Engineering at the <a href="https://www.gatech.edu/" target="_blank">Georgia Institute of Technology</a>, and I was fortunate to be advised by <a href="https://molzahn.github.io/index.html" target="_blank">Prof. Daniel Molzahn</a>.
 
 <br />
-My passion lies in harnessing the power of mathematical optimization and machine learning techniques to foster a more reliable, resilient, affordable, and sustainable energy future. Outside of my work in research and education, I enjoy hiking, traveling, camping, watching movies, and playing soccer and volleyball.
+My passion lies in harnessing the power of mathematical optimization and machine learning techniques to foster a more reliable, resilient, affordable, and sustainable energy future. Outside of my work in research, I enjoy traveling, hiking, watching movies, and playing soccer and volleyball.
 
 <br />
 
