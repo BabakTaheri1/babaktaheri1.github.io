@@ -22,7 +22,7 @@ My passion lies in harnessing the power of mathematical optimization and machine
   <!-- Section Heading -->
   <div>
     <h3 style="margin: 0; font-size: 1.5em; text-align: left; color: #333; font-family: Arial, sans-serif; padding: 0.5em;">
-      Latest News
+      News
     </h3>
   </div>
 
