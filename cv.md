@@ -110,7 +110,7 @@ comments: false
       <p style="margin: 0.5em 0 0; color: #666;">
         <strong>Research Scientist</strong> 
         <span style="font-size: 0.75em; font-style: italic; color: #999;">
-          (Jan 2025 – present)
+          (Jan. 2025 – present)
         </span>
       </p>
     </div>
