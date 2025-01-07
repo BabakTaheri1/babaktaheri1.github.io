@@ -100,6 +100,23 @@ comments: false
 ">
   <h2 style="margin-top: 0; color: #333; font-size: 1.5em;">Experience</h2>
 
+ <!-- Hitachi-->
+  <div style="margin-bottom: 1.5em;">
+    <h3 style="margin: 0; color: #555; font-size: 1.2em;">
+     Hitachi Energy Research 
+      <span style="font-weight: normal; color: #999;">(Raleigh, NC)</span>
+    </h3>
+    <div style="margin-left: 2em;">
+      <p style="margin: 0.5em 0 0; color: #666;">
+        <strong>Research Scientist</strong> 
+        <span style="font-size: 0.85em; font-style: italic; color: #999;">
+          (Jan 2025 – present)
+        </span>
+      </p>
+    </div>
+  </div>
+
+
   <!-- Dominion Energy (Strategic Initiatives) -->
   <div style="margin-bottom: 1.5em;">
     <h3 style="margin: 0; color: #555; font-size: 1.2em;">
