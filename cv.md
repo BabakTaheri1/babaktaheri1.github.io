@@ -215,6 +215,9 @@ comments: false
         (February 2020)
       </span>
     </li>
+     <li style="margin-bottom: 0.5em;">
+      <strong>Ranked 2nd in the class of 2019 in terms of cumulative GPA, masters degree, Sharif University of Technology</strong>.
+    </li>
     <li style="margin-bottom: 0.5em;">
       <strong>Ranked 1st in the class of 2017 in the Department of Electrical Engineering among nearly 200 entrants of 2013, in terms of cumulative GPA</strong>.
     </li>
