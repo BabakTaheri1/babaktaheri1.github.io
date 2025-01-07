@@ -7,7 +7,7 @@ image:
   feature: laguna.jpg
 ---
 
-I am a research scientist at <a href="https://www.hitachienergy.com/us/en" target="_blank">Hitachi Energy Research</a>.
+I am a Research Scientist at <a href="https://www.hitachienergy.com/us/en" target="_blank">Hitachi Energy Research</a>.
 
 <br />
 I recently completed my PhD in the School of Electrical and Computer Engineering at the <a href="https://www.gatech.edu/" target="_blank">Georgia Institute of Technology</a>, and I was fortunate to be advised by <a href="https://molzahn.github.io/index.html" target="_blank">Prof. Daniel Molzahn</a>.
