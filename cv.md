@@ -127,7 +127,7 @@ comments: false
       <p style="margin: 0.5em 0 0; color: #666;">
         <strong>Graduate Intern, Electric Transmission Strategic Initiatives</strong> 
         <span style="font-size: 0.85em; font-style: italic; color: #999;">
-          (May 2024 – Aug. 2024)
+          (May – Aug. 2024)
         </span>
       </p>
     </div>
@@ -143,7 +143,7 @@ comments: false
       <p style="margin: 0.5em 0 0; color: #666;">
         <strong>Graduate Intern, Advanced System Analytics & Modeling</strong> 
         <span style="font-size: 0.85em; font-style: italic; color: #999;">
-          (Jan. 2024 – May 2024)
+          (Jan. – May 2024)
         </span>
       </p>
     </div>
@@ -159,7 +159,7 @@ comments: false
       <p style="margin: 0.5em 0 0; color: #666;">
         <strong>Graduate Intern, Electric Transmission Planning – Modeling</strong> 
         <span style="font-size: 0.85em; font-style: italic; color: #999;">
-          (May 2023 – Aug. 2023)
+          (May – Aug. 2023)
         </span>
       </p>
     </div>
