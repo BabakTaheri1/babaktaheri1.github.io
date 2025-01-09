@@ -192,6 +192,18 @@ comments: false
       </p>
     </div>
 
+     <!-- Georgia Tech -->
+    <div class="timeline-item">
+      <h3>
+        Georgia Institute of Technology
+        <span class="location">(Atlanta, GA)</span>
+      </h3>
+      <p>
+        <strong>Graduate Research and Teaching Assistant</strong>
+        <span class="date-range">(Aug. 2021 – Dec. 2024)</span>
+      </p>
+    </div>
+
     <!-- Dominion Energy (Strategic Initiatives) -->
     <div class="timeline-item">
       <h3>
@@ -225,18 +237,6 @@ comments: false
       <p>
         <strong>Graduate Intern, Electric Transmission Planning</strong>
         <span class="date-range">(May – Aug. 2023)</span>
-      </p>
-    </div>
-
-    <!-- Georgia Tech -->
-    <div class="timeline-item">
-      <h3>
-        Georgia Institute of Technology
-        <span class="location">(Atlanta, GA)</span>
-      </h3>
-      <p>
-        <strong>Graduate Research and Teaching Assistant</strong>
-        <span class="date-range">(Aug. 2021 – Dec. 2024)</span>
       </p>
     </div>
 
