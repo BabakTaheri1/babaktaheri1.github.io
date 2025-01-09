@@ -101,16 +101,14 @@ comments: false
   }
 
   /* The vertical line in the background */
-    .timeline-item::before {
+    .timeline::before {
       content: "";
       position: absolute;
-      left: 32px; /* centers the bullet on the line */
-      background: #fff;
-      border: 2px solid #ccc;
-      border-radius: 50%;
-      width: 16px;
-      height: 16px;
-      top: 4px;
+      left: 40px; /* distance from the left edge */
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: #ddd;
     }
 
 
