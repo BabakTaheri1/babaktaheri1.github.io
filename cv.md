@@ -86,6 +86,82 @@ comments: false
   </div>
 </div>
 
+
+
+
+
+<style>
+  /* Timeline container (applies only to the Experience section) */
+  .timeline {
+    position: relative;
+    margin: 1.5em 0 0 0;
+    padding: 2em 0;
+    /* The background, border, etc. could be the same as your "outer" div,
+       or you can keep them in your inline styles on the outer div. */
+  }
+
+  /* The vertical line in the background */
+  .timeline::before {
+    content: "";
+    position: absolute;
+    left: 40px; /* Distance from the left edge */
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: #ddd;
+  }
+
+  /* Individual timeline item */
+  .timeline-item {
+    position: relative;
+    margin-bottom: 2.5em;
+    padding-left: 80px; /* to shift text away from the bullets/line */
+  }
+
+  /* The circle (bullet) for each timeline item */
+  .timeline-item::before {
+    content: "";
+    position: absolute;
+    left: 32px;
+    top: 4px;
+    width: 16px;
+    height: 16px;
+    background: #fff;
+    border: 2px solid #ccc;
+    border-radius: 50%;
+  }
+
+  /* Headings for each job */
+  .timeline-item h3 {
+    margin: 0;
+    color: #555;
+    font-size: 1.2em;
+  }
+
+  .timeline-item .location {
+    font-weight: normal; 
+    color: #999;
+    margin-left: 0.5em;
+  }
+
+  .timeline-item p {
+    margin: 0.5em 0 0; 
+    color: #666;
+  }
+
+  /* Dates inside parentheses */
+  .timeline-item .date-range {
+    font-size: 0.75em;
+    font-style: italic;
+    color: #999;
+    margin-left: 0.5em;
+  }
+</style>
+
+
+
+
+<!-- EXPERIENCE SECTION -->
 <div style="
   background: #fdfdfd;
   padding: 1.5em;
@@ -98,105 +174,95 @@ comments: false
   line-height: 1.5;
   font-size: 0.9em;
 ">
+  <!-- Heading stays as is -->
   <h2 style="margin-top: 0; color: #333; font-size: 1.5em;">Experience</h2>
 
- <!-- Hitachi-->
-  <div style="margin-bottom: 1.5em;">
-    <h3 style="margin: 0; color: #555; font-size: 1.2em;">
-     Hitachi Energy Research 
-      <span style="font-weight: normal; color: #999;">(Raleigh, NC)</span>
-    </h3>
-    <div style="margin-left: 2em;">
-      <p style="margin: 0.5em 0 0; color: #666;">
-        <strong>Research Scientist</strong> 
-        <span style="font-size: 0.75em; font-style: italic; color: #999;">
-          (Jan. 2025 – present)
-        </span>
+  <!-- Timeline container -->
+  <div class="timeline">
+
+    <!-- Hitachi -->
+    <div class="timeline-item">
+      <h3>
+        Hitachi Energy Research 
+        <span class="location">(Raleigh, NC)</span>
+      </h3>
+      <p>
+        <strong>Research Scientist</strong>
+        <span class="date-range">(Jan. 2025 – present)</span>
       </p>
     </div>
-  </div>
 
-
-  <!-- Dominion Energy (Strategic Initiatives) -->
-  <div style="margin-bottom: 1.5em;">
-    <h3 style="margin: 0; color: #555; font-size: 1.2em;">
-      Dominion Energy 
-      <span style="font-weight: normal; color: #999;">(Richmond, VA)</span>
-    </h3>
-    <div style="margin-left: 2em;">
-      <p style="margin: 0.5em 0 0; color: #666;">
-        <strong>Graduate Intern, Electric Transmission Strategic Initiatives</strong> 
-        <span style="font-size: 0.75em; font-style: italic; color: #999;">
-          (May – Aug. 2024)
-        </span>
+    <!-- Dominion Energy (Strategic Initiatives) -->
+    <div class="timeline-item">
+      <h3>
+        Dominion Energy
+        <span class="location">(Richmond, VA)</span>
+      </h3>
+      <p>
+        <strong>Graduate Intern, Electric Transmission Strategic Initiatives</strong>
+        <span class="date-range">(May – Aug. 2024)</span>
       </p>
     </div>
-  </div>
 
-  <!-- NERC -->
-  <div style="margin-bottom: 1.5em;">
-    <h3 style="margin: 0; color: #555; font-size: 1.2em;">
-      North American Electric Reliability Corporation (NERC) 
-      <span style="font-weight: normal; color: #999;">(Atlanta, GA)</span>
-    </h3>
-    <div style="margin-left: 2em;">
-      <p style="margin: 0.5em 0 0; color: #666;">
-        <strong>Graduate Intern, Advanced System Analytics & Modeling</strong> 
-        <span style="font-size: 0.75em; font-style: italic; color: #999;">
-          (Jan. – May 2024)
-        </span>
+    <!-- NERC -->
+    <div class="timeline-item">
+      <h3>
+        North American Electric Reliability Corporation (NERC) 
+        <span class="location">(Atlanta, GA)</span>
+      </h3>
+      <p>
+        <strong>Graduate Intern, Advanced System Analytics & Modeling</strong>
+        <span class="date-range">(Jan. – May 2024)</span>
       </p>
     </div>
-  </div>
 
-  <!-- Dominion Energy (Planning – Modeling) -->
-  <div style="margin-bottom: 1.5em;">
-    <h3 style="margin: 0; color: #555; font-size: 1.2em;">
-      Dominion Energy 
-      <span style="font-weight: normal; color: #999;">(Richmond, VA)</span>
-    </h3>
-    <div style="margin-left: 2em;">
-      <p style="margin: 0.5em 0 0; color: #666;">
-        <strong>Graduate Intern, Electric Transmission Planning</strong> 
-        <span style="font-size: 0.75em; font-style: italic; color: #999;">
-          (May – Aug. 2023)
-        </span>
+    <!-- Dominion Energy (Planning – Modeling) -->
+    <div class="timeline-item">
+      <h3>
+        Dominion Energy
+        <span class="location">(Richmond, VA)</span>
+      </h3>
+      <p>
+        <strong>Graduate Intern, Electric Transmission Planning</strong>
+        <span class="date-range">(May – Aug. 2023)</span>
       </p>
     </div>
-  </div>
 
-  <!-- Georgia Tech -->
-  <div style="margin-bottom: 1.5em;">
-    <h3 style="margin: 0; color: #555; font-size: 1.2em;">
-      Georgia Institute of Technology 
-      <span style="font-weight: normal; color: #999;">(Atlanta, GA)</span>
-    </h3>
-    <div style="margin-left: 2em;">
-      <p style="margin: 0.5em 0 0; color: #666;">
-        <strong>Graduate Research and Teaching Assistant</strong> 
-        <span style="font-size: 0.75em; font-style: italic; color: #999;">
-          (Aug. 2021 – Dec. 2024)
-        </span>
+    <!-- Georgia Tech -->
+    <div class="timeline-item">
+      <h3>
+        Georgia Institute of Technology
+        <span class="location">(Atlanta, GA)</span>
+      </h3>
+      <p>
+        <strong>Graduate Research and Teaching Assistant</strong>
+        <span class="date-range">(Aug. 2021 – Dec. 2024)</span>
       </p>
     </div>
-  </div>
 
-  <!-- Sharif University -->
-  <div>
-    <h3 style="margin: 0; color: #555; font-size: 1.2em;">
-      Sharif University of Technology 
-      <span style="font-weight: normal; color: #999;">(Tehran)</span>
-    </h3>
-    <div style="margin-left: 2em;">
-      <p style="margin: 0.5em 0 0; color: #666;">
-        <strong>Graduate Research and Teaching Assistant</strong> 
-        <span style="font-size: 0.75em; font-style: italic; color: #999;">
-          (Sep. 2017 – May 2021)
-        </span>
+    <!-- Sharif University -->
+    <div class="timeline-item">
+      <h3>
+        Sharif University of Technology
+        <span class="location">(Tehran)</span>
+      </h3>
+      <p>
+        <strong>Graduate Research and Teaching Assistant</strong>
+        <span class="date-range">(Sep. 2017 – May 2021)</span>
       </p>
     </div>
-  </div>
+
+  </div> <!-- end .timeline -->
 </div>
+
+
+
+
+
+
+
+
+
 
 
 
