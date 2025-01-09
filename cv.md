@@ -15,7 +15,7 @@ comments: false
   box-shadow: 0 2px 6px rgba(0,0,0,0.07);
   font-family: Arial, sans-serif;
   margin-bottom: 1.5em;
-  max-width: 3500px;
+  max-width: 100%;
   line-height: 1.5;
   font-size: 0.9em;
 ">
@@ -171,7 +171,7 @@ comments: false
   box-shadow: 0 2px 6px rgba(0,0,0,0.07);
   font-family: Arial, sans-serif;
   margin-bottom: 1.5em;
-  max-width: 3500px;
+  max-width: 100%;
   line-height: 1.5;
   font-size: 0.9em;
 ">
@@ -275,7 +275,7 @@ comments: false
   box-shadow: 0 2px 6px rgba(0,0,0,0.07);
   font-family: Arial, sans-serif;
   margin-bottom: 1.5em;
-  max-width: 3500px;
+  max-width: 100%;
   line-height: 1.5;
   font-size: 0.9em;
 ">
