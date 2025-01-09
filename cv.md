@@ -101,15 +101,16 @@ comments: false
   }
 
   /* The vertical line in the background */
-  .timeline::before {
+   .timeline::before {
     content: "";
     position: absolute;
-    left: 40px; /* Distance from the left edge */
+    left: 40px;
     top: 0;
     bottom: 0;
     width: 2px;
-    background: #ddd;
+    background: linear-gradient(to bottom, #00c6ff, #0072ff);
   }
+
 
   /* Individual timeline item */
   .timeline-item {
