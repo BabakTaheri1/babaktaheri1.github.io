@@ -101,15 +101,17 @@ comments: false
   }
 
   /* The vertical line in the background */
-   .timeline::before {
-    content: "";
-    position: absolute;
-    left: 40px;
-    top: 0;
-    bottom: 0;
-    width: 2px;
-    background: linear-gradient(to bottom, #00c6ff, #0072ff);
-  }
+    .timeline-item::before {
+      content: "";
+      position: absolute;
+      left: 32px; /* centers the bullet on the line */
+      background: #fff;
+      border: 2px solid #ccc;
+      border-radius: 50%;
+      width: 16px;
+      height: 16px;
+      top: 4px;
+    }
 
 
   /* Individual timeline item */
