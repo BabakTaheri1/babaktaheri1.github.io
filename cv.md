@@ -123,7 +123,7 @@ comments: false
   .timeline-item::before {
     content: "";
     position: absolute;
-    left: 20px;
+    left: 32px;
     top: 4px;
     width: 16px;
     height: 16px;
