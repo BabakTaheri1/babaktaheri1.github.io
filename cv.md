@@ -288,7 +288,7 @@ comments: false
   <h2 style="margin-top: 0; color: #333; font-size: 1.5em;">Selected Honors & Awards</h2>
   <ul style="list-style: disc; margin: 0; padding-left: 2em; color: #666;">
     <li style="margin-bottom: 0.5em;">
-      2xAwarded the <strong>Dominion Energy Inclusion, Equity and Diversity Scholarship</strong>. 
+      2x Awarded the <strong>Dominion Energy Inclusion, Equity and Diversity Scholarship</strong>. 
       <span style="font-size: 0.85em; font-style: italic; color: #999;">
         (Jul. 2024 & Aug. 2023)
       </span>
