@@ -288,37 +288,31 @@ comments: false
   <h2 style="margin-top: 0; color: #333; font-size: 1.5em;">Selected Honors & Awards</h2>
   <ul style="list-style: disc; margin: 0; padding-left: 2em; color: #666;">
     <li style="margin-bottom: 0.5em;">
-      <strong>Awarded the Dominion Energy Inclusion, Equity and Diversity Scholarship</strong> 
+      2xAwarded the <strong>Dominion Energy Inclusion, Equity and Diversity Scholarship</strong> 
       <span style="font-size: 0.85em; font-style: italic; color: #999;">
-        (Jul. 2024)
+        (Jul. 2024 & Aug. 2023)
       </span>
     </li>
     <li style="margin-bottom: 0.5em;">
-      <strong>Awarded the Dominion Energy Inclusion, Equity and Diversity Scholarship</strong> 
-      <span style="font-size: 0.85em; font-style: italic; color: #999;">
-        (Aug. 2023)
-      </span>
-    </li>
-    <li style="margin-bottom: 0.5em;">
-      <strong>Awarded the Georgia Tech ECE Chaddick Fellowship</strong> 
+      Awarded the <strong>Georgia Tech ECE Chaddick Fellowship</strong>. 
       <span style="font-size: 0.85em; font-style: italic; color: #999;">
         (Feb. 2020)
       </span>
     </li>
      <li style="margin-bottom: 0.5em;">
-      <strong>Ranked 2nd in the class of 2019 in terms of cumulative GPA, masters degree, Sharif University of Technology</strong>
+      <strong>Ranked 2nd</strong> in the class of 2019 in terms of cumulative GPA, masters degree, Sharif University of Technology.
        <span style="font-size: 0.85em; font-style: italic; color: #999;">
         (Jun. 2019)
       </span>
     </li>
     <li style="margin-bottom: 0.5em;">
-      <strong>Ranked 1st in the class of 2017 in the Department of Electrical Engineering among nearly 200 entrants of 2013, in terms of cumulative GPA</strong>
+      <strong>Ranked 1st</strong> in the class of 2017 in the Department of Electrical Engineering among nearly 200 entrants of 2013, in terms of cumulative GPA.
       <span style="font-size: 0.85em; font-style: italic; color: #999;">
         (Jun. 2017)
       </span>
     </li>
     <li style="margin-bottom: 0.5em;">
-      <strong>Direct admission to M.Sc. program at Sharif University of Technology as an exceptional talent, based on B.Sc. top GPA and rank</strong> 
+      <strong>Direct admission</strong> to M.Sc. program at Sharif University of Technology as an exceptional talent, based on B.Sc. top GPA and rank. 
       <span style="font-size: 0.85em; font-style: italic; color: #999;">
         (Apr. 2017)
       </span>
