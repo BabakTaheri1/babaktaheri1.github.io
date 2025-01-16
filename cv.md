@@ -34,10 +34,16 @@ comments: false
           (Aug. 2021 – Dec. 2024)
         </span>
       </p>
+
+      
+      <!--
       <ul style="list-style: none; margin: 0.5em 0 0; padding-left: 2em; color: #666;">
         <li>Dissertation: <q>Improving Power System Approximations Through Machine Learning–Inspired Optimization Methods</q></li>
         <li>Advisor: Dr. Daniel K. Molzahn</li>
       </ul>
+      -->
+
+      
       <p style="margin: 0.5em 0 0; color: #666;">
         <strong>Minor in Industrial & Systems Engineering (ISyE)</strong> 
         <span style="font-size: 0.85em; font-style: italic; color: #999;">
