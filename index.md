@@ -8,18 +8,19 @@ image:
 ---
 
 <style>
-  /* General page text improvements (optional, can be handled by theme) */
+  /* General page text improvements */
   .page-content p, .page-content li { /* Assuming your main content is within a div with class 'page-content' or similar */
     line-height: 1.65;
     font-size: 1.05em; /* Slightly larger for readability */
-    color: #333; /* Dark grey for text */
+    color: #4a4a4a; /* Main text gray */
   }
   .page-content a {
-    color: #007bff; /* Standard link blue */
+    color: #2a2a2a; /* Dark gray for links, almost black for good contrast */
     text-decoration: none;
+    font-weight: 500; /* Slightly bolder for links */
   }
   .page-content a:hover {
-    color: #0056b3;
+    color: #000000; /* Black on hover */
     text-decoration: underline;
   }
 
@@ -27,22 +28,22 @@ image:
   .news-container {
     margin: 2em 0;
     border-radius: 10px;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.08); /* Softer, more modern shadow */
+    box-shadow: 0 6px 18px rgba(0,0,0,0.07); /* Subtle shadow */
     overflow: hidden; /* To respect border-radius with inner elements */
     background-color: #fff; /* Explicit background for the container */
   }
 
   .news-header {
     padding: 0.8em 1.5em; /* Adjusted padding */
-    background-color: #f8f9fa; /* Light background for header */
-    border-bottom: 1px solid #e9ecef; /* Subtle separator */
+    background-color: #f5f5f5; /* Very light gray background for header */
+    border-bottom: 1px solid #e0e0e0; /* Light gray separator */
   }
 
   .news-header h3 {
     margin: 0;
     font-size: 1.6em; /* Slightly larger heading */
     text-align: left;
-    color: #2c3e50; /* Dark, modern heading color */
+    color: #2a2a2a; /* Very dark gray for heading */
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Modern font stack */
   }
 
@@ -53,26 +54,26 @@ image:
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Consistent modern font */
     font-size: 0.98em; /* Slightly adjusted for readability */
     line-height: 1.6;
-    color: #333;
+    color: #4a4a4a; /* Main text gray for news content */
   }
   /* Custom scrollbar for webkit browsers */
   .news-scrollable-content::-webkit-scrollbar {
     width: 8px;
   }
   .news-scrollable-content::-webkit-scrollbar-track {
-    background: #f1f1f1;
+    background: #eeeeee; /* Lighter track */
     border-radius: 10px;
   }
   .news-scrollable-content::-webkit-scrollbar-thumb {
-    background: #007bff; /* Scrollbar color */
+    background: #b0b0b0; /* Medium gray scrollbar thumb */
     border-radius: 10px;
   }
   .news-scrollable-content::-webkit-scrollbar-thumb:hover {
-    background: #0056b3; /* Darker on hover */
+    background: #888888; /* Darker gray on hover */
   }
 
   .news-list {
-    list-style-type: none;
+    list-style-type: none; /* Ensures no default bullets (like diamonds, discs, etc.) */
     margin: 0;
     padding: 0;
   }
@@ -87,31 +88,33 @@ image:
 
   .news-date {
     font-weight: bold;
-    color: #007bff; /* Using theme blue for dates */
+    color: #333333; /* Dark gray for dates */
     margin-right: 0.5em; /* Space after the date */
   }
 
   .news-item a {
-    color: #007bff; /* Consistent link color */
+    color: #1a1a1a; /* Dark gray/almost black for links */
     text-decoration: none;
-    font-weight: 500; /* Slightly bolder for links */
+    font-weight: 500;
   }
   .news-item a:hover {
-    color: #0056b3;
+    color: #000000; /* Black on hover */
     text-decoration: underline;
   }
   .news-item a .fas { /* Font Awesome icon styling within news links */
     margin-right: 5px;
-    color: #007bff; /* Match link color */
+    color: #555555; /* Medium gray for icons to be slightly less dominant than link text */
+    width: 1.1em; /* Ensure icons take up similar space */
+    text-align: center;
   }
   .news-item a:hover .fas {
-    color: #0056b3;
+    color: #222222; /* Darker gray for icons on hover */
   }
 
   /* Specific styling for publication venues mentioned in news */
   .publication-venue { /* Re-using from previous publication styling */
     font-weight: bold;
-    color: #0056b3; /* Dark blue for venue names */
+    color: #333333; /* Dark gray for venue names */
     font-style: italic;
   }
 
@@ -191,16 +194,14 @@ image:
       <li class="news-item">
         <span class="news-date">📅 March 2024:</span>
         Two papers
-        [<a href="https://arxiv.org/pdf/2310.00447" target="_blank"><i class="fas fa-link"></i>1</a>,
-        <a href="https://arxiv.org/pdf/2304.11418" target="_blank"><i class="fas fa-link"></i>2</a>]
-        have been accepted for the <i><span class="publication-venue">23rd Power Systems Computational Conference (PSCC)</span></i>,
+        [<a href="https://arxiv.org/pdf/2310.00447" target="_blank"><i class="fas fa-file-alt"></i>1</a>, <a href="https://arxiv.org/pdf/2304.11418" target="_blank"><i class="fas fa-file-alt"></i>2</a>] have been accepted for the <i><span class="publication-venue">23rd Power Systems Computational Conference (PSCC)</span></i>,
         to appear in <i><span class="publication-venue">Electric Power Systems Research</span></i>. We are looking to present our papers in Paris this summer.
       </li>
       <li class="news-item">
         <span class="news-date">📅 February 2024:</span>
         I presented our
         <a href="https://ieeexplore.ieee.org/abstract/document/10472173" target="_blank">
-          <i class="fas fa-bullhorn"></i> paper </a>
+          <i class="fas fa-microphone-alt"></i> paper </a>
         on power system equivalents at the <i><span class="publication-venue">Texas Power and Energy Conference (TPEC)</span></i>.
       </li>
       <li class="news-item">
@@ -215,7 +216,7 @@ image:
         <span class="news-date">📅 June 2023:</span>
         I presented our
         <a href="https://arxiv.org/pdf/2209.04399" target="_blank">
-          <i class="fas fa-bullhorn"></i> paper </a>
+          <i class="fas fa-microphone-alt"></i> paper </a>
         on the AC power flow feasibility restoration at the <i><span class="publication-venue">American Control Conference (ACC)</span></i>.
       </li>
       <li class="news-item">
@@ -230,6 +231,6 @@ image:
   <script
     type="text/javascript"
     id="clustrmaps"
-    src="//clustrmaps.com/map_v2.js?cl=ffffff&w=100%25&t=tt&d=IOXQwQpSC0JvOPauXcqdxTU8zarkV5M0XYAfgrG4TXs&co=007bff&cmo=FF5722"
+    src="//clustrmaps.com/map_v2.js?cl=ffffff&w=100%25&t=tt&d=IOXQwQpSC0JvOPauXcqdxTU8zarkV5M0XYAfgrG4TXs&co=606060&cmo=202020"
   ></script>
   </div>
