@@ -30,7 +30,7 @@ My passion lies in harnessing the power of mathematical optimization and machine
   <div style="max-height: 300px; overflow-y: auto; padding: 1.2em 1.5em; font-family: Arial, sans-serif; font-size: 0.95em; line-height: 1.5; color: #333;">
     <ul style="list-style-type: none; margin: 0; padding: 0;">
       
-      <ul class="biblist"> <li> <p> <span style="font-weight: bold; color: #555;">📅 May 2025:</span>
+      <li> <p> <span style="font-weight: bold; color: #555;">📅 May 2025:</span>
             Our paper
             <a href="https://arxiv.org/pdf/2411.10528" target="_blank">
               <i class="fas fa-newspaper"></i> on the DC Optimal Transmission Switching Problem
