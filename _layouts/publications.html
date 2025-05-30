@@ -24,7 +24,7 @@
   .publication-venue {
     font-weight: bold;
     color: #0056b3; /* A distinct but readable blue, choose your preferred color */
-    /* font-style: italic; /* You can keep it italic or remove if bold is enough */
+    /* font-style: italic; /* Uncomment if you want italics handled by the class instead of <i> tags */
   }
 
   /* Section titles for publications */
@@ -36,7 +36,6 @@
     font-size: 1.4em; /* Slightly larger title */
     color: #333333; /* Darker grey for titles */
   }
-
 
   /* Toggle styling for BibTeX boxes */
   div.noshow {
@@ -66,7 +65,7 @@
   }
   .biblist li a:hover {
     text-decoration: underline;
-    /* color: #0056b3; /* Darker blue on hover */
+    /* color: #0056b3; /* Darker on hover */
   }
 
 </style>
@@ -173,7 +172,7 @@
           <p>
             <b>B. Taheri</b> and D.K. Molzahn<br />
             AC-Informed DC Optimal Transmission Switching Problems via Parameter Optimization<br />to appear in
-            <i> <span class="publication-venue">IEEE Transactions on Power Systems</span></i>, 2025.<br />
+            <i><span class="publication-venue">IEEE Transactions on Power Systems</span></i>, 2025.<br />
             <a href="javascript:toggleBibtex('ACInformed2024')">[BibTeX]</a>
             <a href="https://arxiv.org/pdf/2411.10528" target="_blank">[PDF]</a>
           </p>
@@ -201,17 +200,18 @@
       <div id="bib_DamageRestoration2024" class="bibtex noshow">
       <pre>
 @article{DamageRestoration2024,
-author  = {A. Jalilian, B. Taheri, and D.K. Molzahn},
- journal={IEEE Transactions on Power Systems}, 
+ author  = {A. Jalilian, B. Taheri, and D.K. Molzahn},
+ journal = {IEEE Transactions on Power Systems}, 
   title={Co-Optimization of Damage Assessment and Restoration: A Resilience-Driven Dynamic Crew Allocation for Power Distribution Systems}, 
   year={2025},
   volume={40},
   number={1},
-  pages={676-688},
-</pre>
+  pages={676-688}
+}
+      </pre>
       </div>
     </li>
-
+    
     <li>
     <p>
     <b>B. Taheri</b> and D.K. Molzahn<br />
@@ -225,20 +225,161 @@ author  = {A. Jalilian, B. Taheri, and D.K. Molzahn},
     <div id="bib_OptimizingDCP2024" class="bibtex noshow">
     <pre>
 @article{OptimizingDCP2024,
-author = {B. Taheri and D. K. Molzahn},
-title  = {Optimizing Parameters of the DC Power Flow},
-volume = {235},
-number = {110719},
-journal= {Electric Power Systems Research},
-month  = {October},
-year   = {2024},
-note   = {Presented at the 23rd Power Systems Computation Conference (PSCC)}
+ author = {B. Taheri and D. K. Molzahn},
+ title  = {Optimizing Parameters of the DC Power Flow},
+ volume = {235},
+ number = {110719},
+ journal= {Electric Power Systems Research},
+ month  = {October},
+ year   = {2024},
+ note   = {Presented at the 23rd Power Systems Computation Conference (PSCC)}
 }
     </pre>
     </div>
     </li>
     
-    </ul>
+    <li>
+    <p>
+    <b>B. Taheri</b> and D.K. Molzahn<br />
+    AC Power Flow Feasibility Restoration via a State Estimation-Based Post-Processing Algorithm<br />
+    <i><span class="publication-venue">Electric Power Systems Research</span></i>, vol. 235, 110642, October 2024, 
+    presented at <i><span class="publication-venue">23rd Power Systems Computation Conference (PSCC)</span></i>, 
+    June 4-7, 2024.<br />
+    <a href="javascript:toggleBibtex('FeasibilityRestoration2024')">[BibTeX]</a>
+    <a href="https://www.sciencedirect.com/science/article/pii/S0378779624005285" target="_blank">[PDF]</a>
+    </p>
+    <div id="bib_FeasibilityRestoration2024" class="bibtex noshow">
+    <pre>
+@article{FeasibilityRestoration2024,
+ author = {B. Taheri and D. K. Molzahn},
+ title  = {AC Power Flow Feasibility Restoration via a State Estimation-Based Post-Processing Algorithm},
+ volume = {235},
+ number = {110642},
+ journal= {Electric Power Systems Research},
+ month  = {October},
+ year   = {2024},
+ note   = {Presented at the 23rd Power Systems Computation Conference (PSCC)}
+}
+    </pre>
+    </div>
+    </li>
+    
+    <li>
+      <p>
+        <b>B. Taheri</b>, D.K. Molzahn, and S. Grijalva<br />
+        Improving distribution system resilience by undergrounding lines and deploying mobile generators<br />
+        <i><span class="publication-venue">Electric Power Systems Research</span></i>, vol. 214, 108804, 2023.<br/>
+        <a href="javascript:toggleBibtex('Taheri2023')">[BibTeX]</a>
+        <a href="https://www.sciencedirect.com/science/article/pii/S0378779622008586" target="_blank">[PDF]</a>
+      </p>
+      <div id="bib_Taheri2023" class="bibtex noshow">
+      <pre>
+@article{Taheri2023,
+ author  = {B. Taheri, D.K. Molzahn, and S. Grijalva},
+ title   = {Improving distribution system resilience by undergrounding lines and deploying mobile generators},
+ journal = {Electric Power Systems Research},
+ volume  = {214},
+ pages   = {108804},
+ year    = {2023}
+}
+      </pre>
+      </div>
+    </li>
+    
+    <li>
+      <p>
+        <b>B. Taheri</b> and A. Safdarian<br />
+        Tie‐line planning for resilience enhancement in unbalanced distribution networks<br />
+        <i><span class="publication-venue">IET Generation, Transmission &amp; Distribution</span></i>, vol. 16, no. 5, pp. 1030-1046, 2022.<br />
+        <a href="javascript:toggleBibtex('taheri2022tie')">[BibTeX]</a>
+        <a href="https://ietresearch.onlinelibrary.wiley.com/doi/full/10.1049/gtd2.12347" target="_blank">[PDF]</a>
+      </p>
+      <div id="bib_taheri2022tie" class="bibtex noshow">
+      <pre>
+@article{taheri2022tie,
+ title   = {Tie-line planning for resilience enhancement in unbalanced distribution networks},
+ author  = {B. Taheri and A. Safdarian},
+ journal = {IET Generation, Transmission & Distribution},
+ volume  = {16},
+ number  = {5},
+ pages   = {1030--1046},
+ year    = {2022},
+ publisher = {Wiley Online Library}
+}
+      </pre>
+      </div>
+    </li>
+    
+    <li>
+      <p>
+        <b>B. Taheri</b>, A. Safdarian, M. Moeini-Aghtaie, and M. Lehtonen<br />
+        Distribution System Resilience Enhancement via Mobile Emergency Generators<br />
+        <i><span class="publication-venue">IEEE Transactions on Power Delivery</span></i>, vol. 36, no. 4, pp. 2308--2319, 2020.<br />
+        <a href="javascript:toggleBibtex('MobileGenerators2020')">[BibTeX]</a>
+        <a href="https://ieeexplore.ieee.org/abstract/document/9136725" target="_blank">[PDF]</a>
+      </p>
+      <div id="bib_MobileGenerators2020" class="bibtex noshow">
+      <pre>
+@article{MobileGenerators2020,
+ author  = {B. Taheri, A. Safdarian, M. Moeini-Aghtaie, and M. Lehtonen},
+ title   = {Distribution System Resilience Enhancement via Mobile Emergency Generators},
+ journal = {IEEE Transactions on Power Delivery},
+ volume  = {36},
+ number  = {4},
+ pages   = {2308--2319},
+ year    = {2020}
+}
+      </pre>
+      </div>
+    </li>
+    
+    <li>
+      <p>
+        <b>B. Taheri</b>, A. Safdarian, M. Moeini-Aghtaie, and M. Lehtonen<br />
+        Enhancing Resilience Level of Power Distribution Systems Using Proactive Operational Actions<br />
+        <i><span class="publication-venue">IEEE Access</span></i>, vol. 7, pp. 137378--137389, 2019.<br />
+        <a href="javascript:toggleBibtex('access2019')">[BibTeX]</a>
+        <a href="https://ieeexplore.ieee.org/abstract/document/8839073" target="_blank">[PDF]</a>
+      </p>
+      <div id="bib_access2019" class="bibtex noshow">
+      <pre>
+@article{taheri2019enhancing,
+ title     = {Enhancing resilience level of power distribution systems using proactive operational actions},
+ author    = {B. Taheri, A. Safdarian, M. Moeini-Aghtaie, and M. Lehtonen},
+ journal   = {IEEE Access},
+ volume    = {7},
+ pages     = {137378--137389},
+ year      = {2019},
+ publisher = {IEEE}
+}
+      </pre>
+      </div>
+    </li>
+
+    <li>
+    <p>
+    <b>B. Taheri</b>, A. Safdarian, M. Moeini-Aghtaie, and M. Lehtonen<br />
+    Distribution Systems Resilience Enhancement via Pre- and Post-Event Actions<br />
+    <i><span class="publication-venue">IET Smart Grid</span></i>, vol. 2, no. 4, pp. 549--556, 2019.<br />
+    <a href="javascript:toggleBibtex('IET2019')">[BibTeX]</a>
+    <a href="https://ietresearch.onlinelibrary.wiley.com/doi/full/10.1049/iet-stg.2019.0035" target="_blank">[PDF]</a>
+    </p>
+    <div id="bib_IET2019" class="bibtex noshow">
+    <pre>
+@article{taheri2019distribution,
+ title     = {Distribution systems resilience enhancement via pre-and post-event actions},
+ author    = {B. Taheri, A. Safdarian, M. Moeini-Aghtaie, and M. Lehtonen},
+ journal   = {IET Smart Grid},
+ volume    = {2},
+ number    = {4},
+ pages     = {549--556},
+ year      = {2019},
+ publisher = {Wiley Online Library}
+}
+    </pre>
+    </div>
+    </li>
+      </ul>
       <h4 class="publication-section-title">Conference Publications</h4>
       <ul class="biblist">
         <li>
@@ -261,8 +402,73 @@ note   = {Presented at the 23rd Power Systems Computation Conference (PSCC)}
             </pre>
           </div>
         </li>
-        </ul>
 
+        <li>
+          <p>
+            <b>B. Taheri</b> and D.K. Molzahn<br />
+            Restoring AC Power Flow Feasibility from Relaxed and Approximated Optimal Power Flow Models<br />
+            <i><span class="publication-venue">American Control Conference (ACC)</span></i>, May 31 - June 2, 2023.<br />
+            <a href="javascript:toggleBibtex('TaheriACC2023')">[BibTeX]</a>
+            <a href="https://ieeexplore.ieee.org/abstract/document/10156521" target="_blank">[PDF]</a>
+          </p>
+          <div id="bib_TaheriACC2023" class="bibtex noshow">
+            <pre>
+@inproceedings{TaheriACC2023,
+  author    = {B. Taheri and D.K. Molzahn},
+  title     = {Restoring AC power flow feasibility from relaxed and approximated optimal power flow models},
+  booktitle = {American Control Conference (ACC)},
+  year      = {2023}
+}
+            </pre>
+          </div>
+        </li>
+
+      <li>
+          <p>
+            <b>B. Taheri</b>, A. Jalilian, and A. Safdarian<br />
+            Hardening Strategy to Boost Resilience of Distribution Systems via Harnessing a Proactive Operation Model<br />
+            <i><span class="publication-venue">Smart Grid Conference (SGC)</span></i>, 2019.<br />
+            <a href="javascript:toggleBibtex('taheriSGC2019_1')">[BibTeX]</a>
+            <a href="https://ieeexplore.ieee.org/abstract/document/9056585" target="_blank">[PDF]</a>
+          </p>
+          <div id="bib_taheriSGC2019_1" class="bibtex noshow">
+            <pre>
+@inproceedings{taheriSGC2019_1,
+  author={B. Taheri, A. Jalilian, and A. Safdarian},
+  booktitle={2019 Smart Grid Conference (SGC)}, 
+  title={Hardening Strategy to Boost Resilience of Distribution Systems via Harnessing a Proactive Operation Model}, 
+  year={2019},
+  volume={},
+  number={},
+  pages={1-6}
+}
+            </pre>
+          </div>
+        </li>
+
+      <li>
+          <p>
+            A. Jalilian, <b>B. Taheri</b>, and A. Safdarian<br />
+            Optimal switch placement in power distribution systems with complex configurations<br />
+            <i><span class="publication-venue">Smart Grid Conference (SGC)</span></i>, 2019.<br />
+            <a href="javascript:toggleBibtex('taheriSGC2019_2')">[BibTeX]</a>
+            <a href="https://ieeexplore.ieee.org/abstract/document/9056625" target="_blank">[PDF]</a>
+          </p>
+          <div id="bib_taheriSGC2019_2" class="bibtex noshow">
+            <pre>
+@inproceedings{taheriSGC2019_2,
+  author={A. Jalilian,  B. Taheri, and A. Safdarian},
+  booktitle={2019 Smart Grid Conference (SGC)}, 
+  title={Optimal Switch Placement in Power Distribution Systems with Complex Configurations}, 
+  year={2019},
+  volume={},
+  number={},
+  pages={1-5}
+}
+            </pre>
+          </div>
+        </li>
+      </ul>
 
       <h4 class="publication-section-title">Book Chapters</h4>
       <ul class="biblist">
@@ -289,7 +495,6 @@ note   = {Presented at the 23rd Power Systems Computation Conference (PSCC)}
         </li>
       </ul>
 
-
       <h4 class="publication-section-title">Written Theses</h4>
       <ul class="biblist">
         <li><p>
@@ -309,6 +514,7 @@ note   = {Presented at the 23rd Power Systems Computation Conference (PSCC)}
             </pre>
           </div>
         </li>
+
         <li><p>
           Master Thesis<br>
           <b>Optimal Network Hardening to Enhance Distribution Networks Resiliency Against Hurricane</b><br>
@@ -317,7 +523,7 @@ note   = {Presented at the 23rd Power Systems Computation Conference (PSCC)}
           <a href="javascript:toggleBibtex('master_thesis')">[BibTeX]</a>
           </p>
           <div id="bib_master_thesis" class="bibtex noshow">
-            <pre>@phdthesis{master_thesis, /* Corrected ID here */
+            <pre>@phdthesis{master_thesis,
    author = {Babak Taheri},
    title = {Optimal Network Hardening to Enhance Distribution Networks Resiliency Against Hurricane},
    school = {Sharif University of Technology},
