@@ -11,7 +11,7 @@ image:
   /* General page text improvements */
   .page-content p, .page-content li { /* Assuming your main content is within a div with class 'page-content' or similar */
     line-height: 1.65;
-    font-size: 1.05em; /* Slightly larger for readability */
+    font-size: 1em; /* Slightly larger for readability */
     color: #4a4a4a; /* Main text gray */
   }
   .page-content a {
@@ -41,7 +41,7 @@ image:
 
   .news-header h3 {
     margin: 0;
-    font-size: 1.6em; /* Slightly larger heading */
+    font-size: 1em; /* Slightly larger heading */
     text-align: left;
     color: #2a2a2a; /* Very dark gray for heading */
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Modern font stack */
@@ -127,6 +127,7 @@ image:
 </style>
 
 <div class="page-content"> <p>I am a Research Scientist at <a href="https://www.hitachienergy.com/us/en" target="_blank">Hitachi Energy Research</a>.</p>
+
 
   <p>I recently completed my PhD in the School of Electrical and Computer Engineering at the <a href="https://www.gatech.edu/" target="_blank">Georgia Institute of Technology</a>, and I was fortunate to be advised by <a href="https://molzahn.github.io/index.html" target="_blank">Prof. Daniel Molzahn</a>.</p>
 
