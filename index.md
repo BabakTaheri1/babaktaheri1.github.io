@@ -29,20 +29,22 @@ My passion lies in harnessing the power of mathematical optimization and machine
   <!-- Scrollable Content -->
   <div style="max-height: 300px; overflow-y: auto; padding: 1.2em 1.5em; font-family: Arial, sans-serif; font-size: 0.95em; line-height: 1.5; color: #333;">
     <ul style="list-style-type: none; margin: 0; padding: 0;">
+      
+      <ul class="biblist"> <li> <p> <span style="font-weight: bold; color: #555;">📅 May 2025:</span>
+            Our paper
+            <a href="https://arxiv.org/pdf/2411.10528" target="_blank">
+              <i class="fas fa-newspaper"></i> on the DC Optimal Transmission Switching Problem
+            </a>
+            has been accepted to <i><span class="publication-venue">IEEE Transactions on Power Systems</span></i>.
+          </p>
+        </li>
+
+        </ul>
       <li style="margin-bottom: 1em;">
         <span style="font-weight: bold; color: #555;">📅 December 2024:</span>
         I defended my dissertation 
         <em>“Improving Power System Approximations Through Machine Learning-Inspired Optimization Methods”</em>
         to complete the PhD degree.
-      </li>
-      <li style="margin-bottom: 1em;">
-        <span style="font-weight: bold; color: #555;">📅 November 2024:</span>
-        Check out our new 
-        <a href="https://arxiv.org/pdf/2411.10528" target="_blank" style="color: red; font-weight: bold; text-decoration: none;">
-          preprint
-        </a>
-        on DC Optimal Transmission Switching Problem.
-      </li>
       <li style="margin-bottom: 1em;">
         <span style="font-weight: bold; color: #555;">📅 October 2024:</span>
         Check out our new 
