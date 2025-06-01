@@ -255,7 +255,7 @@ comments: false
       </h3>
       <p>
         <strong>Graduate Research and Teaching Assistant</strong>
-        <span class="date-range">(Sep. 2017 – May 2021)</span>
+        <span class="date-range">(Sep. 2017 – July 2021)</span>
       </p>
     </div>
 
