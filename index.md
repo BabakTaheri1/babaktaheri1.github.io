@@ -142,9 +142,9 @@ image:
     <ul class="news-list">
       <li class="news-item">
         <span class="news-date">📅 May 2025:</span>
-        Our paper
+        Our paper on the 
         <a href="https://arxiv.org/pdf/2411.10528" target="_blank">
-          <i class="fas fa-newspaper"></i> on the DC Optimal Transmission Switching Problem
+          <i class="fas fa-newspaper"></i> DC Optimal Transmission Switching Problem
         </a>
         has been accepted to <i><span class="publication-venue">IEEE Transactions on Power Systems</span></i>.
       </li>
