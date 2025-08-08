@@ -1,42 +1,40 @@
-title:            Jordi Pont-Tuset's site
+title:            Babak Taheri's site
 description:      Welcome to my site.
 # Your site's domain goes here. Leave localhost server or blank when working locally.
-url:              //jponttuset.github.io
+url:              //babaktaheri1.github.io
 #http://localhost:5000
-#https://jponttuset.github.io
-disqus_shortname: jponttuset
+disqus_shortname: Babak Taheri
 
 # Owner/author information
 owner:
-  name:           Jordi Pont-Tuset
-  avatar:         jordi.png
-  bio:            I'm from a small town near Girona, Catalunya. Currently in Zürich, Switzerland. Passionate about computer vision, technology, running, and mountains.
-  email:          jponttuset@gmail.com
+  name:           Babak Taheri
+  avatar:         babak.jpg
+  #bio:            I'm from a small town near Girona, Catalunya. Currently in Zürich, Switzerland. Passionate about computer vision, technology, running, and mountains.
+  email:          babaktaheri77@gmail.com
   # Social networking links are used in author-bio sidebar. Update and remove as you like.
-  twitter: jponttuset
-  linkedin: jponttuset
-  google_scholar: VCBBx24AAAAJ
-  google_plus: 113718226018314522413
-  github: jponttuset
+ # twitter: jponttuset
+  linkedin: babak-taheri/
+  google_scholar: https://scholar.google.com/citations?user=7_H8IkUAAAAJ
+  #google_plus: 113718226018314522413
+  github: BabakTaheri1
 # Analytics and webmaster tools stuff goes here
-google_verify:
+#google_verify:
 # https://ssl.bing.com/webmaster/configure/verify/ownership Option 2 content= goes here
 bing_verify:
 
 # Links to include in top navigation
 # For external links add external: true
-links:
-  - title: Curriculum
-    url: /cv/
-  - title: Publications
-    url: /publications/
-  - title: Code
-    url: /code/
-  - title: Blog
-    url: /blog/
+#links:
+#  - title: Publications
+#    url: /publications/
+
+#  - title: Code
+#    url: /code/
+#  - title: Blog
+#    url: /blog/
 
 # http://en.wikipedia.org/wiki/List_of_tz_database_time_zones
-timezone:    Europe/Zurich
+timezone:    Eastern Time (ET)
 future:      true
 #pygments:    true
 highlighter: rouge
