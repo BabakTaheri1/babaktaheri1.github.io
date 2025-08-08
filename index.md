@@ -10,7 +10,7 @@ image:
 I am a research scientist at <a href="https://www.hitachienergy.com/us/en" target="_blank">Hitachi Energy Research</a>.
 
 <br />
-I recently completed my PhD in the School of Electrical and Computer Engineering at the Georgia Institute of Technology, and I was fortunate to be advised by Prof. <a href="https://molzahn.github.io" target="_blank"></a>Daniel Molzahn.
+I recently completed my PhD in the School of Electrical and Computer Engineering at the Georgia Institute of Technology, and I was fortunate to be advised by Prof. <a href="https://molzahn.github.io" target="_blank">Daniel Molzahn</a>.
 
 <br />
 
