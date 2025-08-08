@@ -4,42 +4,42 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reactive Power: The Particle Flow</title>
-    
+
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/Draggable.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
+
     <style>
-        body { 
-            font-family: 'Inter', sans-serif; 
-            background-color: #020617; 
-            color: #e2e8f0; 
-            margin: 0; 
-            overflow: auto; 
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #020617;
+            color: #e2e8f0;
+            margin: 0;
+            overflow: auto;
         }
-        .glass-panel { 
-            background: rgba(15, 23, 42, 0.75); 
-            backdrop-filter: blur(12px); 
-            border: 1px solid rgba(255, 255, 255, 0.1); 
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s;
         }
-        #main-overlay { 
-            pointer-events: none; 
-            min-height: 100vh; 
+        #main-overlay {
+            pointer-events: none;
+            min-height: 100vh;
             width: 100%;
         }
-        #dashboard-panel, #panel-toggle-button, #concepts-panel { 
-            pointer-events: auto; 
+        #dashboard-panel, #panel-toggle-button, #concepts-panel {
+            pointer-events: auto;
         }
         #dashboard-panel.minimized {
             transform: translateX(100%);
         }
         #dashboard-panel, #concepts-panel {
-            overflow-y: auto; 
-            scrollbar-width: thin; 
+            overflow-y: auto;
+            scrollbar-width: thin;
             scrollbar-color: rgba(148, 163, 184, 0.4) rgba(15, 23, 42, 0.75);
         }
         #dashboard-panel::-webkit-scrollbar, #concepts-panel::-webkit-scrollbar {
@@ -56,104 +56,104 @@
             background: rgba(148, 163, 184, 0.8);
         }
         #webgl-container {
-            position: fixed; 
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100vh;
-            z-index: 0; 
+            z-index: 0;
         }
-        input[type="range"]{ 
-            -webkit-appearance: none; 
-            appearance: none; 
-            width: 100%; 
-            height: .5rem; 
-            background: #334155; 
-            border-radius: 9999px; 
-            outline: none; 
+        input[type="range"]{
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: .5rem;
+            background: #334155;
+            border-radius: 9999px;
+            outline: none;
             transition: opacity .2s;
         }
-        input[type="range"]::-webkit-slider-thumb, 
-        input[type="range"]::-moz-range-thumb { 
-            -webkit-appearance: none; 
-            appearance: none; 
-            width: 20px; 
-            height: 20px; 
-            background: #fff; 
-            cursor: pointer; 
-            border-radius: 50%; 
-            border: 3px solid; 
-            transition: background .2s; 
+        input[type="range"]::-webkit-slider-thumb,
+        input[type="range"]::-moz-range-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: #fff;
+            cursor: pointer;
+            border-radius: 50%;
+            border: 3px solid;
+            transition: background .2s;
         }
         #pfSlider::-webkit-slider-thumb { border-color: #38bdf8; }
         #pfSlider::-moz-range-thumb { border-color: #38bdf8; }
-        .label-3d { 
-            position: fixed; 
-            color: white; 
-            background: rgba(0,0,0,.6); 
-            padding: 4px 10px; 
-            border-radius: 5px; 
-            font-size: 14px; 
-            pointer-events: none; 
-            user-select: none; 
-            transition: opacity .3s; 
-            transform: translate(-50%,-50%); 
+        .label-3d {
+            position: fixed;
+            color: white;
+            background: rgba(0,0,0,.6);
+            padding: 4px 10px;
+            border-radius: 5px;
+            font-size: 14px;
+            pointer-events: none;
+            user-select: none;
+            transition: opacity .3s;
+            transform: translate(-50%,-50%);
             opacity: 0;
         }
-        .control-button { 
-            background-color: rgba(71,85,105,.6); 
-            border: 1px solid rgba(148,163,184,.4); 
-            padding: 6px 12px; 
-            font-size: 12px; 
-            font-weight: 500; 
-            border-radius: .375rem; 
-            transition: background-color .2s; 
+        .control-button {
+            background-color: rgba(71,85,105,.6);
+            border: 1px solid rgba(148,163,184,.4);
+            padding: 6px 12px;
+            font-size: 12px;
+            font-weight: 500;
+            border-radius: .375rem;
+            transition: background-color .2s;
         }
-        .control-button.active, .control-button:hover { 
-            background-color: rgba(59,130,246,.7); 
-            border-color: rgba(96,165,250,.8); 
+        .control-button.active, .control-button:hover {
+            background-color: rgba(59,130,246,.7);
+            border-color: rgba(96,165,250,.8);
         }
-        .tooltip-container { 
-            position: relative; 
-            display: inline-flex; 
-            align-items: center; 
-            cursor: help; 
+        .tooltip-container {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            cursor: help;
         }
-        .tooltip-icon { 
-            font-style: normal; 
-            font-weight: bold; 
-            color: #94a3b8; 
-            border: 1px solid #94a3b8; 
-            border-radius: 50%; 
-            width: 16px; 
-            height: 16px; 
-            font-size: 10px; 
-            line-height: 14px; 
-            text-align: center; 
-            margin-left: 6px; 
+        .tooltip-icon {
+            font-style: normal;
+            font-weight: bold;
+            color: #94a3b8;
+            border: 1px solid #94a3b8;
+            border-radius: 50%;
+            width: 16px;
+            height: 16px;
+            font-size: 10px;
+            line-height: 14px;
+            text-align: center;
+            margin-left: 6px;
         }
-        .tooltip-container .tooltip-text { 
-            visibility: hidden; 
-            width: 220px; 
-            background-color: #1e293b; 
-            color: #fff; 
-            text-align: center; 
-            border-radius: 6px; 
-            padding: 8px; 
-            position: absolute; 
+        .tooltip-container .tooltip-text {
+            visibility: hidden;
+            width: 220px;
+            background-color: #1e293b;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 8px;
+            position: absolute;
             z-index: 10;
-            bottom: 125%; 
-            left: 50%; 
-            margin-left: -110px; 
-            opacity: 0; 
-            transition: opacity 0.3s; 
-            pointer-events: none; 
-            font-size: 12px; 
-            font-weight: 400; 
+            bottom: 125%;
+            left: 50%;
+            margin-left: -110px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+            font-size: 12px;
+            font-weight: 400;
         }
-        .tooltip-container .tooltip-text.visible { 
-            visibility: visible; 
-            opacity: 1; 
+        .tooltip-container .tooltip-text.visible {
+            visibility: visible;
+            opacity: 1;
         }
         .pf-toggle {
             position: relative;
@@ -200,7 +200,7 @@
             font-size: 0.7em;
         }
         footer {
-            position: fixed; 
+            position: fixed;
             bottom: 2px;
             left: 4px;
             z-index: 10;
@@ -216,13 +216,13 @@
 
 <body>
     <div id="webgl-container"></div>
-    
+
     <div id="label-source" class="label-3d">Source</div>
     <div id="label-load" class="label-3d">Load</div>
 
     <main id="main-overlay" class="relative p-4 md:p-6">
         <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
-            
+
             <div class="lg:col-span-2">
                 <section id="concepts-panel" class="glass-panel rounded-xl shadow-2xl flex-col p-4 md:p-6 h-full overflow-y-auto hidden">
                     <div class="flex justify-between items-center mb-4">
@@ -280,7 +280,7 @@
                             <button id="presetCapacitive" class="control-button">Capacitive</button>
                         </div>
                         <p id="analogyText" class="text-slate-400 text-sm h-16"></p>
-                        
+
                         <div>
                             <h3 class="font-semibold text-white mb-2">Power Triangle</h3>
                             <canvas id="triangleCanvas" class="w-full h-64 rounded-lg bg-slate-900/50 cursor-grab"></canvas>
@@ -347,7 +347,7 @@
         </div>
     </main>
     <footer class="text-xs text-slate-500 pointer-events-none">Created by Babak Taheri (https://babaktaheri1.github.io/)</footer>
-    
+
     <script type="importmap">
         {
             "imports": {
@@ -356,7 +356,7 @@
             }
         }
     </script>
-    
+
     <script type="module">
         import * as THREE from 'three';
         import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
@@ -418,10 +418,10 @@
             const isCapacitive = dom.pfTypeToggle.checked;
             const angleSign = isCapacitive ? -1 : 1;
             const netAngleRad = angleSign * Math.acos(pf);
-            
+
             const p = S_CONSTANT * Math.cos(netAngleRad);
             const q_net = S_CONSTANT * Math.sin(netAngleRad);
-            
+
             state = {
                 S: S_CONSTANT,
                 P: p,
@@ -576,7 +576,7 @@
             ctx.moveTo(originX, originY);
             ctx.lineTo(originX + p_len, originY - q_len);
             ctx.stroke();
-            
+
             ctx.restore();
         }
 
@@ -596,7 +596,7 @@
             const axisMargin = 40;
             const plotWidth = w - axisMargin;
             const y_center = h / 2;
-            const v_amp = h * 0.4; 
+            const v_amp = h * 0.4;
 
             // Draw Axes
             const axisColor = '#64748b';
@@ -608,7 +608,7 @@
 
             ctx.beginPath();
             ctx.moveTo(axisMargin, 0); ctx.lineTo(axisMargin, h); ctx.stroke();
-            
+
             ctx.beginPath();
             ctx.moveTo(axisMargin, y_center); ctx.lineTo(w, y_center); ctx.stroke();
 
@@ -646,7 +646,7 @@
 
             ctx.restore();
         }
-        
+
         function drawPowerWaveforms() {
             const w = dom.waveformCanvas.clientWidth, h = dom.waveformCanvas.clientHeight;
             const ctx = waveformCtx;
@@ -688,7 +688,7 @@
             ctx.setLineDash([2 / waveformZoom, 3 / waveformZoom]);
             ctx.beginPath(); ctx.moveTo(axisMargin, y_center); ctx.lineTo(w, y_center); ctx.stroke();
             ctx.setLineDash([]);
-            
+
             // Draw Waveforms
             const p_path = new Path2D(), q_path = new Path2D();
             for (let i = 0; i <= plotWidth; i++) {
@@ -704,7 +704,7 @@
                     q_path.lineTo(x, q_y);
                 }
             }
-            
+
             ctx.fillStyle = "rgba(74, 222, 128, .2)";
             const p_fill = new Path2D(p_path); p_fill.lineTo(plotWidth + axisMargin, y_center); p_fill.lineTo(axisMargin, y_center); ctx.fill(p_fill);
 
@@ -739,7 +739,7 @@
             const starGeometry = new THREE.BufferGeometry();
             starGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starVertices, 3));
             scene.add(new THREE.Points(starGeometry, new THREE.PointsMaterial({ color: 0x666666, size: 0.8 })));
-            
+
             cylinderGroup = new THREE.Group();
             scene.add(cylinderGroup);
 
@@ -749,13 +749,13 @@
             conduit.rotation.x = Math.PI/2;
             conduit.position.y = 2.5;
             cylinderGroup.add(conduit);
-            
+
             const auraMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, side: THREE.BackSide });
             reactiveAura = new THREE.Mesh(new THREE.CylinderGeometry(CONDUIT_RADIUS, CONDUIT_RADIUS, 30, 32, 1, true), auraMaterial);
             reactiveAura.rotation.x = Math.PI / 2;
             reactiveAura.position.y = 2.5;
             cylinderGroup.add(reactiveAura);
-            
+
             const particlesGeom = new THREE.BufferGeometry();
             const positions = new Float32Array(PARTICLE_COUNT * 3);
             const randoms = new Float32Array(PARTICLE_COUNT);
@@ -767,7 +767,7 @@
             }
             particlesGeom.setAttribute('position', new THREE.BufferAttribute(positions, 3));
             particlesGeom.setAttribute('aRandom', new THREE.BufferAttribute(randoms, 1));
-            
+
             const particlesMaterial = new THREE.ShaderMaterial({
                 vertexShader: particleVertexShader, fragmentShader: particleFragmentShader,
                 uniforms: {
@@ -786,7 +786,7 @@
             if (!particles) return;
             const powerRatio = state.P / state.S;
             const turbulence = Math.abs(state.Q) / state.S;
-            
+
             particles.material.uniforms.uPowerRatio.value = powerRatio;
             particles.material.uniforms.uTurbulence.value = turbulence;
             particles.material.uniforms.uReactiveType.value = state.Q >= 0 ? 0.0 : 1.0;
@@ -813,7 +813,7 @@
             requestAnimationFrame(animate);
             const t = clock.getElapsedTime();
             if(particles) particles.material.uniforms.uTime.value = t;
-            
+
             if (!isDragging) {
                 cylinderGroup.rotation.x += rotationVelocity.x * 0.05;
                 cylinderGroup.rotation.y += rotationVelocity.y * 0.05;
@@ -825,20 +825,20 @@
             const turbulence = Math.abs(state.Q) / S_CONSTANT;
             const reactivePhase = t * Math.PI * turbulence;
             if(particles) particles.material.uniforms.uReactivePhase.value = reactivePhase;
-            
+
             const auraPulse = Math.sin(reactivePhase * 2) ** 2;
             reactiveAura.scale.setScalar(1 + auraPulse * turbulence * ANIMATION_CONSTS.AURA_SCALE_FACTOR);
             reactiveAura.material.opacity = auraPulse * turbulence * ANIMATION_CONSTS.AURA_OPACITY_FACTOR;
-            
+
             const w = renderer.domElement.clientWidth, h = renderer.domElement.clientHeight;
             const sourcePos = new THREE.Vector3(0, 2.5, 20).applyMatrix4(cylinderGroup.matrixWorld).project(camera);
             dom.labelSource.style.transform = `translate(-50%, -50%) translate(${(sourcePos.x * 0.5 + 0.5) * w}px, ${(-sourcePos.y * 0.5 + 0.5) * h}px)`;
             dom.labelSource.style.opacity = sourcePos.z < 1 ? 1 : 0;
-            
+
             const loadPos = new THREE.Vector3(0, 2.5, -22).applyMatrix4(cylinderGroup.matrixWorld).project(camera);
             dom.labelLoad.style.transform = `translate(-50%, -150%) translate(${(loadPos.x * 0.5 + 0.5) * w}px, ${(-loadPos.y * 0.5 + 0.5) * h}px)`;
             dom.labelLoad.style.opacity = loadPos.z < 1 ? 1 : 0;
-            
+
             composer.render();
         }
 
@@ -852,7 +852,7 @@
             queryDOMElements();
             setupCanvases();
             setupAccessibleTooltips();
-            
+
             gsap.registerPlugin(Draggable);
             Draggable.create(dom.triangleCanvas, { type: "x,y", cursor: "grab", onDrag: function() { chartOffsets.triangle.x = this.x; chartOffsets.triangle.y = this.y; drawTriangle(); } });
             Draggable.create(dom.waveformCanvas, { type: "x,y", cursor: "grab", onDrag: function() { chartOffsets.waveform.x = this.x; chartOffsets.waveform.y = this.y; drawCharts(); } });
@@ -874,12 +874,12 @@
             scene = new THREE.Scene();
             camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 3000);
             camera.position.copy(INITIAL_STATE.cameraPos);
-            
+
             renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
             renderer.setSize(window.innerWidth, window.innerHeight);
             renderer.setPixelRatio(window.devicePixelRatio);
             dom.webglContainer.appendChild(renderer.domElement);
-            
+
             controls = new OrbitControls(camera, renderer.domElement);
             controls.enableDamping = true;
             controls.dampingFactor = 0.1;
@@ -950,7 +950,7 @@
 
             dom.pfSlider.addEventListener("input", masterUpdate);
             dom.pfTypeToggle.addEventListener("change", masterUpdate);
-            
+
             const handlePreset = (pf, isCapacitive) => {
                 gsap.to(dom.pfSlider, { value: pf, duration: 0.7, ease: "power2.inOut", onUpdate: masterUpdate });
                 dom.pfTypeToggle.checked = isCapacitive;
@@ -963,14 +963,14 @@
                 cylinderGroup.rotation.set(0, 0, 0);
                 rotationVelocity = { x: 0, y: 0 };
                 handlePreset(INITIAL_STATE.pf, INITIAL_STATE.isCapacitive);
-                
+
                 triangleZoom = 1.0;
                 waveformZoom = 1.0;
                 chartOffsets.triangle.x = 0;
                 chartOffsets.triangle.y = 0;
                 chartOffsets.waveform.x = 0;
                 chartOffsets.waveform.y = 0;
-                
+
                 // Redraw with reset transforms
                 const draggableTriangle = Draggable.get(dom.triangleCanvas);
                 const draggableWaveform = Draggable.get(dom.waveformCanvas);
@@ -1004,7 +1004,7 @@
                 dom.viewVi.classList.toggle('active', view === 'vi');
                 dom.viewPq.classList.toggle('active', view === 'pq');
                 dom.chartTitle.textContent = view === 'vi' ? "Voltage & Current" : "Instantaneous Power";
-                
+
                 if (view === 'vi') {
                     dom.waveformCaption.textContent = "This shows Voltage (V) and Current (I). Their misalignment (phase shift) creates reactive power.";
                 } else {
@@ -1024,7 +1024,7 @@
                 setupCanvases();
                 masterUpdate();
             }, false);
-            
+
             masterUpdate();
             animate();
         }
