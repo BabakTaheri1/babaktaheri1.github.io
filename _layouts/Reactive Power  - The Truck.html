@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reactive Power: The Truck Analogy</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0c4a6e;
+            color: #cbd5e1;
+            overflow: hidden;
+        }
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        #dashboard-panel.minimized {
+            transform: translateX(calc(100% - 60px));
+        }
+        .control-button{ 
+            background-color:rgba(71,85,105,.6); 
+            border:1px solid rgba(148,163,184,.4); 
+            padding:6px 12px; 
+            font-size:12px; 
+            font-weight:500; 
+            border-radius:.375rem; 
+            transition:background-color .2s; 
+        }
+        .control-button.active, .control-button:hover{ 
+            background-color:rgba(59,130,246,.7); 
+            border-color: rgba(96,165,250,.8); 
+        }
+        input[type="range"]{ 
+            -webkit-appearance:none; 
+            appearance:none; 
+            width:100%; 
+            height:.5rem; 
+            background:#334155; 
+            border-radius:9999px; 
+            outline:none; 
+        }
+        input[type="range"]::-webkit-slider-thumb { 
+            -webkit-appearance:none; 
+            appearance:none; 
+            width:20px; 
+            height:20px; 
+            background:#fff; 
+            cursor:pointer; 
+            border-radius:50%; 
+            border:3px solid; 
+        }
+        input[type="range"]::-moz-range-thumb {
+            width:20px; 
+            height:20px; 
+            background:#fff; 
+            cursor:pointer; 
+            border-radius:50%; 
+            border:3px solid;
+        }
+        #loadSlider::-webkit-slider-thumb{ border-color:#f59e0b }
+        #loadSlider::-moz-range-thumb{ border-color:#f59e0b }
+        #pfcSlider::-webkit-slider-thumb{ border-color:#38bdf8 }
+        #pfcSlider::-moz-range-thumb{ border-color:#38bdf8 }
+        .canvas-interactive {
+            cursor: grab;
+        }
+        .canvas-interactive:active {
+            cursor: grabbing;
+        }
+    </style>
+</head>
+<body class="w-screen h-screen p-4 lg:p-6 flex flex-col">
+    <main class="w-full max-w-screen-2xl mx-auto grid grid-cols-1 lg:grid-cols-5 gap-6 flex-grow min-h-0">
+        <div class="lg:col-span-3 flex flex-col gap-6 min-h-0">
+            <section class="glass-panel rounded-xl p-4 shadow-2xl flex-grow relative overflow-hidden">
+                <canvas id="animationCanvas" class="absolute top-0 left-0 w-full h-full"></canvas>
+            </section>
+            <section class="glass-panel rounded-xl p-4 lg:p-6 shadow-2xl">
+                <h2 class="text-xl font-semibold text-white mb-2">Waveforms</h2>
+                <canvas id="waveformCanvas" class="w-full h-48 md:h-56 rounded-lg bg-slate-900/50 canvas-interactive"></canvas>
+            </section>
+        </div>
+        
+        <div class="lg:col-span-2 relative min-h-0">
+            <section id="dashboard-panel" class="glass-panel rounded-xl shadow-2xl flex flex-col p-4 md:p-6 h-full">
+                <div class="flex justify-between items-center flex-shrink-0">
+                    <h1 class="text-xl md:text-2xl font-bold text-white">Reactive Power Animation</h1>
+                    <button id="resetViewBtn" class="control-button">Reset</button>
+                </div>
+                <div class="mt-4 overflow-y-auto flex-grow">
+                    <p id="analogyText" class="text-slate-400 mb-4 text-sm h-24"></p>
+                    <div class="mb-4">
+                        <h3 class="font-semibold text-white mb-2">Power Triangle</h3>
+                        <canvas id="triangleCanvas" class="w-full h-48 rounded-lg bg-slate-900/50 canvas-interactive"></canvas>
+                    </div>
+                    <div class="grid grid-cols-2 gap-x-4 gap-y-3 text-sm mb-6">
+                        <div>
+                            <div class="text-slate-400">Net Power Factor</div>
+                            <div id="pfValue" class="text-2xl font-bold text-sky-400"></div>
+                        </div>
+                        <div>
+                            <div class="text-slate-400">Apparent Power (S)</div>
+                            <div id="apparentPowerValue" class="text-lg font-semibold text-white"></div>
+                        </div>
+                        <div>
+                            <div class="text-slate-400">Active Power (P)</div>
+                            <div id="activePowerValue" class="text-lg font-semibold text-green-400"></div>
+                        </div>
+                        <div>
+                            <div class="text-slate-400">Net Reactive (Q)</div>
+                            <div id="reactivePowerValue" class="text-lg font-semibold"></div>
+                        </div>
+                    </div>
+                     <div class="text-sm space-y-2 mb-6">
+                        <div id="equationP"></div>
+                        <div id="equationQ"></div>
+                    </div>
+                    <div class="space-y-6">
+                        <div>
+                            <label for="loadSlider" class="block mb-2 font-medium text-white">Load Type (Inductive &harr; Capacitive)</label>
+                            <input id="loadSlider" type="range" min="-60" max="60" value="0">
+                        </div>
+                        <div>
+                            <label for="pfcSlider" class="block mb-2 font-medium text-white">Power Factor Correction</label>
+                            <input id="pfcSlider" type="range" min="0" max="150" value="0">
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <button id="panel-toggle-button" class="absolute top-6 right-6 z-50 control-button p-2">
+                <svg id="toggle-icon-minus" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M2 8a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11A.5.5 0 0 1 2 8Z"/></svg>
+                <svg id="toggle-icon-plus" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="hidden" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M5.828 10.172a.5.5 0 0 0-.707.707l4.096 4.096V11.5a.5.5 0 0 0 1 0v3.975a.5.5 0 0 0-.5.5H7.5a.5.5 0 0 0 0-1h2.768L5.828 10.172Zm4.344-4.344a.5.5 0 0 0 .707-.707L6.78 1.025V4.5a.5.5 0 0 0-1 0V.525a.5.5 0 0 0 .5-.5H9.5a.5.5 0 0 0 0 1H6.732l4.44 4.44Z"/></svg>
+            </button>
+        </div>
+    </main>
+    <footer class="w-full text-center py-2 flex-shrink-0">
+        <p class="text-sm text-slate-500">Created by Babak Taheri (https://babaktaheri1.github.io/)</p>
+    </footer>
+
+    <script>
+        const App = {
+            config: {
+                apparentPower: 100,
+                truck: { 
+                    startX: -150, 
+                    deliverySpeedMultiplier: 2, 
+                    returnSpeed: 150, 
+                    unloadTime: 0.5, 
+                    packageSize: 15, 
+                    packagesPer10Power: 1,
+                    verticalOffset: 20 // Add this line to define the vertical offset
+                },
+                cloud: { count: 5, minSpeed: 10, speedVariation: 20 },
+                waveform: { periods: 2 },
+                zoom: { min: 0.5, max: 5, sensitivity: 0.001 }
+            },
+            dom: {},
+            state: {
+                truck: { x: -150, state: 'delivering', unloadTimer: 0 },
+                windTurbineAngle: 0,
+                clouds: [],
+                lastTime: 0,
+                currentPower: {},
+                sceneData: {},
+                viewports: {
+                    triangle: { x: 0, y: 0, zoom: 1, isDragging: false, lastX: 0, lastY: 0 },
+                    waveform: { x: 0, y: 0, zoom: 1, isDragging: false, lastX: 0, lastY: 0 }
+                }
+            },
+
+            init() {
+                this.queryDOMElements();
+                this.setupClouds();
+                this.addEventListeners();
+                this.resizeAndRedraw();
+                requestAnimationFrame(this.animate.bind(this));
+            },
+
+            queryDOMElements() {
+                const ids = ['loadSlider', 'pfcSlider', 'analogyText', 'pfValue', 'apparentPowerValue', 'activePowerValue', 'reactivePowerValue', 'equationP', 'equationQ', 'animationCanvas', 'triangleCanvas', 'waveformCanvas', 'dashboard-panel', 'panel-toggle-button', 'toggle-icon-minus', 'toggle-icon-plus', 'resetViewBtn'];
+                ids.forEach(id => {
+                    const camelCaseId = id.replace(/-([a-z])/g, g => g[1].toUpperCase());
+                    this.dom[camelCaseId] = document.getElementById(id);
+                });
+                this.dom.animCtx = this.dom.animationCanvas.getContext('2d');
+                this.dom.triangleCtx = this.dom.triangleCanvas.getContext('2d');
+                this.dom.waveCtx = this.dom.waveformCanvas.getContext('2d');
+            },
+            
+            setupClouds() {
+                for (let i = 0; i < this.config.cloud.count; i++) {
+                    this.state.clouds.push({
+                        x: Math.random() * (window.innerWidth + 200),
+                        y: Math.random() * (window.innerHeight * 0.2) + 20,
+                        speed: Math.random() * this.config.cloud.speedVariation + this.config.cloud.minSpeed
+                    });
+                }
+            },
+
+            addEventListeners() {
+                this.dom.loadSlider.addEventListener('input', () => this.masterUpdate());
+                this.dom.pfcSlider.addEventListener('input', () => this.masterUpdate());
+                window.addEventListener('resize', () => this.resizeAndRedraw());
+                
+                this.dom.resetViewBtn.addEventListener('click', () => {
+                    gsap.to(this.dom.loadSlider, { value: 0, duration: 0.7, ease: "power2.inOut", onUpdate: () => this.masterUpdate() });
+                    gsap.to(this.dom.pfcSlider, { value: 0, duration: 0.7, ease: "power2.inOut", onUpdate: () => this.masterUpdate() });
+                });
+
+                this.dom.panelToggleButton.addEventListener('click', () => {
+                    const isMinimized = this.dom.dashboardPanel.classList.toggle('minimized');
+                    this.dom.toggleIconMinus.classList.toggle('hidden', isMinimized);
+                    this.dom.toggleIconPlus.classList.toggle('hidden', !isMinimized);
+                });
+
+                this.setupCanvasInteractions('triangle');
+                this.setupCanvasInteractions('waveform');
+            },
+
+            setupCanvasInteractions(canvasName) {
+                const canvas = this.dom[canvasName + 'Canvas'];
+                const viewport = this.state.viewports[canvasName];
+
+                canvas.addEventListener('mousedown', (e) => {
+                    viewport.isDragging = true;
+                    viewport.lastX = e.clientX;
+                    viewport.lastY = e.clientY;
+                });
+                canvas.addEventListener('mousemove', (e) => {
+                    if (!viewport.isDragging) return;
+                    const dx = e.clientX - viewport.lastX;
+                    const dy = e.clientY - viewport.lastY;
+                    viewport.x += dx;
+                    viewport.y += dy;
+                    viewport.lastX = e.clientX;
+                    viewport.lastY = e.clientY;
+                    if (canvasName === 'triangle') this.drawTriangle();
+                    else this.drawWaveforms();
+                });
+                canvas.addEventListener('mouseup', () => viewport.isDragging = false);
+                canvas.addEventListener('mouseleave', () => viewport.isDragging = false);
+                canvas.addEventListener('wheel', (e) => {
+                    e.preventDefault();
+                    const zoomAmount = e.deltaY * -this.config.zoom.sensitivity;
+                    viewport.zoom = Math.max(this.config.zoom.min, Math.min(this.config.zoom.max, viewport.zoom + zoomAmount));
+                    if (canvasName === 'triangle') this.drawTriangle();
+                    else this.drawWaveforms();
+                });
+            },
+
+            resizeAndRedraw() {
+                Object.values(this.dom).filter(el => el.getContext).forEach(ctxEl => {
+                    const parent = ctxEl.parentElement;
+                    ctxEl.width = parent.clientWidth;
+                    ctxEl.height = parent.clientHeight;
+                });
+                this.masterUpdate();
+            },
+
+            masterUpdate() {
+                this.state.currentPower = this.calculatePowerValues();
+                this.updateUI();
+                this.drawTriangle();
+                this.drawWaveforms();
+                this.state.sceneData = this.drawSceneBackground();
+            },
+
+            animate(timestamp) {
+                const deltaTime = (timestamp - this.state.lastTime) / 1000 || 0;
+                this.state.lastTime = timestamp;
+
+                this.updateTruckAnimation(deltaTime);
+                this.state.windTurbineAngle += deltaTime;
+                this.state.clouds.forEach(cloud => {
+                    cloud.x -= cloud.speed * deltaTime;
+                    if (cloud.x < -100) cloud.x = this.dom.animationCanvas.width + 100;
+                });
+                
+                this.dom.animCtx.clearRect(0, 0, this.dom.animationCanvas.width, this.dom.animationCanvas.height);
+                this.drawSceneBackground();
+                this.drawDynamicElements();
+
+                requestAnimationFrame(this.animate.bind(this));
+            },
+
+            calculatePowerValues() {
+                const loadAngleDeg = parseFloat(this.dom.loadSlider.value);
+                const pfcValue = parseFloat(this.dom.pfcSlider.value);
+                const loadAngleRad = loadAngleDeg * Math.PI / 180;
+                const S = this.config.apparentPower;
+
+                const loadReactivePower = S * Math.sin(loadAngleRad);
+                const netReactivePower = loadReactivePower - pfcValue;
+                
+                const pSquared = S**2 - netReactivePower**2;
+                const netActivePower = (pSquared > 0) ? Math.sqrt(pSquared) : 0;
+                
+                const netPowerFactor = netActivePower / S;
+                const netAngleRad = Math.asin(netReactivePower / S);
+
+                return { S_total: S, P_net: netActivePower, Q_net: netReactivePower, PF_net: netPowerFactor, netAngleRad };
+            },
+
+            updateUI() {
+                const power = this.state.currentPower;
+                this.dom.pfValue.textContent = power.PF_net.toFixed(2);
+                this.dom.apparentPowerValue.textContent = `${power.S_total.toFixed(0)} VA`;
+                this.dom.activePowerValue.textContent = `${power.P_net.toFixed(0)} W`;
+                this.dom.reactivePowerValue.textContent = `${power.Q_net.toFixed(0)} VAR`;
+                this.dom.reactivePowerValue.style.color = power.Q_net >= 0 ? '#f59e0b' : '#a855f7';
+
+                katex.render(`P = S \\times \\cos(\\theta)`, this.dom.equationP, { throwOnError: false, displayMode: true });
+                katex.render(`Q = S \\times \\sin(\\theta)`, this.dom.equationQ, { throwOnError: false, displayMode: true });
+                
+                if (power.PF_net > 0.99) this.dom.analogyText.textContent = "Excellent Power Factor. The road is flat, so almost all of the system's capacity is used for delivering packages (real work).";
+                else if (power.PF_net < 0.3) this.dom.analogyText.textContent = "Poor Power Factor! Most capacity is wasted fighting the steep hill. The truck moves slowly and delivers few packages.";
+                else if (power.Q_net > 0) this.dom.analogyText.textContent = "Lagging PF (uphill). Capacity is used to climb the hill, reducing useful work. Add correction to flatten the road.";
+                else this.dom.analogyText.textContent = "Leading PF (downhill). The system is over-corrected. This can also be inefficient. Aim for a flat road (PF \u2248 1.0).";
+            },
+            
+            drawSceneBackground() {
+                const { animCtx, animationCanvas } = this.dom;
+                const { netAngleRad } = this.state.currentPower;
+                const w = animationCanvas.width; const h = animationCanvas.height;
+                
+                const bgGrad = animCtx.createLinearGradient(0, 0, 0, h);
+                bgGrad.addColorStop(0, '#38bdf8'); bgGrad.addColorStop(1, '#7dd3fc');
+                animCtx.fillStyle = bgGrad; animCtx.fillRect(0, 0, w, h);
+                
+                const hillLength = w * 0.7;
+                const hillHeight = hillLength * Math.tan(netAngleRad);
+                const sceneOffsetY = Math.max(0, hillHeight * 1.2, -h * 0.3 + Math.abs(hillHeight));
+                const groundStartY = h * 0.5 + sceneOffsetY;
+                const hillStartX = w * 0.15;
+                const houseX = hillStartX + hillLength;
+
+                animCtx.fillStyle = '#22c55e';
+                animCtx.beginPath();
+                animCtx.moveTo(0, groundStartY); animCtx.lineTo(hillStartX, groundStartY);
+                animCtx.lineTo(houseX, groundStartY - hillHeight);
+                animCtx.lineTo(w, groundStartY - hillHeight);
+                animCtx.lineTo(w, h); animCtx.lineTo(0, h);
+                animCtx.closePath(); animCtx.fill();
+
+                const houseY = groundStartY - hillHeight;
+                animCtx.fillStyle = '#a16207'; animCtx.fillRect(houseX - 30, houseY - 50, 60, 50);
+                animCtx.fillStyle = '#ca8a04';
+                animCtx.beginPath(); animCtx.moveTo(houseX - 40, houseY - 50); animCtx.lineTo(houseX, houseY - 80);
+                animCtx.lineTo(houseX + 40, houseY - 50); animCtx.closePath(); animCtx.fill();
+                animCtx.font = "12px Inter"; animCtx.fillStyle = "#1e293b"; animCtx.textAlign = "center";
+                animCtx.fillText("The Load", houseX, houseY - 85);
+
+                return { groundStartY, hillHeight, hillStartX, houseX };
+            },
+
+            drawDynamicElements() {
+                const { animCtx } = this.dom;
+                const { groundStartY, hillHeight, hillStartX, houseX } = this.state.sceneData;
+                const { netAngleRad, P_net } = this.state.currentPower;
+
+                this.drawClouds(animCtx);
+                this.drawMainWindmill(animCtx, 60, groundStartY);
+                
+                let truckY = groundStartY; 
+                let truckAngle = 0;
+                if (this.state.truck.x > hillStartX && this.state.truck.x < houseX) {
+                    const hillProgress = (this.state.truck.x - hillStartX) / (houseX - hillStartX);
+                    truckY = groundStartY - hillProgress * hillHeight;
+                    truckAngle = -netAngleRad;
+                } else if (this.state.truck.x >= houseX) {
+                    truckY = groundStartY - hillHeight;
+                    truckAngle = -netAngleRad;
+                }
+
+                this.drawTruck(animCtx, this.state.truck.x, truckY - this.config.truck.verticalOffset, truckAngle);
+                if (this.state.truck.state === 'delivering' || this.state.truck.state === 'unloading') {
+                    const numPackages = Math.round(P_net / 10 * this.config.truck.packagesPer10Power);
+                    this.drawPackages(animCtx, this.state.truck.x, truckY - this.config.truck.verticalOffset, truckAngle, numPackages);
+                }
+            },
+
+            updateTruckAnimation(deltaTime) {
+                const { P_net } = this.state.currentPower;
+                const { houseX } = this.state.sceneData;
+                const { truck } = this.state;
+                
+                switch(truck.state) {
+                    case 'delivering':
+                        truck.x += (this.config.truck.deliverySpeedMultiplier * P_net * deltaTime);
+                        if (truck.x >= houseX) {
+                            truck.x = houseX;
+                            truck.state = 'unloading';
+                            truck.unloadTimer = this.config.truck.unloadTime;
+                        }
+                        break;
+                    case 'unloading':
+                        truck.unloadTimer -= deltaTime;
+                        if (truck.unloadTimer <= 0) truck.state = 'returning';
+                        break;
+                    case 'returning':
+                        truck.x -= (this.config.truck.returnSpeed * deltaTime);
+                        if (truck.x < this.config.truck.startX) {
+                            truck.x = this.config.truck.startX;
+                            truck.state = 'delivering';
+                        }
+                        break;
+                }
+            },
+
+            drawClouds(ctx) {
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+                this.state.clouds.forEach(cloud => {
+                    ctx.beginPath();
+                    ctx.ellipse(cloud.x, cloud.y, 60, 20, 0, 0, Math.PI * 2);
+                    ctx.ellipse(cloud.x + 30, cloud.y - 10, 40, 15, 0, 0, Math.PI * 2);
+                    ctx.ellipse(cloud.x - 30, cloud.y + 5, 40, 15, 0, 0, Math.PI * 2);
+                    ctx.fill();
+                });
+            },
+
+            drawMainWindmill(ctx, x, y) {
+                ctx.save(); ctx.translate(x, y);
+                ctx.fillStyle = '#94a3b8';
+                ctx.beginPath(); ctx.moveTo(-10, 0); ctx.lineTo(10, 0); ctx.lineTo(4, -150); ctx.lineTo(-4, -150); ctx.closePath(); ctx.fill();
+                ctx.translate(0, -150); ctx.rotate(this.state.windTurbineAngle); ctx.fillStyle = '#e2e8f0';
+                for (let i = 0; i < 3; i++) { ctx.rotate(Math.PI * 2 / 3); ctx.fillRect(-4, -4, 80, 8); }
+                ctx.restore();
+            },
+
+            drawPackages(ctx, x, y, angle, numPackages) {
+                ctx.save(); ctx.translate(x, y); ctx.rotate(angle);
+                ctx.fillStyle = 'rgba(74, 222, 128, 0.9)'; ctx.strokeStyle = '#166534'; ctx.lineWidth = 1;
+                const bs = this.config.truck.packageSize;
+                for(let i = 0; i < numPackages; i++) {
+                    const row = Math.floor(i / 3); const col = i % 3;
+                    const boxX = -55 + col * (bs + 2); const boxY = -38 + row * (bs + 2);
+                    ctx.fillRect(boxX, boxY, bs, bs); ctx.strokeRect(boxX, boxY, bs, bs);
+                }
+                ctx.restore();
+            },
+
+            drawTruck(ctx, x, y, angle) {
+                ctx.save(); ctx.translate(x, y); ctx.rotate(angle);
+                ctx.fillStyle = '#f87171'; ctx.fillRect(-60, -40, 60, 40);
+                ctx.fillStyle = '#ef4444'; ctx.fillRect(0, -30, 30, 30);
+                ctx.fillStyle = '#4b5563';
+                ctx.beginPath(); ctx.arc(-45, 5, 10, 0, Math.PI * 2); ctx.arc(15, 5, 10, 0, Math.PI * 2); ctx.fill();
+                ctx.restore();
+            },
+
+            drawTriangle() {
+                const { triangleCtx, triangleCanvas } = this.dom;
+                const { P_net, Q_net } = this.state.currentPower;
+                const viewport = this.state.viewports.triangle;
+                const w = triangleCanvas.width; const h = triangleCanvas.height;
+                triangleCtx.clearRect(0, 0, w, h);
+                triangleCtx.save();
+                triangleCtx.translate(viewport.x, viewport.y);
+                triangleCtx.scale(viewport.zoom, viewport.zoom);
+
+                const margin = {top: 20, right: 20, bottom: 40, left: 50};
+                const plotWidth = w - margin.left - margin.right;
+                const plotHeight = h - margin.top - margin.bottom;
+
+                const max_val = this.config.apparentPower * 1.1;
+                const p_scale = plotWidth / max_val;
+                const q_scale = plotHeight / max_val;
+
+                const originX = margin.left;
+                const originY = h - margin.bottom;
+
+                const p_len = P_net * p_scale;
+                const q_len = Q_net * q_scale;
+
+                // Draw Axes
+                triangleCtx.strokeStyle = '#64748b';
+                triangleCtx.lineWidth = 1 / viewport.zoom;
+                triangleCtx.font = `${12 / viewport.zoom}px Inter`;
+                triangleCtx.fillStyle = '#9ca3af';
+
+                // Y-Axis
+                triangleCtx.beginPath();
+                triangleCtx.moveTo(originX, margin.top);
+                triangleCtx.lineTo(originX, originY + 4 / viewport.zoom);
+                triangleCtx.stroke();
+                triangleCtx.save();
+                triangleCtx.translate(margin.left - 35/viewport.zoom, h / 2);
+                triangleCtx.rotate(-Math.PI/2);
+                triangleCtx.textAlign = "center";
+                triangleCtx.fillText("Reactive Power (Q) [VAR]", 0, 0);
+                triangleCtx.restore();
+
+                // X-Axis
+                triangleCtx.beginPath();
+                triangleCtx.moveTo(originX - 4 / viewport.zoom, originY);
+                triangleCtx.lineTo(originX + plotWidth, originY);
+                triangleCtx.stroke();
+                triangleCtx.textAlign = "center";
+                triangleCtx.fillText("Active Power (P) [W]", w / 2, h - 15 / viewport.zoom);
+
+                // Draw Ticks
+                triangleCtx.textAlign = "right";
+                triangleCtx.textBaseline = "middle";
+                triangleCtx.fillText("0", originX - 8 / viewport.zoom, originY);
+
+                // Draw Triangle
+                triangleCtx.lineWidth = 4;
+                // P - Active Power
+                triangleCtx.strokeStyle = '#4ade80'; 
+                triangleCtx.beginPath(); triangleCtx.moveTo(originX, originY); triangleCtx.lineTo(originX + p_len, originY); triangleCtx.stroke();
+                // Q - Reactive Power
+                triangleCtx.strokeStyle = Q_net >= 0 ? '#f59e0b' : '#a855f7';
+                triangleCtx.beginPath(); triangleCtx.moveTo(originX + p_len, originY); triangleCtx.lineTo(originX + p_len, originY - q_len); triangleCtx.stroke();
+                // S - Apparent Power
+                triangleCtx.strokeStyle = '#d1d5db';
+                triangleCtx.beginPath(); triangleCtx.moveTo(originX, originY); triangleCtx.lineTo(originX + p_len, originY - q_len); triangleCtx.stroke();
+
+                // P, Q, S labels
+                triangleCtx.font = `${14 / viewport.zoom}px Inter`;
+                triangleCtx.textBaseline = 'top';
+                triangleCtx.fillStyle = '#4ade80';
+                if (p_len > 20) {
+                    triangleCtx.textAlign = 'center';
+                    triangleCtx.fillText('P', originX + p_len / 2, originY + 8 / viewport.zoom);
+                }
+
+                triangleCtx.textBaseline = 'middle';
+                triangleCtx.fillStyle = Q_net >= 0 ? '#f59e0b' : '#a855f7';
+                if (Math.abs(q_len) > 20) {
+                     triangleCtx.textAlign = 'left';
+                    triangleCtx.fillText('Q', originX + p_len + 8 / viewport.zoom, originY - q_len / 2);
+                }
+
+                triangleCtx.fillStyle = '#d1d5db';
+                triangleCtx.save();
+                triangleCtx.translate(originX + p_len/2, originY - q_len/2);
+                triangleCtx.rotate(Math.atan2(-q_len, p_len));
+                triangleCtx.textAlign = 'center';
+                if(p_len > 10) triangleCtx.fillText('S', 0, -8 / viewport.zoom);
+                triangleCtx.restore();
+                
+                triangleCtx.restore();
+            },
+
+            drawWaveforms() {
+                const { waveCtx, waveformCanvas } = this.dom;
+                const { P_net, Q_net, netAngleRad } = this.state.currentPower;
+                const S = this.config.apparentPower;
+                const viewport = this.state.viewports.waveform;
+                const w = waveformCanvas.width; const h = waveformCanvas.height;
+                waveCtx.clearRect(0, 0, w, h);
+                waveCtx.save();
+                waveCtx.translate(viewport.x, viewport.y);
+                waveCtx.scale(viewport.zoom, viewport.zoom);
+                
+                const axisMargin = 50;
+                const plotWidth = w - axisMargin;
+                const y_center = h / 2;
+                const p_scale = (h * 0.4) / S;
+                const v_amp = S * p_scale;
+
+                // Draw Y-Axis
+                waveCtx.strokeStyle = '#64748b'; // slate-500
+                waveCtx.lineWidth = 1 / viewport.zoom;
+                waveCtx.beginPath();
+                waveCtx.moveTo(axisMargin, 0);
+                waveCtx.lineTo(axisMargin, h);
+                waveCtx.stroke();
+
+                // Draw Y-Axis Ticks and Labels
+                waveCtx.fillStyle = '#9ca3af'; // slate-400
+                waveCtx.font = `${12 / viewport.zoom}px Inter`;
+                waveCtx.textAlign = "right";
+                waveCtx.textBaseline = "middle";
+
+                waveCtx.fillText("0", axisMargin - 8, y_center);
+
+                const maxAmpY = y_center - v_amp;
+                const minAmpY = y_center + v_amp;
+                waveCtx.fillText(S.toFixed(0), axisMargin - 8, maxAmpY);
+                waveCtx.fillText(`-${S.toFixed(0)}`, axisMargin - 8, minAmpY);
+                waveCtx.beginPath();
+                waveCtx.moveTo(axisMargin - 4, maxAmpY); waveCtx.lineTo(axisMargin, maxAmpY);
+                waveCtx.moveTo(axisMargin - 4, minAmpY); waveCtx.lineTo(axisMargin, minAmpY);
+                waveCtx.stroke();
+
+                if (Math.abs(P_net * p_scale) > 1) {
+                    const p_avg_y = y_center - P_net * p_scale;
+                    waveCtx.fillStyle = '#16a34a';
+                    waveCtx.fillText(P_net.toFixed(0), axisMargin - 8, p_avg_y);
+                    waveCtx.beginPath();
+                    waveCtx.moveTo(axisMargin - 4, p_avg_y);
+                    waveCtx.lineTo(axisMargin, p_avg_y);
+                    waveCtx.strokeStyle = '#16a34a';
+                    waveCtx.stroke();
+                }
+
+                // Reset text alignment for legend
+                waveCtx.textAlign = "left";
+                waveCtx.textBaseline = "alphabetic";
+
+                // Legend
+                const legendY1 = 20 / viewport.zoom;
+                const legendY2 = legendY1 + (15 / viewport.zoom);
+                const legendXStart = axisMargin + 10;
+                waveCtx.font = `${12 / viewport.zoom}px Inter`;
+                waveCtx.fillStyle = '#3b82f6'; waveCtx.fillText("V", legendXStart, legendY1);
+                waveCtx.fillStyle = '#ef4444'; waveCtx.fillText("I", legendXStart + 20, legendY1);
+                waveCtx.fillStyle = '#16a34a'; waveCtx.fillText("p (active)", legendXStart + 45, legendY1);
+                waveCtx.fillStyle = Q_net >= 0 ? '#f59e0b' : '#a855f7'; waveCtx.fillText("q (reactive)", legendXStart + 120, legendY1);
+                
+                const v_path = new Path2D(), i_path = new Path2D(), p_path = new Path2D(), q_path = new Path2D();
+                
+                for (let i = 0; i < plotWidth; i++) {
+                    const angle = (i / plotWidth) * Math.PI * 2 * this.config.waveform.periods;
+                    const v = Math.sin(angle);
+                    const current_val = Math.sin(angle - netAngleRad);
+                    const p_inst = P_net * (1 - Math.cos(2 * angle));
+                    const q_inst = -Q_net * Math.sin(2 * angle);
+                    
+                    const x = i + axisMargin;
+
+                    if (i === 0) {
+                        v_path.moveTo(x, y_center - v * v_amp);
+                        i_path.moveTo(x, y_center - current_val * v_amp);
+                        p_path.moveTo(x, y_center - p_inst * p_scale);
+                        q_path.moveTo(x, y_center - q_inst * p_scale);
+                    } else {
+                        v_path.lineTo(x, y_center - v * v_amp);
+                        i_path.lineTo(x, y_center - current_val * v_amp);
+                        p_path.lineTo(x, y_center - p_inst * p_scale);
+                        q_path.lineTo(x, y_center - q_inst * p_scale);
+                    }
+                }
+                
+                waveCtx.lineWidth = 2 / viewport.zoom;
+                waveCtx.strokeStyle = '#3b82f6'; waveCtx.stroke(v_path);
+                waveCtx.strokeStyle = '#ef4444'; waveCtx.stroke(i_path);
+                
+                waveCtx.lineWidth = 2.5 / viewport.zoom;
+                waveCtx.strokeStyle = '#16a34a'; waveCtx.stroke(p_path);
+                waveCtx.strokeStyle = Q_net >= 0 ? '#f59e0b' : '#a855f7'; waveCtx.stroke(q_path);
+
+                waveCtx.setLineDash([5 / viewport.zoom, 5 / viewport.zoom]);
+                waveCtx.lineWidth = 1.5 / viewport.zoom;
+                waveCtx.strokeStyle = '#16a34a';
+                waveCtx.beginPath(); waveCtx.moveTo(axisMargin, y_center - P_net * p_scale); waveCtx.lineTo(w, y_center - P_net * p_scale); waveCtx.stroke();
+                
+                waveCtx.strokeStyle = '#64748b';
+                waveCtx.beginPath(); waveCtx.moveTo(axisMargin, y_center); waveCtx.lineTo(w, y_center); waveCtx.stroke();
+                waveCtx.setLineDash([]);
+                waveCtx.restore();
+            }
+        };
+
+        App.init();
+    </script>
+</body>
+</html>
