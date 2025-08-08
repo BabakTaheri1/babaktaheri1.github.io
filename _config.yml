@@ -27,10 +27,11 @@ bing_verify:
 links:
   - title: Publications
     url: /publications/
+  - title: cv
+    url: /cv/
   - title: Code
     url: /code/
-#  - title: Blog
-#    url: /blog/
+
 
 # http://en.wikipedia.org/wiki/List_of_tz_database_time_zones
 timezone:    Eastern Time (ET)

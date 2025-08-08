@@ -1,9 +1,5 @@
 <!doctype html>
-<!--[if lt IE 7]><html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
-<!--[if (IE 7)&!(IEMobile)]><html class="no-js lt-ie9 lt-ie8" lang="en"><![endif]-->
-<!--[if (IE 8)&!(IEMobile)]><html class="no-js lt-ie9" lang="en"><![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en"><!--<![endif]-->
-<head>
+<html class="no-js" lang="en"><head>
 {% include _head.html %}
 <style>
   .bottom-three {
@@ -35,8 +31,7 @@
   {% if page.image.credit %}
     <span class="image-credit">Photo Credit: <a href="{{ page.image.creditlink }}">{{ page.image.credit }}</a></span>
   {% endif %}
-  </div><!-- /.image-wrap -->
-{% endif %}
+  </div>{% endif %}
 <div id="main" role="main">
   <div class="article-author-side">
     {% include _author-bio.html %}
@@ -44,47 +39,35 @@
   <article>
     <h1>{{ page.title }}</h1>
     <div class="article-wrap">
-    <p align="center" class=bottom-small><img src="{{ site.url }}/images/CV/business.png" alt="Work Experience" width="70" height="70"></p>
-    <p align="center">&#8226 I am a <strong>research scientist</strong> at <a href="https://deepmind.google" target="_blank">Google DeepMind</a>.</p>
-    <p align="center">&#8226 I was a post-doctoral researcher at <a href="http://www.vision.ee.ethz.ch/index.en.html" target="_blank">ETHZ</a> with <a href="http://www.vision.ee.ethz.ch/members/get_member.cgi?id=1" target="_blank">Prof. Van Gool</a>.</p>
-    <p align="center">&#8226 I did an internship at <a href="http://www.disneyresearch.com/research-labs/disney-research-zurich/" target="_blank">Disney Research</a>, resulting in three patents.</p>
-    <p align="center" class="bottom-three">&#8226 I collaborated with the startup <a href="https://gestoos.com" target="_blank">Fezoo</a>.</p>
 
-    <p align="center" class=bottom-small><img src="{{ site.url }}/images/CV/study2.png" alt="Education" width="70" height="70"></p>
-    <p align="center">&#8226 I have a <strong>PhD</strong> in Computer Vision, supervised by <a href="https://imatge.upc.edu/web/ferran" target="_blank">Prof. Marques</a>.</p>
-    <p align="center">&#8226 We created MCG in <a href="http://www.cs.berkeley.edu/~malik/" target="_blank">Prof. Malik</a>’s vision group in <a href="http://www.berkeley.edu" target="_blank">UC Berkeley</a>,<br>supervised by <a href="http://www.cs.berkeley.edu/~arbelaez/index.html" target="_blank">Dr. Arbeláez</a>. It has over 2100 citations.</p>
-    <p align="center" class="bottom-three">&#8226 I received a <strong>Mathematics</strong> degree, a <strong>Telecommunication</strong><br>engineering degree, and a <strong>Master</strong>´s degree from UPC Barcelonatech</a>.</p>
-    
-    <p align="center" class=bottom-small><img src="{{ site.url }}/images/CV/computer2.png" alt="Computer Skills" width="80" height="80"></p>
-    <p align="center">&#8226 Give me the <strong>STL</strong> library and a <strong>VCS</strong> repository on which to store the <strong>C++</strong> code, and I shall move the world. Or was it about levers? &#12484;</p>
-    <p align="center">&#8226 I use <strong>Python</strong> for fast prototyping and testing.</p>
-    <p align="center">&#8226 I cannot sleep at night if I have not committed my code or<br>if I have not done enough <strong>unit tests</strong>.</p>
-    <p align="center" class="bottom-three">&#8226 I <a href="http://goo.gl/XbK9qN" target="_blank">build</a> <a href="http://www.vision.ee.ethz.ch/~cvlsegmentation/" target="_blank">awesome</a> <a href="http://davischallenge.org" target="_blank">websites</a> using <strong>Javascript</strong>, <strong>Web Components</strong>, and <strong>D3.js</strong>.</p>
+    <p align="center" class="bottom-small"><img src="{{ site.url }}/images/CV/study2.png" alt="Education" width="70" height="70"></p>
+    <p align="center">&#8226 <strong>Ph.D. in Electrical & Computer Engineering</strong> from Georgia Institute of Technology (2024).</p>
+    <p align="center">&#8226 <strong>M.Sc. in Electrical & Computer Engineering</strong> from Georgia Institute of Technology (2024).</p>
+    <p align="center">&#8226 <strong>M.Sc. in Electrical Engineering</strong> (Ranked 2<sup>nd</sup>/19) from Sharif University of Technology (2019).</p>
+    <p align="center" class="bottom-three">&#8226 <strong>B.Sc. in Electrical Engineering</strong> (Ranked 1<sup>st</sup>/200) from University of Tabriz (2017).</p>
 
-    <p align="center" class=bottom-small><img src="{{ site.url }}/images/CV/talk.png" alt="Languages" width="70" height="70"></p>
-    <p align="center">&#8226 El <strong>català</strong> és la meva llengua materna.</p>
-    <p align="center">&#8226 Hablo <strong>español</strong> como lengua materna.</p>
-    <p align="center">&#8226 My <strong>English</strong> is proficient.</p>
-    <p align="center">&#8226 Je parle un peu <strong>français</strong>.</p>
-    <p align="center" class="bottom-three">&#8226 Ich beginne <strong>Deutsch</strong> zu lernen.</p>
-    
-    
-    
+    <p align="center" class="bottom-small"><img src="{{ site.url }}/images/CV/business.png" alt="Work Experience" width="70" height="70"></p>
+    <p align="center">&#8226 <strong>Research Scientist</strong> at <a href="https://www.hitachienergy.com/us/en/about-us/research-and-development" target="_blank">Hitachi Energy Research</a>.</p>
+    <p align="center">&#8226 <strong>Graduate Intern</strong> at <a href="https://www.dominionenergy.com/" target="_blank">Dominion Energy</a>.</p>
+    <p align="center">&#8226 <strong>Graduate Intern</strong> at <a href="https://www.nerc.com/" target="_blank">North American Electric Reliability Corporation (NERC)</a>.</p>
+    <p align="center">&#8226 <strong>Graduate Research & Teaching Assistant</strong> at <a href="https://www.gatech.edu/" target="_blank">Georgia Institute of Technology</a>.</p>
+    <p align="center" class="bottom-three">&#8226 <strong>Graduate Research & Teaching Assistant</strong> at <a href="https://www.sharif.edu/" target="_blank">Sharif University of Technology</a>.</p>
+
+    <p align="center" class="bottom-small"><img src="{{ site.url }}/images/CV/talk.png" alt="Honors and Awards" width="70" height="70"></p>
+    <p align="center">&#8226 <strong>Dominion Energy Scholarship</strong> (Awarded twice, 2023 & 2024).</p>
+    <p align="center">&#8226 <strong>Chaddick Fellowship</strong>, Georgia Institute of Technology (2020).</p>
+    <p align="center">&#8226 <strong>Exceptional Talent Direct Admission</strong> to M.Sc. program (2017).</p>
+    <p align="center" class="bottom-three">&#8226 <strong>Top 0.5% Rank</strong> in Nationwide University Entrance Exam (2013).</p>
+
     {{ content }}
-    </div><!-- /.article-wrap -->
-    {% if site.disqus_shortname and page.comments %}
-      <section id="disqus_thread"></section><!-- /#disqus_thread -->
-    {% endif %}
+    </div>{% if site.disqus_shortname and page.comments %}
+      <section id="disqus_thread"></section>{% endif %}
   </article>
-</div><!-- /#index -->
-
-<div class="footer-wrap">
+</div><div class="footer-wrap">
   <footer>
     {% include _footer.html %}
   </footer>
-</div><!-- /.footer-wrap -->
-
-{% include _scripts.html %}          
+</div>{% include _scripts.html %}
 
 </body>
 </html>
