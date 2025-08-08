@@ -1,58 +1,89 @@
 <!doctype html>
-<html class="no-js" lang="en"><head>
+<html class="no-js" lang="en">
+<head>
 {% include _head.html %}
 <style>
-  /* Keep your existing styles */
+  /* --- Professional CV Design --- */
+
+  /* General Section Styling */
   .cv-section {
-    margin-bottom: 2em;
+    margin-bottom: 2.5em; /* Increased space between major sections */
   }
   .cv-section h2 {
-    font-size: 1.5em;
-    color: #333;
-    border-bottom: 2px solid #333;
-    padding-bottom: 0.3em;
-    margin-bottom: 1em;
+    font-family: sans-serif; /* A clean, modern font for headings */
+    font-size: 1.6em;
+    font-weight: 600;
+    color: #2c3e50; /* A deep, professional blue-gray */
+    border-bottom: 2px solid #3498db; /* A subtle blue accent color */
+    padding-bottom: 0.4em;
+    margin-bottom: 1.2em;
   }
+
+  /* Two-Column Entry Layout */
   .cv-entry {
-    margin-bottom: 1.5em;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1.8em; /* Generous spacing between each entry */
   }
-  .cv-title, .cv-institution { /* .cv-institution is new */
-    font-weight: bold;
-    font-size: 1.1em;
-    color: #444;
+  .cv-main-info {
+    flex-grow: 1;
+    padding-right: 1.5em; /* Space between main info and meta info */
   }
-  .cv-location-date {
+  .cv-meta-info {
+    flex-shrink: 0;
+    text-align: right;
     font-size: 0.9em;
-    color: #777;
-    margin: 0;
+    color: #7f8c8d; /* A softer gray for meta text */
   }
-  /* Styles for the new compact education list */
+
+  /* Typography and Element Spacing */
+  .cv-main-info p, .cv-main-info ul, .cv-meta-info p {
+    margin: 0; /* Reset default margins */
+    padding: 0;
+  }
+  .cv-title {
+    font-size: 1.15em;
+    font-weight: bold;
+    color: #34495e; /* A slightly darker text color for titles */
+    margin-bottom: 0.1em;
+  }
+  .cv-institution {
+    font-size: 1.05em;
+    color: #555;
+    margin-bottom: 0.1em;
+  }
+  .cv-institution a {
+    color: #2980b9; /* A professional blue for links */
+    text-decoration: none;
+  }
+  .cv-institution a:hover {
+    text-decoration: underline;
+  }
   .cv-degree-list {
     list-style-type: none;
-    padding-left: 0;
-    margin-top: 0.6em;
+    margin-top: 0.7em;
   }
   .cv-degree-item {
     position: relative;
-    padding-left: 1.5em; /* Space for the custom bullet */
-    margin-bottom: 0.3em;
+    padding-left: 1.5em;
+    margin-bottom: 0.4em;
     color: #555;
   }
   .cv-degree-item::before {
-    content: '‣'; /* Custom bullet point */
+    content: '›'; /* A clean, right-pointing angle bracket */
     position: absolute;
-    left: 0;
-    top: 0.05em;
-    color: #333;
-    font-size: 1.1em;
+    left: 0.2em;
+    font-weight: bold;
+    color: #3498db; /* Use the accent color for bullets */
   }
+
 </style>
 </head>
 
 <body class="page">
 
 {% include _browser-upgrade.html %}
-
 {% include _navigation.html %}
 
 {% if page.image.feature %}
@@ -69,7 +100,9 @@
   {% if page.image.credit %}
     <span class="image-credit">Photo Credit: <a href="{{ page.image.creditlink }}">{{ page.image.credit }}</a></span>
   {% endif %}
-  </div>{% endif %}
+  </div>
+{% endif %}
+
 <div id="main" role="main">
   <div class="article-author-side">
     {% include _author-bio.html %}
@@ -78,95 +111,145 @@
     <h1>{{ page.title }}</h1>
     <div class="article-wrap">
 
-<div class="cv-section">
+      <div class="cv-section">
         <h2>Education</h2>
-
         <div class="cv-entry">
-          <p class="cv-institution">Georgia Institute of Technology</p>
-          <p class="cv-location-date">Atlanta, GA | 2021 - 2024</p>
-          <ul class="cv-degree-list">
-            <li class="cv-degree-item">Ph.D. in Electrical & Computer Engineering</li>
-            <li class="cv-degree-item">M.Sc. in Electrical & Computer Engineering</li>
-            <li class="cv-degree-item">Minor in Industrial & Systems Engineering</li>
-          </ul>
+          <div class="cv-main-info">
+            <p class="cv-title">Georgia Institute of Technology</p>
+            <ul class="cv-degree-list">
+              <li class="cv-degree-item">Ph.D. in Electrical & Computer Engineering</li>
+              <li class="cv-degree-item">M.Sc. in Electrical & Computer Engineering</li>
+              <li class="cv-degree-item">Minor in Industrial & Systems Engineering</li>
+            </ul>
+          </div>
+          <div class="cv-meta-info">
+            <p>Atlanta, GA</p>
+            <p>2021 – 2024</p>
+          </div>
         </div>
-
         <div class="cv-entry">
-          <p class="cv-institution">Sharif University of Technology</p>
-          <p class="cv-location-date">Tehran, Iran | 2017 - 2019</p>
-          <ul class="cv-degree-list">
-            <li class="cv-degree-item">M.Sc. in Electrical Engineering (Ranked 2<sup>nd</sup>/19)</li>
-          </ul>
+          <div class="cv-main-info">
+            <p class="cv-title">Sharif University of Technology</p>
+            <ul class="cv-degree-list">
+              <li class="cv-degree-item">M.Sc. in Electrical Engineering (Ranked 2<sup>nd</sup>/19)</li>
+            </ul>
+          </div>
+          <div class="cv-meta-info">
+            <p>Tehran, Iran</p>
+            <p>2017 – 2019</p>
+          </div>
         </div>
-
         <div class="cv-entry">
-          <p class="cv-institution">University of Tabriz</p>
-          <p class="cv-location-date">Tabriz, Iran | 2013 - 2017</p>
-          <ul class="cv-degree-list">
-            <li class="cv-degree-item">B.Sc. in Electrical Engineering (Ranked 1<sup>st</sup>/200)</li>
-          </ul>
+          <div class="cv-main-info">
+            <p class="cv-title">University of Tabriz</p>
+            <ul class="cv-degree-list">
+              <li class="cv-degree-item">B.Sc. in Electrical Engineering (Ranked 1<sup>st</sup>/200)</li>
+            </ul>
+          </div>
+          <div class="cv-meta-info">
+            <p>Tabriz, Iran</p>
+            <p>2013 – 2017</p>
+          </div>
         </div>
       </div>
 
       <div class="cv-section">
         <h2>Experience</h2>
         <div class="cv-entry">
-          <p class="cv-title">Research Scientist</p>
-          <p class="cv-institution"><a href="https://www.hitachienergy.com/us/en/about-us/research-and-development" target="_blank">Hitachi Energy Research</a></p>
-          <p class="cv-location-date">Raleigh, NC | Jan. 2025 - Present</p>
+          <div class="cv-main-info">
+            <p class="cv-title">Research Scientist</p>
+            <p class="cv-institution"><a href="https://www.hitachienergy.com/us/en/about-us/research-and-development" target="_blank">Hitachi Energy Research</a></p>
+          </div>
+          <div class="cv-meta-info">
+            <p>Raleigh, NC</p>
+            <p>Jan. 2025 – Present</p>
+          </div>
         </div>
         <div class="cv-entry">
-          <p class="cv-title">Graduate Intern</p>
-          <p class="cv-institution"><a href="https://www.dominionenergy.com/" target="_blank">Dominion Energy</a></p>
-          <p class="cv-location-date">Richmond, VA | May 2024 - Aug. 2024</p>
+          <div class="cv-main-info">
+            <p class="cv-title">Graduate Intern</p>
+            <p class="cv-institution"><a href="https://www.dominionenergy.com/" target="_blank">Dominion Energy</a></p>
+          </div>
+          <div class="cv-meta-info">
+            <p>Richmond, VA</p>
+            <p>May 2024 – Aug. 2024</p>
+          </div>
         </div>
         <div class="cv-entry">
-          <p class="cv-title">Graduate Intern</p>
-          <p class="cv-institution"><a href="https://www.nerc.com/" target="_blank">North American Electric Reliability Corporation (NERC)</a></p>
-          <p class="cv-location-date">Atlanta, GA | Jan. 2024 - May 2024</p>
+          <div class="cv-main-info">
+            <p class="cv-title">Graduate Intern</p>
+            <p class="cv-institution"><a href="https://www.nerc.com/" target="_blank">North American Electric Reliability Corporation</a></p>
+          </div>
+          <div class="cv-meta-info">
+            <p>Atlanta, GA</p>
+            <p>Jan. 2024 – May 2024</p>
+          </div>
         </div>
         <div class="cv-entry">
-          <p class="cv-title">Graduate Intern</p>
-          <p class="cv-institution"><a href="https://www.dominionenergy.com/" target="_blank">Dominion Energy</a></p>
-          <p class="cv-location-date">Richmond, VA | May 2023 - Aug. 2023</p>
+            <div class="cv-main-info">
+              <p class="cv-title">Graduate Intern</p>
+              <p class="cv-institution"><a href="https://www.dominionenergy.com/" target="_blank">Dominion Energy</a></p>
+            </div>
+            <div class="cv-meta-info">
+              <p>Richmond, VA</p>
+              <p>May 2023 – Aug. 2023</p>
+            </div>
+          </div>
+        <div class="cv-entry">
+          <div class="cv-main-info">
+            <p class="cv-title">Graduate Research & Teaching Assistant</p>
+            <p class="cv-institution"><a href="https://www.gatech.edu/" target="_blank">Georgia Institute of Technology</a></p>
+          </div>
+          <div class="cv-meta-info">
+            <p>Atlanta, GA</p>
+            <p>Aug. 2021 – Dec. 2024</p>
+          </div>
         </div>
         <div class="cv-entry">
-          <p class="cv-title">Graduate Research & Teaching Assistant</p>
-          <p class="cv-institution"><a href="https://www.gatech.edu/" target="_blank">Georgia Institute of Technology</a></p>
-          <p class="cv-location-date">Atlanta, GA | Aug. 2021 - Dec. 2024</p>
-        </div>
-        <div class="cv-entry">
-          <p class="cv-title">Graduate Research & Teaching Assistant</p>
-          <p class="cv-institution"><a href="https://www.sharif.edu/" target="_blank">Sharif University of Technology</a></p>
-          <p class="cv-location-date">Tehran, Iran | Sep. 2017 - May 2021</p>
+          <div class="cv-main-info">
+            <p class="cv-title">Graduate Research & Teaching Assistant</p>
+            <p class="cv-institution"><a href="https://www.sharif.edu/" target="_blank">Sharif University of Technology</a></p>
+          </div>
+          <div class="cv-meta-info">
+            <p>Tehran, Iran</p>
+            <p>Sep. 2017 – May 2021</p>
+          </div>
         </div>
       </div>
 
       <div class="cv-section">
         <h2>Honors & Awards</h2>
         <div class="cv-entry">
-          <p class="cv-title">Dominion Energy Scholarship (Awarded twice, 2023 & 2024)</p>
-          <p class="cv-location-date">Richmond, VA | 2023-2024</p>
+          <div class="cv-main-info">
+            <p class="cv-title">Dominion Energy Scholarship</p>
+          </div>
+          <div class="cv-meta-info">
+            <p>2023 & 2024</p>
+          </div>
         </div>
         <div class="cv-entry">
-          <p class="cv-title">Chaddick Fellowship</p>
-          <p class="cv-location-date">Atlanta, GA | 2020</p>
+          <div class="cv-main-info">
+            <p class="cv-title">Chaddick Fellowship</p>
+          </div>
+          <div class="cv-meta-info">
+            <p>2020</p>
+          </div>
         </div>
         <div class="cv-entry">
-          <p class="cv-title">Ranked 2<sup>nd</sup> in M.Sc. Program</p>
-          <p class="cv-location-date">Tehran, Iran | 2019</p>
+          <div class="cv-main-info">
+            <p class="cv-title">Exceptional Talent Direct Admission to M.Sc. Program</p>
+          </div>
+          <div class="cv-meta-info">
+            <p>2017</p>
+          </div>
         </div>
         <div class="cv-entry">
-          <p class="cv-title">Ranked 1<sup>st</sup> in B.Sc. Program</p>
-          <p class="cv-location-date">Tabriz, Iran | 2017</p>
-        </div>
-        <div class="cv-entry">
-          <p class="cv-title">Exceptional Talent Direct Admission to M.Sc.</p>
-          <p class="cv-location-date">Tehran, Iran | 2017</p>
-        </div>
-        <div class="cv-entry">
-          <p class="cv-title">Top 0.5% in Nationwide University Entrance Exam</p>
-          <p class="cv-location-date">Tehran, Iran | 2013</p>
+          <div class="cv-main-info">
+            <p class="cv-title">Top 0.5% in Nationwide University Entrance Exam</p>
+          </div>
+          <div class="cv-meta-info">
+            <p>2013</p>
+          </div>
         </div>
       </div>
 
