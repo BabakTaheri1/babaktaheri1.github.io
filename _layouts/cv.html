@@ -3,18 +3,18 @@
 <head>
 {% include _head.html %}
 <style>
-  /* --- Professional CV Design --- */
+  /* --- Professional CV Design (Colorless) --- */
 
   /* General Section Styling */
   .cv-section {
-    margin-bottom: 2.5em; /* Increased space between major sections */
+    margin-bottom: 2.5em;
   }
   .cv-section h2 {
-    font-family: sans-serif; /* A clean, modern font for headings */
+    font-family: sans-serif;
     font-size: 1.6em;
     font-weight: 600;
-    color: #2c3e50; /* A deep, professional blue-gray */
-    border-bottom: 2px solid #3498db; /* A subtle blue accent color */
+    color: #000; /* Black */
+    border-bottom: 2px solid #000; /* Black */
     padding-bottom: 0.4em;
     margin-bottom: 1.2em;
   }
@@ -24,41 +24,41 @@
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    margin-bottom: 1.8em; /* Generous spacing between each entry */
+    margin-bottom: 1.8em;
   }
   .cv-main-info {
     flex-grow: 1;
-    padding-right: 1.5em; /* Space between main info and meta info */
+    padding-right: 1.5em;
   }
   .cv-meta-info {
     flex-shrink: 0;
     text-align: right;
     font-size: 0.9em;
-    color: #7f8c8d; /* A softer gray for meta text */
+    color: #555; /* Dark Gray for secondary text */
   }
 
   /* Typography and Element Spacing */
   .cv-main-info p, .cv-main-info ul, .cv-meta-info p {
-    margin: 0; /* Reset default margins */
+    margin: 0;
     padding: 0;
   }
   .cv-title {
     font-size: 1.15em;
     font-weight: bold;
-    color: #34495e; /* A slightly darker text color for titles */
+    color: #000; /* Black */
     margin-bottom: 0.1em;
   }
   .cv-institution {
     font-size: 1.05em;
-    color: #555;
+    color: #333; /* Darker Gray */
     margin-bottom: 0.1em;
   }
   .cv-institution a {
-    color: #2980b9; /* A professional blue for links */
-    text-decoration: none;
+    color: #000; /* Black for links */
+    text-decoration: underline; /* Underline to identify links */
   }
   .cv-institution a:hover {
-    text-decoration: underline;
+    text-decoration: none; /* Optional: remove underline on hover */
   }
   .cv-degree-list {
     list-style-type: none;
@@ -68,14 +68,14 @@
     position: relative;
     padding-left: 1.5em;
     margin-bottom: 0.4em;
-    color: #555;
+    color: #333; /* Darker Gray */
   }
   .cv-degree-item::before {
-    content: '›'; /* A clean, right-pointing angle bracket */
+    content: '›';
     position: absolute;
     left: 0.2em;
     font-weight: bold;
-    color: #3498db; /* Use the accent color for bullets */
+    color: #000; /* Black */
   }
 
 </style>
@@ -235,6 +235,22 @@
             <p>2020</p>
           </div>
         </div>
+        <div class="cv-entry">
+            <div class="cv-main-info">
+              <p class="cv-title">Ranked 2<sup>nd</sup> in M.Sc. Program</p>
+            </div>
+            <div class="cv-meta-info">
+              <p>2019</p>
+            </div>
+          </div>
+          <div class="cv-entry">
+            <div class="cv-main-info">
+              <p class="cv-title">Ranked 1<sup>st</sup> in B.Sc. Program</p>
+            </div>
+            <div class="cv-meta-info">
+              <p>2017</p>
+            </div>
+          </div>
         <div class="cv-entry">
           <div class="cv-main-info">
             <p class="cv-title">Exceptional Talent Direct Admission to M.Sc. Program</p>
