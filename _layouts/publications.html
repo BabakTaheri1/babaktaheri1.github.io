@@ -1,80 +1,73 @@
 <!doctype html>
 <html class="no-js" lang="en"><head>
 {% include _head.html %}
-    <style>
-        /* General Body Styles */
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            line-height: 1.6;
-            color: #333;
-        }
-        #main {
-            max-width: 900px;
-            margin: 2em auto;
-            padding: 0 2em;
-        }
-        /* The list of items */
-        .biblist {
-            padding-left: 0;
-            list-style: none;
-        }
-        /* The item */
-        .biblist li {
-            margin-bottom: 1.75em;
-        }
-        .biblist p {
-            margin: 0;
-            line-height: 1.5;
-        }
-        .biblist a {
-            color: #007bff;
-            text-decoration: none;
-            margin-left: 4px;
-        }
-        .biblist a:first-of-type {
-            margin-left: 0;
-        }
-        .biblist a:hover {
-            text-decoration: underline;
-        }
-        /* The box that contains BibTeX code */
-        div.noshow {
-            display: none;
-        }
-        div.bibtex {
-            margin-top: 1.2em;
-            margin-bottom: 1em;
-            border: 1px solid #e0e0e0;
-            padding: 0em 1em;
-            background: #ffffee;
-            border-radius: 4px;
-        }
-        div.bibtex pre {
-            font-family: monospace;
-            font-size: 85%;
-            overflow: auto;
-            width: 100%;
-        }
-    </style>
 </head>
 
 <body class="page">
+<style>
+    /*********************************
+     The list of publication items
+     *********************************/
+    /* The list of items */
+    .biblist {
+        padding-left: 0;
+        list-style: none;
+    }
+
+    /* The item */
+    .biblist li {
+        margin-bottom: 1.75em;
+    }
+    .biblist p {
+        margin: 0;
+        line-height: 1.5;
+    }
+    .biblist a {
+        margin-left: 4px;
+    }
+    .biblist a:first-of-type {
+        margin-left: 0;
+    }
+
+    /*************************************
+     The box that contain BibTeX code
+     *************************************/
+    div.noshow {
+        display: none;
+    }
+    div.bibtex {
+        margin-right: 0%;
+        margin-top: 1.2em;
+        margin-bottom: 1em;
+        border: 1px solid silver;
+        padding: 0em 1em;
+        background: #ffffee;
+    }
+    div.bibtex pre {
+        font-family: monospace;
+        font-size: 85%;
+        overflow: auto;
+        width: 100%;
+        padding: 0.5em 0em;
+    }
+</style>
 <script type="text/javascript">
-    // Toggles the display of the BibTeX entry
+    // Toggle Display of BibTeX
     function toggleBibtex(articleid) {
         var bib = document.getElementById('bib_' + articleid);
         if (bib) {
-            // Check if the 'noshow' class is present and toggle it
-            if (bib.className.indexOf('noshow') !== -1) {
-                bib.className = 'bibtex';
-            } else {
-                bib.className = 'bibtex noshow';
+            if (bib.className.indexOf('bibtex') !== -1) {
+                // Ternary operator to toggle the 'noshow' class
+                (bib.className.indexOf('noshow') === -1) ? bib.className = 'bibtex noshow' : bib.className = 'bibtex';
             }
+        } else {
+            return;
         }
     }
 </script>
 
 {% include _browser-upgrade.html %}
+
 {% include _navigation.html %}
 
 {% if page.image.feature %}
@@ -107,7 +100,7 @@
     <li><p>
         B. Taheri and D.K. Molzahn<br>
         <b>Improving the Accuracy of DC Optimal Power Flow Formulations via Parameter Optimization</b><br>
-        <i>arXiv preprint</i>, arXiv:2410.11725, 2024.<br>
+        <i>arXiv preprint</i>, arXiv:2410.11725, 2024.<br />
         <a href="javascript:toggleBibtex('ImprovingDCOPF2024')">[BibTeX]</a>
         <a href="https://arxiv.org/pdf/2410.11725" target="_blank">[PDF]</a>
     </p>
@@ -125,7 +118,7 @@
     <li><p>
         B. Taheri, R.K. Gupta, and D.K. Molzahn<br>
         <b>Optimizing Parameters of the LinDistFlow Power Flow Approximation for Distribution Systems</b><br>
-        <i>arXiv preprint</i>, arXiv:2404.05125, 2024.<br>
+        <i>arXiv preprint</i>, arXiv:2404.05125, 2024.<br />
         <a href="javascript:toggleBibtex('OptimizedLDF2024')">[BibTeX]</a>
         <a href="https://arxiv.org/pdf/2404.05125" target="_blank">[PDF]</a>
     </p>
@@ -147,7 +140,7 @@
     <li><p>
         B. Taheri and D.K. Molzahn<br>
         <b>AC-Informed DC Optimal Transmission Switching Problems via Parameter Optimization</b><br>
-        <i>to appear in IEEE Transactions on Power Systems</i>, 2025.<br>
+        <i>to appear in IEEE Transactions on Power Systems</i>, 2025.<br />
         <a href="javascript:toggleBibtex('ACInformed2024')">[BibTeX]</a>
         <a href="https://ieeexplore.ieee.org/abstract/document/11023158" target="_blank">[PDF]</a>
     </p>
@@ -164,7 +157,7 @@
     <li><p>
         A. Jalilian, B. Taheri, and D.K. Molzahn<br>
         <b>Co-Optimization of Damage Assessment and Restoration: A Resilience-Driven Dynamic Crew Allocation for Power Distribution Systems</b><br>
-        <i>IEEE Transactions on Power Systems</i>, vol. 40, no. 1, pp. 676-688, Jan. 2025.<br>
+        <i>IEEE Transactions on Power Systems</i>, vol. 40, no. 1, pp. 676-688, Jan. 2025.<br />
         <a href="javascript:toggleBibtex('DamageRestoration2024')">[BibTeX]</a>
         <a href="https://ieeexplore.ieee.org/abstract/document/10508102" target="_blank">[PDF]</a>
     </p>
@@ -184,7 +177,7 @@
     <li><p>
         B. Taheri and D.K. Molzahn<br>
         <b>Optimizing Parameters of the DC Power Flow</b><br>
-        <i>Electric Power Systems Research</i>, vol. 235, 110719, October 2024.<br>
+        <i>Electric Power Systems Research</i>, vol. 235, 110719, October 2024.<br />
         <a href="javascript:toggleBibtex('OptimizingDCP2024')">[BibTeX]</a>
         <a href="https://arxiv.org/pdf/2310.00447" target="_blank">[PDF]</a>
     </p>
@@ -204,7 +197,7 @@
     <li><p>
         B. Taheri and D.K. Molzahn<br>
         <b>AC Power Flow Feasibility Restoration via a State Estimation-Based Post-Processing Algorithm</b><br>
-        <i>Electric Power Systems Research</i>, vol. 235, 110642, October 2024.<br>
+        <i>Electric Power Systems Research</i>, vol. 235, 110642, October 2024.<br />
         <a href="javascript:toggleBibtex('FeasibilityRestoration2024')">[BibTeX]</a>
         <a href="https://arxiv.org/pdf/2304.11418" target="_blank">[PDF]</a>
     </p>
@@ -224,7 +217,7 @@
     <li><p>
         B. Taheri, D.K. Molzahn, and S. Grijalva<br>
         <b>Improving distribution system resilience by undergrounding lines and deploying mobile generators</b><br>
-        <i>Electric Power Systems Research</i>, vol. 214, 108804, 2023.<br>
+        <i>Electric Power Systems Research</i>, vol. 214, 108804, 2023.<br />
         <a href="javascript:toggleBibtex('Taheri2023')">[BibTeX]</a>
         <a href="https://www.sciencedirect.com/science/article/abs/pii/S0378779622008586" target="_blank">[PDF]</a>
     </p>
@@ -243,7 +236,7 @@
     <li><p>
         B. Taheri and A. Safdarian<br>
         <b>Tie‐line planning for resilience enhancement in unbalanced distribution networks</b><br>
-        <i>IET Generation, Transmission & Distribution</i>, vol. 16, no. 5, pp. 1030-1046, 2022.<br>
+        <i>IET Generation, Transmission & Distribution</i>, vol. 16, no. 5, pp. 1030-1046, 2022.<br />
         <a href="javascript:toggleBibtex('taheri2022tie')">[BibTeX]</a>
         <a href="https://ietresearch.onlinelibrary.wiley.com/doi/full/10.1049/gtd2.12347" target="_blank">[PDF]</a>
     </p>
@@ -263,7 +256,7 @@
     <li><p>
         B. Taheri, A. Safdarian, M. Moeini-Aghtaie, and M. Lehtonen<br>
         <b>Distribution System Resilience Enhancement via Mobile Emergency Generators</b><br>
-        <i>IEEE Transactions on Power Delivery</i>, vol. 36, no. 4, pp. 2308-2319, 2020.<br>
+        <i>IEEE Transactions on Power Delivery</i>, vol. 36, no. 4, pp. 2308-2319, 2020.<br />
         <a href="javascript:toggleBibtex('MobileGenerators2020')">[BibTeX]</a>
         <a href="https://ieeexplore.ieee.org/abstract/document/9136725" target="_blank">[PDF]</a>
     </p>
@@ -283,7 +276,7 @@
     <li><p>
         B. Taheri, A. Safdarian, M. Moeini-Aghtaie, and M. Lehtonen<br>
         <b>Enhancing Resilience Level of Power Distribution Systems Using Proactive Operational Actions</b><br>
-        <i>IEEE Access</i>, vol. 7, pp. 137378-137389, 2019.<br>
+        <i>IEEE Access</i>, vol. 7, pp. 137378-137389, 2019.<br />
         <a href="javascript:toggleBibtex('taheri2019enhancing')">[BibTeX]</a>
         <a href="https://ieeexplore.ieee.org/abstract/document/8839073" target="_blank">[PDF]</a>
     </p>
@@ -302,7 +295,7 @@
     <li><p>
         B. Taheri, A. Safdarian, M. Moeini-Aghtaie, and M. Lehtonen<br>
         <b>Distribution Systems Resilience Enhancement via Pre- and Post-Event Actions</b><br>
-        <i>IET Smart Grid</i>, vol. 2, no. 4, pp. 549-556, 2019.<br>
+        <i>IET Smart Grid</i>, vol. 2, no. 4, pp. 549-556, 2019.<br />
         <a href="javascript:toggleBibtex('taheri2019distribution')">[BibTeX]</a>
         <a href="https://ietresearch.onlinelibrary.wiley.com/doi/full/10.1049/iet-stg.2019.0035" target="_blank">[PDF]</a>
     </p>
@@ -326,7 +319,7 @@
     <li><p>
         B. Taheri and D.K. Molzahn<br>
         <b>AC Power Flow Informed Parameter Learning for DC Power Flow Network Equivalents</b><br>
-        <i>2024 IEEE Texas Power and Energy Conference (TPEC)</i>, February 12-13, 2024.<br>
+        <i>2024 IEEE Texas Power and Energy Conference (TPEC)</i>, February 12-13, 2024.<br />
         <a href="javascript:toggleBibtex('ParameterLearning2024')">[BibTeX]</a>
         <a href="https://ieeexplore.ieee.org/abstract/document/10472173" target="_blank">[PDF]</a>
     </p>
@@ -344,7 +337,7 @@
     <li><p>
         B. Taheri and D.K. Molzahn<br>
         <b>Restoring AC Power Flow Feasibility from Relaxed and Approximated Optimal Power Flow Models</b><br>
-        <i>American Control Conference (ACC)</i>, May 31 - June 2, 2023.<br>
+        <i>American Control Conference (ACC)</i>, May 31 - June 2, 2023.<br />
         <a href="javascript:toggleBibtex('TaheriACC2023')">[BibTeX]</a>
         <a href="https://arxiv.org/pdf/2209.04399" target="_blank">[PDF]</a>
     </p>
@@ -361,7 +354,7 @@
     <li><p>
         B. Taheri, A. Jalilian, and A. Safdarian<br>
         <b>Hardening Strategy to Boost Resilience of Distribution Systems via Harnessing a Proactive Operation Model</b><br>
-        <i>Smart Grid Conference (SGC)</i>, 2019.<br>
+        <i>Smart Grid Conference (SGC)</i>, 2019.<br />
         <a href="javascript:toggleBibtex('taheriSGC2019_1')">[BibTeX]</a>
         <a href="https://ieeexplore.ieee.org/abstract/document/9056585" target="_blank">[PDF]</a>
     </p>
@@ -379,7 +372,7 @@
     <li><p>
         A. Jalilian, B. Taheri, and A. Safdarian<br>
         <b>Optimal Switch Placement in Power Distribution Systems with Complex Configurations</b><br>
-        <i>Smart Grid Conference (SGC)</i>, 2019.<br>
+        <i>Smart Grid Conference (SGC)</i>, 2019.<br />
         <a href="javascript:toggleBibtex('taheriSGC2019_2')">[BibTeX]</a>
         <a href="https://ieeexplore.ieee.org/abstract/document/9056625" target="_blank">[PDF]</a>
     </p>
@@ -401,7 +394,7 @@
     <li><p>
         B. Taheri, A. Jalilian, A. Safdarian, M. Moeini-Aghtaie, and M. Lehtonen<br>
         <b>Toward Operational Resilience of Smart Energy Networks in Complex Infrastructures</b><br>
-        <i>Optimization, Learning, and Control for Interdependent Complex Networks</i>, pp. 203-228, 2020, Springer.<br>
+        <i>Optimization, Learning, and Control for Interdependent Complex Networks</i>, pp. 203-228, 2020, Springer.<br />
         <a href="javascript:toggleBibtex('chapter')">[BibTeX]</a>
         <a href="https://link.springer.com/chapter/10.1007/978-3-030-34094-0_9" target="_blank">[PDF]</a>
     </p>
@@ -424,7 +417,7 @@
     <li><p>
         PhD Dissertation<br>
         <b>Improving Power System Approximations Through Machine Learning-Inspired Optimization Methods</b><br>
-        <i>Georgia Institute of Technology</i>, 2024.<br>
+        <i>Georgia Institute of Technology</i>, 2024.<br />
         <a href="javascript:toggleBibtex('thesis')">[BibTeX]</a>
         <a href="https://repository.gatech.edu/entities/publication/ce61b5eb-bd5b-4d05-920c-23bdc551cb07" target="_blank">[PDF]</a>
     </p>
@@ -441,7 +434,7 @@
     <li><p>
         Master Thesis<br>
         <b>Optimal Network Hardening to Enhance Distribution Networks Resiliency Against Hurricane</b><br>
-        <i>Sharif University of Technology</i>, 2019.<br>
+        <i>Sharif University of Technology</i>, 2019.<br />
         <a href="javascript:toggleBibtex('master_thesis')">[BibTeX]</a>
         <a href="[LINK_TO_PDF]" target="_blank">[PDF]</a>
     </p>
