@@ -1,87 +1,87 @@
 <!doctype html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <title>My Publications</title>
-    <style>
-        /* General Body Styles */
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            margin: 0;
-            padding: 0;
-        }
-        /* Main container */
-        #main {
-            max-width: 900px;
-            margin: 2em auto;
-            padding: 0 2em;
-        }
-        /* Publication List Styles */
-        .biblist {
-            padding-left: 0;
-            list-style: none;
-        }
-        .biblist li {
-            margin-bottom: 1.75em;
-        }
-        .biblist p {
-            margin: 0;
-        }
-        .biblist a {
-            color: #007bff;
-            text-decoration: none;
-            margin-left: 4px; /* Adds a little space between links */
-        }
-        .biblist a:first-of-type {
-            margin-left: 0;
-        }
-        .biblist a:hover {
-            text-decoration: underline;
-        }
-        /* BibTeX Box Styles */
-        div.noshow {
-            display: none;
-        }
-        div.bibtex {
-            margin-top: 1em;
-            border: 1px solid #e0e0e0;
-            border-radius: 4px;
-            padding: 0 1em;
-            background: #fdfdfd;
-        }
-        div.bibtex pre {
-            font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
-            font-size: 85%;
-            overflow: auto;
-            width: 100%;
-            line-height: 1.45;
-        }
-    </style>
+<html class="no-js" lang="en"><head>
+{% include _head.html %}
 </head>
 
-<body>
-
-<script type="text/javascript">
-    // Toggles the display of the BibTeX entry
-    function toggleBibtex(articleid) {
-        var bib = document.getElementById('bib_' + articleid);
-        if (bib) {
-            // Check if the 'noshow' class is present and toggle it
-            if (bib.className.indexOf('noshow') !== -1) {
-                bib.className = 'bibtex';
-            } else {
-                bib.className = 'bibtex noshow';
-            }
-        }
+<body class="page">
+<style>
+    /*********************************
+     The list of publication items
+     *********************************/
+    /* The list of items */
+    .biblist {
+        list-style: none;
+        padding-left: 0;
     }
-</script>
+
+    /* The item */
+    .biblist li {
+        margin-bottom: 1.75em;
+    }
+
+    /* You can define custom styles for plstyle field here. */
+    .biblist p {
+        margin: 0;
+    }
+    .biblist a {
+        margin-left: 4px; /* Adds a little space between links */
+    }
+    .biblist a:first-of-type {
+        margin-left: 0;
+    }
+
+
+    /*************************************
+     The box that contain BibTeX code
+     *************************************/
+    div.noshow { display: none; }
+    div.bibtex {
+        margin-right: 0%;
+        margin-top: 1.2em;
+        margin-bottom: 1em;
+        border: 1px solid silver;
+        padding: 0em 1em;
+        background: #ffffee;
+    }
+    div.bibtex pre {
+        font-family: monospace;
+        font-size: 85%;
+        overflow: auto;
+        width: 100%;
+        padding: 0.5em 0em;
+    }
+</style>
+<script type="text/javascript">
+    </script>
+
+{% include _browser-upgrade.html %}
+
+{% include _navigation.html %}
+
+{% if page.image.feature %}
+  <div class="image-wrap">
+  <img src=
+    {% if page.image.feature contains 'http://' %}
+      "{{ page.image.feature }}"
+    {% elsif page.image.feature contains 'https://' %}
+      "{{ page.image.feature }}"
+    {% else %}
+      "{{ site.url }}/images/{{ page.image.feature }}"
+    {% endif %}
+  alt="{{ page.title }} feature image">
+  {% if page.image.credit %}
+    <span class="image-credit">Photo Credit: <a href="{{ page.image.creditlink }}">{{ page.image.credit }}</a></span>
+  {% endif %}
+  </div>{% endif %}
 
 <div id="main" role="main">
+  <div class="article-author-side">
+    {% include _author-bio.html %}
+  </div>
   <article>
-    <h1>My Publications</h1>
+    <h1>{{ page.title | default: "My Publications" }}</h1>
     <div class="article-wrap">
+      {{ content }}
 
 <h4 style="margin-bottom:0px;padding-top:10px;">Preprints</h4>
 <ul class="biblist">
@@ -424,6 +424,7 @@
         <b>Optimal Network Hardening to Enhance Distribution Networks Resiliency Against Hurricane</b><br>
         <i>Sharif University of Technology</i>, 2019.<br>
         <a href="javascript:toggleBibtex('master_thesis')">[BibTeX]</a>
+        <a href="[LINK_TO_PDF]" target="_blank">[PDF]</a>
     </p>
     <div id="bib_master_thesis" class="bibtex noshow">
 <pre>
@@ -437,9 +438,14 @@
     </div></li>
 </ul>
 
-    </div>
+    </div>{% if site.disqus_shortname and page.comments %}
+      <section id="disqus_thread"></section>{% endif %}
   </article>
-</div>
+</div><div class="footer-wrap">
+  <footer>
+    {% include _footer.html %}
+  </footer>
+</div>{% include _scripts.html %}
 
 </body>
 </html>
