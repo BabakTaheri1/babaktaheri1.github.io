@@ -1,7 +1,6 @@
 <!doctype html>
 <html class="no-js" lang="en"><head>
-    <meta charset="utf-8">
-    <title>My Publications</title>
+{% include _head.html %}
 </head>
 
 <body class="page">
@@ -9,43 +8,58 @@
     /*********************************
      The list of publication items
      *********************************/
-    /* The list of items */
-    .biblist {
-        padding-left: 0;
-        list-style: none;
-    }
+/* The list of items */
+.biblist { }
 
-    /* The item */
-    .biblist li {
-        margin-bottom: 1.5em; /* Added space between items */
-    }
+/* The item */
+.biblist li { margin-bottom: 1.5em; }
 
-    /*************************************
-     The box that contain BibTeX code
-     *************************************/
-    div.noshow { display: none; }
-    div.bibtex {
-        margin-right: 0%;
-        margin-top: 1.2em;
-        margin-bottom: 1em;
-        border: 1px solid silver;
-        padding: 0em 1em;
-        background: #ffffee;
-    }
-    div.bibtex pre {
-        font-family: monospace;
-        font-size: 85%; /* Slightly larger for readability */
-        overflow: auto;
-        width: 100%;
-        padding: 0.5em 0em;
-    }
+/* You can define custom styles for plstyle field here. */
+
+
+/*************************************
+ The box that contain BibTeX code
+ *************************************/
+div.noshow { display: none; }
+div.bibtex {
+    margin-right: 0%;
+    margin-top: 1.2em;
+    margin-bottom: 1em;
+    border: 1px solid silver;
+    padding: 0em 1em;
+    background: #ffffee;
+}
+div.bibtex pre { font-family: monospace; font-size: 85%; overflow: auto;  width: 100%; padding: 0em 0em;}
 </style>
 <script type="text/javascript">
     </script>
 
+{% include _browser-upgrade.html %}
+
+{% include _navigation.html %}
+
+{% if page.image.feature %}
+  <div class="image-wrap">
+  <img src=
+    {% if page.image.feature contains 'http://' %}
+      "{{ page.image.feature }}"
+    {% elsif page.image.feature contains 'https://' %}
+      "{{ page.image.feature }}"
+    {% else %}
+      "{{ site.url }}/images/{{ page.image.feature }}"
+    {% endif %}
+  alt="{{ page.title }} feature image">
+  {% if page.image.credit %}
+    <span class="image-credit">Photo Credit: <a href="{{ page.image.creditlink }}">{{ page.image.credit }}</a></span>
+  {% endif %}
+  </div>{% endif %}
+
 <div id="main" role="main">
+  <div class="article-author-side">
+    {% include _author-bio.html %}
+  </div>
   <article>
-    <h1>My Publications</h1>
+    <h1>{{ page.title | default: "My Publications" }}</h1>
     <div class="article-wrap">
 
 <h4 style="margin-bottom:0px;padding-top:10px;">Preprints</h4>
@@ -92,7 +106,6 @@ B. Taheri, R.K. Gupta, and D.K. Molzahn
 </pre>
 </div>
 </li>
-
 </ul>
 
 <h4 style="margin-bottom:0px;padding-top:10px;">Journal Publications</h4>
@@ -290,7 +303,6 @@ B. Taheri, A. Safdarian, M. Moeini-Aghtaie, and M. Lehtonen
 </pre>
 </div>
 </li>
-
 </ul>
 
 <h4 style="margin-bottom:0px;padding-top:10px;">Conference Publications</h4>
@@ -374,7 +386,6 @@ A. Jalilian, B. Taheri, and A. Safdarian
 </pre>
 </div>
 </li>
-
 </ul>
 
 <h4 style="margin-bottom:0px;padding-top:10px;">Book Chapters</h4>
@@ -400,7 +411,6 @@ B. Taheri, A. Jalilian, A. Safdarian, M. Moeini-Aghtaie, and M. Lehtonen
 </pre>
 </div>
 </li>
-
 </ul>
 
 <h4 style="margin-bottom:0px;padding-top:20px;">Written Theses</h4>
@@ -443,9 +453,16 @@ Master Thesis<br>
 </pre>
 </div>
 </li>
-
 </ul>
 
-    </div></article>
-</div></body>
+    </div>{% if site.disqus_shortname and page.comments %}
+      <section id="disqus_thread"></section>{% endif %}
+  </article>
+</div><div class="footer-wrap">
+  <footer>
+    {% include _footer.html %}
+  </footer>
+</div>{% include _scripts.html %}
+
+</body>
 </html>
