@@ -2,12 +2,7 @@
 <html class="no-js" lang="en"><head>
 {% include _head.html %}
 <style>
-  .bottom-three {
-     margin-bottom: 1.5cm;
-   }
-  .bottom-small {
-     margin-bottom: 1cm;
-   }
+  /* Keep your existing styles */
   .cv-section {
     margin-bottom: 2em;
   }
@@ -21,21 +16,35 @@
   .cv-entry {
     margin-bottom: 1.5em;
   }
-  .cv-entry p {
-    margin: 0.2em 0;
-  }
-  .cv-title {
+  .cv-title, .cv-institution { /* .cv-institution is new */
     font-weight: bold;
     font-size: 1.1em;
     color: #444;
   }
-  .cv-institution {
-    font-style: italic;
-    color: #555;
-  }
   .cv-location-date {
     font-size: 0.9em;
     color: #777;
+    margin: 0;
+  }
+  /* Styles for the new compact education list */
+  .cv-degree-list {
+    list-style-type: none;
+    padding-left: 0;
+    margin-top: 0.6em;
+  }
+  .cv-degree-item {
+    position: relative;
+    padding-left: 1.5em; /* Space for the custom bullet */
+    margin-bottom: 0.3em;
+    color: #555;
+  }
+  .cv-degree-item::before {
+    content: '‣'; /* Custom bullet point */
+    position: absolute;
+    left: 0;
+    top: 0.05em;
+    color: #333;
+    font-size: 1.1em;
   }
 </style>
 </head>
@@ -69,32 +78,33 @@
     <h1>{{ page.title }}</h1>
     <div class="article-wrap">
 
-      <div class="cv-section">
+<div class="cv-section">
         <h2>Education</h2>
+
         <div class="cv-entry">
-          <p class="cv-title">Ph.D. in Electrical & Computer Engineering</p>
           <p class="cv-institution">Georgia Institute of Technology</p>
-          <p class="cv-location-date">Atlanta, GA | Aug. 2021 - Dec. 2024</p>
+          <p class="cv-location-date">Atlanta, GA | 2021 - 2024</p>
+          <ul class="cv-degree-list">
+            <li class="cv-degree-item">Ph.D. in Electrical & Computer Engineering</li>
+            <li class="cv-degree-item">M.Sc. in Electrical & Computer Engineering</li>
+            <li class="cv-degree-item">Minor in Industrial & Systems Engineering</li>
+          </ul>
         </div>
+
         <div class="cv-entry">
-          <p class="cv-title">Minor in Industrial & Systems Engineering</p>
-          <p class="cv-institution">Georgia Institute of Technology</p>
-          <p class="cv-location-date">Atlanta, GA | Aug. 2022 - May 2024</p>
-        </div>
-        <div class="cv-entry">
-          <p class="cv-title">M.Sc. in Electrical & Computer Engineering</p>
-          <p class="cv-institution">Georgia Institute of Technology</p>
-          <p class="cv-location-date">Atlanta, GA | Aug. 2021 - May 2024</p>
-        </div>
-        <div class="cv-entry">
-          <p class="cv-title">M.Sc. in Electrical Engineering (Ranked 2<sup>nd</sup>/19)</p>
           <p class="cv-institution">Sharif University of Technology</p>
-          <p class="cv-location-date">Tehran, Iran | Sep. 2017 - May 2019</p>
+          <p class="cv-location-date">Tehran, Iran | 2017 - 2019</p>
+          <ul class="cv-degree-list">
+            <li class="cv-degree-item">M.Sc. in Electrical Engineering (Ranked 2<sup>nd</sup>/19)</li>
+          </ul>
         </div>
+
         <div class="cv-entry">
-          <p class="cv-title">B.Sc. in Electrical Engineering (Ranked 1<sup>st</sup>/200)</p>
           <p class="cv-institution">University of Tabriz</p>
-          <p class="cv-location-date">Tabriz, Iran | Sep. 2013 - Jun. 2017</p>
+          <p class="cv-location-date">Tabriz, Iran | 2013 - 2017</p>
+          <ul class="cv-degree-list">
+            <li class="cv-degree-item">B.Sc. in Electrical Engineering (Ranked 1<sup>st</sup>/200)</li>
+          </ul>
         </div>
       </div>
 
@@ -135,7 +145,7 @@
       <div class="cv-section">
         <h2>Honors & Awards</h2>
         <div class="cv-entry">
-          <p class="cv-title">Dominion Energy Scholarship</p>
+          <p class="cv-title">Dominion Energy Scholarship (Awarded twice, 2023 & 2024)</p>
           <p class="cv-location-date">Richmond, VA | 2023-2024</p>
         </div>
         <div class="cv-entry">
