@@ -4,7 +4,7 @@ title: Me in a Nutshell
 description: "Jordi Pont-Tuset's website"
 tags: [Jekyll, theme, responsive, blog, template]
 image:
-  feature: trees.jpg
+  feature: laguna.jpg
 ---
 
 I am a research scientist at <a href="https://www.hitachienergy.com/us/en" target="_blank">Hitachi Energy Research</a>.
