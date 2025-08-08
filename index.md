@@ -7,14 +7,12 @@ image:
   feature: trees.jpg
 ---
 
-I am a research scientist at <a href="https://deepmind.google" target="_blank">Google DeepMind</a>.
+I am a research scientist at <a href="https://www.hitachienergy.com/us/en" target="_blank">Hitachi Energy Research</a>.
 
 <br />
-Previously, I worked at <a href="http://www.vision.ee.ethz.ch/index.en.html" target="_blank">ETHZ</a>
-and <a href="http://www.disneyresearch.com/research-labs/disney-research-zurich/" target="_blank">Disney Research</a>,
-and I collaborated with <a href="http://www.cs.berkeley.edu/~malik/" target="_blank">Prof. J. Malik</a>'s vision group 
-and with the startup <a href="https://gestoos.com" target="_blank">Fezoo</a>.
-
+I recently completed my PhD in the School of Electrical and Computer Engineering at the Georgia Institute of Technology, and I was fortunate to be advised by Prof. <a href="https://molzahn.github.io/index.html" target="_blank">Daniel Molzahn.
 <br />
-I am a mathematician, engineer, and PhD in computer vision by <a href="http://www.upc.edu" target="_blank">UPC Barcelonatech</a>.
+My passion lies in harnessing the power of mathematical optimization and machine learning techniques to foster a more reliable, resilient, affordable, and sustainable energy future. Outside of my work in research, I enjoy traveling, hiking, watching movies, and playing soccer and volleyball.
+<br />
+
 
