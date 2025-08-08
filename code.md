@@ -21,4 +21,4 @@ This *reactive power metaphor* uses flowing particles to visualize electrical co
 ### Math
 
 * [**Polya's Urn**](Polya.html)<br>
-This interactive tool simulates *Polya's Urn* 🏺, a classic probability model demonstrating the "rich-get-richer" phenomenon. In this model, drawing a colored ball from the urn increases the probability of drawing that same color in the future. You can adjust the rules for how many balls are added after each draw and run thousands of simulations to see how early random events influence the final statistical distribution of colors.
+This interactive tool simulates *Polya's Urn* 🏺, a classic probability model demonstrating the "rich-get-richer" phenomenon. In this model, drawing a colored ball from the urn increases the probability of drawing that same color in the future. You can adjust the rules for how many balls are added after each draw and run thousands of simulations to see how early random events can dramatically shape the final outcome.
