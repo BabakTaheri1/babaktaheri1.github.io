@@ -20,6 +20,12 @@ Active power is the useful work, shown as packages being delivered, while reacti
 This *reactive power metaphor* uses flowing particles to visualize electrical concepts. 
 Useful active power is shown as blue particles moving directly to the load to perform work, while non-working reactive power is a turbulent orange or purple flow that just sloshes back and forth.
 
+* [**Braess's Paradox**](BraessParadox.html)<br>
+Braess's Paradox is the counter-intuitive observation that removing capacity from a network, can paradoxically increase the network's overall performance. 
+Discovered by mathematician Dietrich Braess in 1968, this principle reveals a fundamental conflict between individual incentives and the collective good.
+
+It applies to any decentralized network where users make individual routing decisions—from road traffic and data packets to electrical grids. 
+The paradox arises when a new, seemingly superior path diverts flow in a way that creates new system-wide bottlenecks, leading to a worse outcome for every single user.
 ### Math
 
 * [**Polya's Urn**](Polya.html)<br>
