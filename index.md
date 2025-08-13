@@ -4,7 +4,7 @@ title: Me in a Nutshell
 description: "Babak Taheri's website"
 tags: [Jekyll, theme, responsive, blog, template]
 image:
-  feature: earth2.png
+  feature: earth3.png
 ---
 
 I am a research scientist at <a href="https://www.hitachienergy.com/us/en" target="_blank">Hitachi Energy Research</a>.
