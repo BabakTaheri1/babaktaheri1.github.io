@@ -20,7 +20,7 @@ My passion lies in harnessing the power of mathematical optimization and machine
 
 ---
 
-## Latest News & Announcements
+### Latest News & Announcements
 
 <div class="news-box" style="height: 300px; overflow-y: auto; border: 1px solid #ddd; padding: 10px 20px; border-radius: 5px; background-color: #f9f9f9;">
   <ul style="list-style-type: none; padding-left: 0;">
