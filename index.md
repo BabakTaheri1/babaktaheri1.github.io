@@ -18,10 +18,13 @@ My passion lies in harnessing the power of mathematical optimization and machine
 <br />
 
 
+---
+
 ## Latest News & Announcements
 
 <div class="news-box" style="height: 300px; overflow-y: auto; border: 1px solid #ddd; padding: 10px 20px; border-radius: 5px; background-color: #f9f9f9;">
   <ul style="list-style-type: none; padding-left: 0;">
+    <li style="margin-bottom: 12px;"><strong>August 2025:</strong> Our paper on AC-Informed DC Optimal Transmission Switching has been accepted to the <em>IEEE Transactions on Power Systems</em>.</li>
     <li style="margin-bottom: 12px;"><strong>December 2024:</strong> I defended my dissertation "Improving Power System Approximations Through Machine Learning-Inspired Optimization Methods" to complete the PhD degree.</li>
     <li style="margin-bottom: 12px;"><strong>November 2024:</strong> Check out our new preprint on DC Optimal Transmission Switching Problem.</li>
     <li style="margin-bottom: 12px;"><strong>October 2024:</strong> Check out our new preprint on improving the accuracy of DC optimal power flow models.</li>
@@ -39,6 +42,8 @@ My passion lies in harnessing the power of mathematical optimization and machine
     <li style="margin-bottom: 12px;"><strong>May 2023:</strong> I started my internship at Dominion Energy in the ET Planning-Modeling team.</li>
   </ul>
 </div>
+
+---
 
 
 <div style="text-align: center;">
