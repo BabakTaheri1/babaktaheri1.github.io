@@ -44,60 +44,8 @@ My passion lies in harnessing the power of mathematical optimization and machine
 </div>
 
 ---
-##
 
-<div style="text-align: center;">
+
+<div style="text-align: center; transform: scale(0.5);">
   <script type="text/javascript" id="mapmyvisitors" src="//mapmyvisitors.com/map.js?d=XP-MrktceiijarYMkZY6RXtWwaZeYl_0fRJw1BbIApM&cl=ffffff&w=a"></script>
 </div>
-
-
-<style>
-.ticker-wrap {
-  width: 100%;
-  overflow: hidden;
-  padding: 15px 0;
-  background: #f8f9fa; /* A light, clean background */
-  border: 1px solid #e9ecef;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-}
-
-.ticker {
-  display: inline-block;
-  white-space: nowrap;
-  padding-right: 100%;
-  box-sizing: content-box;
-  animation: ticker 90s linear infinite;
-}
-
-/* Pause animation on hover */
-.ticker-wrap:hover .ticker {
-  animation-play-state: paused;
-}
-
-.ticker-item {
-  display: inline-block;
-  padding: 0 2rem;
-  color: #495057; /* Dark grey text for readability */
-}
-
-.ticker-item::after {
-  content: "•";
-  margin-left: 2rem;
-  color: #adb5bd; /* Separator color */
-  font-weight: bold;
-}
-
-.ticker-item:last-child::after {
-    content: ""; /* No separator after the last item */
-}
-
-@keyframes ticker {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(-100%);
-  }
-}
-</style>
