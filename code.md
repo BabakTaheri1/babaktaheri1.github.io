@@ -8,7 +8,7 @@ comments: false
 ---
 
 
-I enjoy animating basic concepts and here you can find some of the programs I've written.
+I enjoy animating basic concepts and here you can find some of them.
 
 ### Power Systems
 
