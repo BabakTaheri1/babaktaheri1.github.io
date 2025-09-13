@@ -31,6 +31,11 @@ This interactive tool simulates *Polya's Urn* 🏺, a classic probability model 
 In this model, drawing a colored ball from the urn increases the probability of drawing that same color in the future. 
 You can adjust the rules for how many balls are added after each draw and run thousands of simulations to see how early random events can dramatically shape the final outcome.
 
+* [**Sierpinski Triangle**](Sierpinski.html)<br>
+This visualization demonstrates the Chaos Game, a stochastic process that beautifully generates the deterministic fractal known as the Sierpinski Triangle. 
+The process begins with three fixed vertices and a random starting point. At each step, a new point is generated exactly halfway between the current point and a randomly selected vertex. 
+As the process iterates, the points converge to form the intricate, self-similar structure of the fractal.
+
 * [**Euler's Identity**](Euler's_Identity.html)<br>
 Euler's Identity, $e^{i\pi} + 1 = 0$, often feels like a cryptic puzzle, a gathering of mathematics' most famous constants with no clear reason to be connected. 
 This visualization reveals that story, showing how constant "sideways growth" (the secret of $e^{i}$) for a precise distance ($\pi$) guides a point from a starting position of 1 to a final destination of -1. 
