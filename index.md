@@ -33,7 +33,7 @@ My passion lies in harnessing the power of mathematical optimization and machine
     <li style="margin-bottom: 12px;"><strong>May 2024:</strong> I defended my PhD proposal and became a PhD candidate.</li>
     <li style="margin-bottom: 12px;"><strong>May 2024:</strong> I received my second MSc degree in Electrical and Computer Engineering, this time from the Georgia Institute of Technology.</li>
     <li style="margin-bottom: 12px;"><strong>April 2024:</strong> Our paper on power systems resilience has been accepted for publication in the IEEE Transactions on Power Systems.</li>
-    <li style="margin-bottom: 12px;"><strong>March 2024:</strong> Two papers [1, 2] have been accepted for the 23rd Power Systems Computational Conference (PSCC), to appear in Electric Power Systems Research. We are looking to present our papers in Paris this summer.</li>
+    <li style="margin-bottom: 12px;"><strong>March 2024:</strong> Two papers have been accepted for the 23rd Power Systems Computational Conference (PSCC), to appear in Electric Power Systems Research. We are looking to present our papers in Paris this summer.</li>
     <li style="margin-bottom: 12px;"><strong>February 2024:</strong> I presented our paper on the power system equivalents at the Texas Power and Energy Conference (TPEC).</li>
     <li style="margin-bottom: 12px;"><strong>January 2024:</strong> I began my part-time internship at North American Electric Reliability Corporation (NERC) in the Advanced System Analytics & Modeling (ASAM) department.</li>
     <li style="margin-bottom: 12px;"><strong>August 2023:</strong> I received the Dominion Energy Inclusion, Equity, and Diversity Scholarship Award.</li>
