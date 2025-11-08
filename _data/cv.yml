@@ -2,96 +2,84 @@
   type: map
   contents:
     - name: Full Name
-      value: Albert Einstein
-    - name: Date of Birth
-      value: 14th March 1879
+      value: Babak Taheri
     - name: Languages
-      value: English, German
+      value: English # Add other languages if applicable
 
 - title: Education
   type: time_table
   contents:
-    - title: PhD
-      institution: University of Zurich, Zurich, Switzerland
-      year: 1905
+    - title: Georgia Institute of Technology
+      institution: Atlanta, GA
+      year: 2021 – 2024
       description:
-        - Description 1.
-        - Description 2.
-        - title: Description 3.
-          contents:
-            - Sub-description 1.
-            - Sub-description 2.
-    - title: Federal teaching diploma
-      institution: Eidgenössische Technische Hochschule, Zurich, Switzerland
-      year: 1900
+        - Ph.D. in Electrical & Computer Engineering
+        - M.Sc. in Electrical & Computer Engineering
+        - Minor in Industrial & Systems Engineering
+    - title: Sharif University of Technology
+      institution: Tehran
+      year: 2017 – 2019
       description:
-        - Description 1.
-        - Description 2.
+        - M.Sc. in Electrical Engineering (Ranked 2nd/19)
+    - title: University of Tabriz
+      institution: Tabriz
+      year: 2013 – 2017
+      description:
+        - B.Sc. in Electrical Engineering (Ranked 1st/200)
 
 - title: Experience
   type: time_table
   contents:
-    - title: Professor of Theoretical Physics
-      institution: Institute for Advanced Study, Princeton University
-      year: 1933 - 1955
-      description:
-        - Description 1.
-        - Description 2.
-        - title: Description 3.
-          contents:
-            - Sub-description 1.
-            - Sub-description 2.
-    - title: Visiting Professor
-      institution: California Institute of Technology, Pasadena, California, US
-      year: 1933
-      description:
-        - Description 1.
-        - Description 2.
-
-    - title: Director
-      institution: Kaiser Wilhelm Institute for Physics, Berlin, Germany.
-      year: 1917-1933
-
-    - title: Professor of Theoretical Physics
-      institution: Karl-Ferdinand University, Prague, Czechoslovakia
-      year: 1911 - 1917
-      description:
-
-    - title: Associate Professor of Theoretical Physics
-      institution: University of Zurich, Zurich, Switzerland
-      year: 1909 - 1911
-
-- title: Open Source Projects
-  type: time_table
-  contents:
-    - title: <a href="https://github.com/alshedivat/al-folio">al-folio</a>
-      year: 2015-now
-      description: A beautiful, simple, clean, and responsive Jekyll theme for academics.
+    - title: Research Scientist
+      institution: <a href="https://www.hitachienergy.com/us/en/about-us" target="_blank">Hitachi Energy Research</a>, Raleigh, NC
+      year: Jan. 2025 - Present
+    - title: Graduate Intern
+      institution: <a href="https://www.dominionenergy.com/" target="_blank">Dominion Energy</a>, Richmond, VA
+      year: May 2024 - Aug. 2024
+    - title: Graduate Intern
+      institution: <a href="https://www.nerc.com/" target="_blank">North American Electric Reliability Corporation</a>, Atlanta, GA
+      year: Jan. 2024 - May 2024
+    - title: Graduate Intern
+      institution: <a href="httpsD://www.dominionenergy.com/" target="_blank">Dominion Energy</a>, Richmond, VA
+      year: May 2023 - Aug. 2023
+    - title: Graduate Research & Teaching Assistant
+      institution: <a href="https://www.gatech.edu/" target="_blank">Georgia Institute of Technology</a>, Atlanta, GA
+      year: Aug. 2021 - Dec. 2024
 
 - title: Honors and Awards
   type: time_table
   contents:
-    - year: 1921
+    - year: 2023 & 2024
       items:
-        - Nobel Prize in Physics
-        - Matteucci Medal
-    - year: 2029
+        - Dominion Energy Scholarship (Awarded twice)
+    - year: 2020
       items:
-        - Max Planck Medal
+        - ECE Chaddick Fellowship at Georgia Tech
+    - year: 2019
+      items:
+        - Ranked 2nd in M.Sc. Program
+    - year: 2017
+      items:
+        - Ranked 1st in B.Sc. Program
+        - Exceptional Talent Direct Admission to M.Sc. Program
+    - year: 2013
+      items:
+        - Top 0.5% in Nationwide University Entrance Exam
 
 - title: Academic Interests
   type: nested_list
   contents:
-    - title: Topic 1.
+    - title: Mathematical Optimization & Machine Learning
       items:
-        - Description 1.
-        - Description 2.
-    - title: Topic 2.
+        - Applications in power and energy systems.
+        - Fostering a reliable, resilient, affordable, and sustainable energy future.
+    - title: Power Systems
       items:
-        - Description 1.
-        - Description 2.
+        - Optimal Power Flow (OPF)
+        - Optimal Transmission Switching (OTS)
+        - Power System Approximations (e.g., LinDistFlow)
 
 - title: Other Interests
   type: list
   contents:
-    - <u>Hobbies:</u> Hobby 1, Hobby 2, etc.
+    - <u>Hobbies:</u> Traveling, hiking, watching movies, playing soccer, and volleyball.
