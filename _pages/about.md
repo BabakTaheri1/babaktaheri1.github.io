@@ -1,6 +1,6 @@
 ---
-layout: Home
-title: Home
+layout: about
+title: about
 permalink: /
 subtitle: <a href='#'>Research Scientist @ Hitachi Energy Research</a>
 
