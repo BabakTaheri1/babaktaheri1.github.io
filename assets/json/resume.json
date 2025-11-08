@@ -4,7 +4,6 @@
     "label": "Research Scientist",
     "image": "",
     "email": "babaktaheri77@gmail.com",
-    "phone": "470-885-4227",
     "url": "https://babaktaheri1.github.io",
     "summary": "Research interests in Optimization, Mathematical Programming, Electric Power Systems, Machine Learning, Renewable Energy.",
     "location": {
@@ -204,15 +203,15 @@
   "publications": [
     {
       "name": "Improving the Accuracy of DC Optimal Power Flow Formulations via Parameter Optimization",
-      "publisher": "IEEE Transactions on Power Systems",
-      "releaseDate": "2025",
+      "publisher": "arXiv",
+      "releaseDate": "2025-11-08",
       "url": "https://arxiv.org/abs/2410.11725",
-      "summary": "Authors: Babak Taheri and Daniel K. Molzahn. Status: Under revision."
+      "summary": "Authors: Babak Taheri and Daniel K. Molzahn. [under review]"
     },
     {
       "name": "Optimizing Parameters of the LinDistFlow Power Flow Approximation for Distribution Systems",
       "publisher": "IEEE Transactions on Smart Grid",
-      "releaseDate": "2025",
+      "releaseDate": "2025-11-07",
       "url": "https://ieeexplore.ieee.org/document/11230858",
       "summary": "Authors: Babak Taheri, Rahul K. Gupta, and Daniel K. Molzahn. DOI: 10.1109/TSG.2025.3630047"
     },
@@ -346,10 +345,8 @@
       "name": "Research",
       "keywords": [
         "Optimization",
-        "Mathematical Programming",
-        "Electric Power Systems",
-        "Machine Learning",
-        "Renewable Energy"
+        "Power Systems",
+        "Machine Learning"
       ]
     }
   ]
