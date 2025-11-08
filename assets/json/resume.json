@@ -5,7 +5,7 @@
     "image": "",
     "email": "babaktaheri77@gmail.com",
     "url": "https://babaktaheri1.github.io",
-    "summary": "Research interests in Optimization, Mathematical Programming, Electric Power Systems, Machine Learning, Renewable Energy.",
+    "summary": "Research interests in Power Systems, Optimization, Machine Learning.",
     "location": {
       "city": "Raleigh",
       "region": "NC",
@@ -344,8 +344,8 @@
     {
       "name": "Research",
       "keywords": [
-        "Optimization",
         "Power Systems",
+        "Optimization",
         "Machine Learning"
       ]
     }
