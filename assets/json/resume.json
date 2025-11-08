@@ -1,200 +1,366 @@
 {
   "basics": {
-    "name": "Albert Einstein",
-    "label": "Scientist",
+    "name": "Babak Taheri",
+    "label": "Research Scientist",
     "image": "",
-    "email": "albert@einstein.de",
-    "phone": "(912) 123-4567",
-    "url": "https://alshedivat.github.io/al-folio/",
-    "summary": "A German-born theoretical physicist, widely ranked among the greatest and most influential scientists of all time",
+    "email": "babaktaheri77@gmail.com",
+    "phone": "470-885-4227",
+    "url": "https://babaktaheri1.github.io",
+    "summary": "Research interests in Optimization, Mathematical Programming, Electric Power Systems, Machine Learning, Renewable Energy.",
     "location": {
-      "address": "2712 Broadway St",
-      "postalCode": "CA 94115",
-      "city": "San Francisco",
-      "countryCode": "US",
-      "region": "California"
+      "city": "Raleigh",
+      "region": "NC",
+      "countryCode": "US"
     },
     "profiles": [
       {
-        "network": "Twitter",
-        "username": "AlbertEinstein",
-        "url": "https://twitter.com/AlbertEinstein"
+        "network": "GitHub",
+        "username": "BabakTaheri1",
+        "url": "https://github.com/BabakTaheri1"
+      },
+      {
+        "network": "LinkedIn",
+        "username": "Babak-Taheri",
+        "url": "https://linkedin.com/in/Babak-Taheri"
+      },
+      {
+        "network": "Google Scholar",
+        "username": "7_H8IkUAAAAJ",
+        "url": "https://scholar.google.com/citations?hl=en&user=7_H8IkUAAAAJ"
       }
     ]
   },
   "work": [
     {
-      "name": "Institute for Advanced Study, Princeton University",
-      "position": "Professor of Theoretical Physics",
-      "url": "https://example.com",
-      "startDate": "1933-01-01",
-      "endDate": "1955-01-01",
-      "summary": "Teaching at Palmer Physical Laboratory (now 302 Frist Campus Center). While not a professor at Princeton, I associated with the physics professors and continued to give lectures on campus.",
-      "highlights": ["Relativity"]
+      "name": "Hitachi Energy Research",
+      "position": "Research Scientist - Power System Optimization",
+      "location": "Raleigh, NC",
+      "startDate": "2025-01-01",
+      "endDate": "present",
+      "summary": "",
+      "highlights": [
+        "Developed a four-wire, three-phase unbalanced load flow (UBLF) engine to serve as a core analytical component for ADMS software.",
+        "Formulated mathematical models for a wide range of network components along with the underlying mismatch equations and Jacobian matrix, establishing foundation for high-fidelity network analysis.",
+        "Validated and benchmarked the engine's performance against existing UBLF solver, OpenDSS, and established IEEE test feeder results."
+      ]
+    },
+    {
+      "name": "Dominion Energy",
+      "position": "Graduate Intern, Electric Transmission Strategic Initiatives",
+      "location": "Richmond, VA",
+      "startDate": "2024-05-01",
+      "endDate": "2024-08-01",
+      "summary": "",
+      "highlights": [
+        "Created a PSS/E model of the Coastal Virginia Offshore Wind (CVOW) system and conducted a transfer limit study using TARA to determine the maximum power transfer capacity from CVOW before requiring system upgrades.",
+        "Performed generation deliverability studies (with PJM rules) under different dispatch scenarios to identify potential thermal violations and executed phasor-domain transient stability studies to analyze system stability and frequency response under sudden loss of CVOW units."
+      ]
+    },
+    {
+      "name": "North American Electric Reliability Corporation (NERC)",
+      "position": "Graduate Intern, Advanced System Analytics & Modeling",
+      "location": "Atlanta, GA",
+      "startDate": "2024-01-01",
+      "endDate": "2024-05-01",
+      "summary": "",
+      "highlights": [
+        "Developed Python scripts to automate the assessment of steady-state power flow and transient dynamics Case Quality Metrics, improving sustainability, efficiency, and accuracy in evaluating model performance in PSLF software.",
+        "Analyzed disturbances in BESS across the Western Interconnection using data from GOs, TOs, and WECC cases."
+      ]
+    },
+    {
+      "name": "Dominion Energy",
+      "position": "Graduate Intern, Electric Transmission Planning-Modeling",
+      "location": "Richmond, VA",
+      "startDate": "2023-05-01",
+      "endDate": "2023-08-01",
+      "summary": "",
+      "highlights": [
+        "Developed and validated transmission planning models to support long-term transmission planning for data centers in northern Virginia.",
+        "Proposed and developed an improved DC power flow model for N-1 and N-1-1 contingency analysis."
+      ]
+    },
+    {
+      "name": "Georgia Institute of Technology",
+      "position": "Graduate Research and Teaching Assistant",
+      "location": "Atlanta, GA",
+      "startDate": "2021-08-01",
+      "endDate": "2024-12-01",
+      "summary": "",
+      "highlights": [
+        "Conducted research on ML and optimization methods for algorithmic improvements in various power system problems, including DC power flow, network equivalencing, DC-OPF, optimal transmission switching, unit commitment, state estimation, and AC power flow feasibility.",
+        "Assisted in teaching graduate-level courses on networked control and electrical energy conversion."
+      ]
+    },
+    {
+      "name": "Sharif University of Technology",
+      "position": "Graduate Research and Teaching Assistant",
+      "location": "Tehran",
+      "startDate": "2017-09-01",
+      "endDate": "2021-05-01",
+      "summary": "",
+      "highlights": [
+        "Conducted research on enhancing the resilience of power systems to natural disasters and other high-impact low-probability disruptions.",
+        "Assisted in teaching a course on electrical distribution systems, graded assignments, and provided feedback to students."
+      ]
     }
   ],
   "volunteer": [
     {
-      "organization": "People's Climate March",
-      "location": "Zurich, Switzerland",
-      "position": "Lead Organizer",
-      "url": "https://example.com",
-      "startDate": "2014-04-01",
-      "endDate": "2015-07-01",
-      "summary": "Lead organizer for the New York City branch of the People's Climate March, the largest climate march in history.",
-      "highlights": ["Awarded 'Climate Hero' award by Greenpeace for my efforts organizing the march.", "Men of the year 2014 by Time magazine"]
+      "organization": "IEEE, IET, EPSR, RESS, IJEPES Journals and Conferences",
+      "position": "Reviewer",
+      "startDate": "2019-01-01",
+      "endDate": "present",
+      "summary": "Reviewer for journals and conferences including IEEE (TPWRS, TSG, TPWRD, Power Engineering Letters, CDC), IET (GTD, RPG), EPSR, RESS, IJEPES"
     }
   ],
   "education": [
     {
-      "institution": "University of Zurich, Zurich, Switzerland",
-      "location": "Zurich, Switzerland",
-      "url": "https://www.uzh.ch/",
-      "area": "Software Development",
-      "studyType": "PhD",
-      "startDate": "1905-01-01",
-      "endDate": "1905-01-01",
-      "score": "10",
-      "courses": ["Theory of Relativity"]
+      "institution": "Georgia Institute of Technology",
+      "location": "Atlanta, GA",
+      "area": "Electrical and Computer Engineering",
+      "studyType": "Ph.D.",
+      "startDate": "2021-08-01",
+      "endDate": "2024-12-01",
+      "courses": [
+        "Dissertation: Improving Power System Approximations Through Machine Learning-Inspired Optimization Methods",
+        "Advisor: Dr. Daniel K. Molzahn",
+        "Minor in Industrial and Systems Engineering (ISyE)"
+      ]
+    },
+    {
+      "institution": "Georgia Institute of Technology",
+      "location": "Atlanta, GA",
+      "area": "Electrical and Computer Engineering",
+      "studyType": "M.Sc.",
+      "startDate": "2021-08-01",
+      "endDate": "2024-05-01"
+    },
+    {
+      "institution": "Sharif University of Technology",
+      "location": "Tehran",
+      "area": "Electrical Engineering - Power Systems",
+      "studyType": "M.Sc.",
+      "startDate": "2017-09-01",
+      "endDate": "2019-05-01",
+      "score": "4.00/4.00"
+    },
+    {
+      "institution": "University of Tabriz",
+      "location": "Tabriz",
+      "area": "Electrical Engineering - Power",
+      "studyType": "B.Sc.",
+      "startDate": "2013-09-01",
+      "endDate": "2017-06-01",
+      "score": "3.94/4.00"
     }
   ],
   "awards": [
     {
-      "title": "Nobel Prize in Physics",
-      "date": "1921-11-01",
-      "awarder": "Royal Swedish Academy of Sciences",
-      "url": "https://www.nobelprize.org/prizes/physics/1921/einstein/biographical/",
-      "summary": "The Nobel Prizes are five separate prizes that, according to Alfred Nobel's will of 1895, are awarded to 'those who, during the preceding year, have conferred the greatest benefit to humankind.'"
+      "title": "Dominion Energy Scholarship",
+      "date": "2024-01-01",
+      "awarder": "Dominion Energy",
+      "summary": "Awarded the Dominion Energy Inclusion, Equity, and Diversity Scholarship (Awarded twice 2023 & 2024)"
+    },
+    {
+      "title": "Chaddick Fellowship",
+      "date": "2020-01-01",
+      "awarder": "Georgia Institute of Technology, ECE",
+      "summary": "Awarded the Georgia Tech ECE Chaddick Fellowship"
+    },
+    {
+      "title": "Ranked 2nd in M.Sc. Class",
+      "date": "2019-05-01",
+      "awarder": "Sharif University of Technology",
+      "summary": "Ranked 2nd in Cumulative GPA (out of 19 students)"
+    },
+    {
+      "title": "Ranked 1st in B.Sc. Class",
+      "date": "2017-06-01",
+      "awarder": "University of Tabriz",
+      "summary": "Ranked 1st in Cumulative GPA, among all entrants of 2013 (nearly 200 students)"
+    },
+    {
+      "title": "Distinction - Direct M.Sc. Admission",
+      "date": "2017-01-01",
+      "awarder": "Sharif University of Technology",
+      "summary": "Granted direct M.Sc. admission to Sharif University with a national entrance exam waiver"
+    },
+    {
+      "title": "Top 0.5% in Nationwide University Entrance Exam",
+      "date": "2013-01-01",
+      "awarder": "National University Entrance Exam",
+      "summary": "Ranked within the Top 0.5% in B.Sc. Mathematics and Physics Nationwide University Entrance Exam"
     }
   ],
   "certificates": [
     {
-      "name": "Machine Learning",
-      "date": "2018-01-01",
-      "issuer": "Stanford University",
-      "url": "https://example.com",
-      "icon": "fa-solid fa-location-dot"
+      "name": "Deep Learning Specialization (v.2)",
+      "date": "2025-08-01",
+      "issuer": "Coursera",
+      "url": "https://www.credly.com/badges/34247948-2f3e-4fd3-b4c4-509b2f26b577/public_url"
     },
     {
-      "name": "Quantum Computing",
-      "date": "2018-01-01",
-      "issuer": "Stanford University",
-      "url": "https://example.com",
-      "icon": "fa-solid fa-tag"
+      "name": "Grid Science Winter School and Conference",
+      "date": "2023-01-01",
+      "issuer": "Los Alamos National Laboratory"
     },
     {
-      "name": "Quantum Information",
-      "date": "2018-01-01",
-      "issuer": "Stanford University",
-      "url": "https://example.com",
-      "icon": "fa-solid fa-envelope"
-    },
-    {
-      "name": "Quantum Cryptography",
-      "date": "2018-01-01",
-      "issuer": "Stanford University",
-      "url": "https://example.com",
-      "icon": "fa-solid fa-hashtag"
-    },
-    {
-      "name": "Quantum Communication",
-      "date": "2018-01-01",
-      "issuer": "Stanford University",
-      "url": "https://example.com",
-      "icon": "fa-solid fa-calendar"
-    },
-    {
-      "name": "Quantum Teleportation",
-      "date": "2018-01-01",
-      "issuer": "Stanford University",
-      "url": "https://example.com",
-      "icon": "fa-solid fa-clipboard-check"
+      "name": "PSERC Transformation Summer School",
+      "date": "2022-07-01",
+      "issuer": "Arizona State University"
     }
   ],
   "publications": [
     {
-      "name": "Zur Elektrody/namik bewegter Körper",
-      "publisher": "Annalen der Physik",
-      "releaseDate": "1905-06-30",
-      "url": "https://en.wikisource.org/wiki/Translation:On_the_Electrodynamics_of_Moving_Bodies",
-      "summary": "It concerned an interpretation of the Michelson–Morley experiment and the properties of light and time. Special relativity incorporates the principle that the speed of light is the same for all inertial observers regardless of the state of motion of the source."
+      "name": "Improving the Accuracy of DC Optimal Power Flow Formulations via Parameter Optimization",
+      "publisher": "IEEE Transactions on Power Systems",
+      "releaseDate": "2025",
+      "url": "https://arxiv.org/abs/2410.11725",
+      "summary": "Authors: Babak Taheri and Daniel K. Molzahn. Status: Under revision."
     },
     {
-      "name": "Über einen die Erzeugung und Verwandlung des Lichtes betreffenden heuristischen Gesichtspunkt",
-      "publisher": "Annalen der Physik",
-      "releaseDate": "1905-03-18",
-      "url": "https://de.wikisource.org/wiki/Über_einen_die_Erzeugung_und_Verwandlung_des_Lichtes_betreffenden_heuristischen_Gesichtspunkt",
-      "summary": "In the second paper, he applied the quantum theory to light to explain the photoelectric effect. In particular, he used the idea of light quanta (photons) to explain experimental results, but stressed the importance of the experimental results. The importance of his work on the photoelectric effect earned him the Nobel Prize in Physics in 1921."
+      "name": "Optimizing Parameters of the LinDistFlow Power Flow Approximation for Distribution Systems",
+      "publisher": "IEEE Transactions on Smart Grid",
+      "releaseDate": "2025",
+      "url": "https://ieeexplore.ieee.org/document/11230858",
+      "summary": "Authors: Babak Taheri, Rahul K. Gupta, and Daniel K. Molzahn. DOI: 10.1109/TSG.2025.3630047"
     },
     {
-      "name": "Die Grundlage der allgemeinen Relativitätstheorie",
-      "publisher": "Annalen der Physik",
-      "releaseDate": "1916-03-20",
-      "url": "https://de.wikisource.org/wiki/Die_Grundlage_der_allgemeinen_Relativitätstheorie",
-      "summary": "The publication of the theory of general relativity made him internationally famous. He was professor of physics at the universities of Zurich (1909–1911) and Prague (1911–1912), before he returned to ETH Zurich (1912–1914)."
+      "name": "AC-Informed DC Optimal Transmission Switching Problems via Parameter Optimization",
+      "publisher": "IEEE Transactions on Power Systems",
+      "releaseDate": "2025-11-01",
+      "url": "https://ieeexplore.ieee.org/document/11023158",
+      "summary": "Authors: Babak Taheri and Daniel K. Molzahn. Vol. 40, no. 6, pp. 5422-5433."
+    },
+    {
+      "name": "Co-Optimization of Damage Assessment and Restoration: A Resilience-Driven Dynamic Crew Allocation for Power Distribution Systems",
+      "publisher": "IEEE Transactions on Power Systems",
+      "releaseDate": "2025-01-01",
+      "url": "https://ieeexplore.ieee.org/document/10508102",
+      "summary": "Authors: Ali Jalilian, Babak Taheri, and Daniel K. Molzahn. Vol. 40, no. 1, pp. 676-688."
+    },
+    {
+      "name": "Optimizing Parameters of the DC Power Flow",
+      "publisher": "Electric Power Systems Research (PSCC 2024)",
+      "releaseDate": "2024-10-01",
+      "url": "https://pscc-central.epfl.ch/repo/papers/2024/2024_87.pdf",
+      "summary": "Authors: Babak Taheri and Daniel K. Molzahn. Vol. 235, no. 110719. Presented at the 23rd Power Systems Computation Conference (PSCC), Paris, France."
+    },
+    {
+      "name": "AC Power Flow Feasibility Restoration through State Estimation-Based Post-Processing",
+      "publisher": "Electric Power Systems Research (PSCC 2024)",
+      "releaseDate": "2024",
+      "url": "https://pscc-central.epfl.ch/repo/papers/2024/2024_184.pdf",
+      "summary": "Authors: Babak Taheri and Daniel K. Molzahn. Vol. 235, no. 110642. Presented at the 23rd Power Systems Computation Conference (PSCC), Paris, France."
+    },
+    {
+      "name": "Improving Distribution System Resilience by Undergrounding Lines and Deploying Mobile Generators",
+      "publisher": "Electric Power Systems Research",
+      "releaseDate": "2023",
+      "url": "https://www.sciencedirect.com/science/article/pii/S0378779622008586",
+      "summary": "Authors: Babak Taheri, Daniel K. Molzahn, and Santiago Grijalva. Vol. 214, 108804."
+    },
+    {
+      "name": "Tie-Line Planning for Resilience Enhancement in Unbalanced Distribution Networks",
+      "publisher": "IET Generation, Transmission & Distribution",
+      "releaseDate": "2022",
+      "url": "https://ietresearch.onlinelibrary.wiley.com/doi/epdf/10.1049/gtd2.12347",
+      "summary": "Authors: Babak Taheri and Amir Safdarian. Vol. 16, pp. 1030–1046."
+    },
+    {
+      "name": "Distribution System Resilience Enhancement via Mobile Emergency Generators",
+      "publisher": "IEEE Transactions on Power Delivery",
+      "releaseDate": "2021-08-01",
+      "url": "https://ieeexplore.ieee.org/document/9136725",
+      "summary": "Authors: Babak Taheri, Amir Safdarian, Moein M. Aghtaie, and Matti Lehtonen. Vol. 36, no. 4, pp. 2308–2319."
+    },
+    {
+      "name": "Enhancing Resilience Level of Power Distribution Systems Using Proactive Operational Actions",
+      "publisher": "IEEE Access",
+      "releaseDate": "2019",
+      "url": "https://ieeexplore.ieee.org/document/8839073",
+      "summary": "Authors: Babak Taheri, Amir Safdarian, Moein M. Aghtaie, and Matti Lehtonen. Vol. 7, pp. 137378–137389."
+    },
+    {
+      "name": "Distribution Systems Resilience Enhancement via Pre- and Post-Event Actions",
+      "publisher": "IET Smart Grid",
+      "releaseDate": "2019",
+      "url": "https://ietresearch.onlinelibrary.wiley.com/doi/full/10.1049/iet-stg.2019.0035",
+      "summary": "Authors: Babak Taheri, Amir Safdarian, Moein M. Aghtaie, and Matti Lehtonen. Vol. 2, no. 4, pp. 549–556."
+    },
+    {
+      "name": "AC Power Flow Informed Parameter Learning for DC Power Flow Network Equivalents",
+      "publisher": "2024 IEEE Texas Power and Energy Conference (TPEC)",
+      "releaseDate": "2024",
+      "url": "https://ieeexplore.ieee.org/document/10472173",
+      "summary": "Authors: Babak Taheri and Daniel K. Molzahn. pp. 1–6."
+    },
+    {
+      "name": "Restoring AC Power Flow Feasibility from Relaxed and Approximated Optimal Power Flow Models",
+      "publisher": "2023 American Control Conference (ACC)",
+      "releaseDate": "2023",
+      "url": "https://ieeexplore.ieee.org/document/10156521",
+      "summary": "Authors: Babak Taheri and Daniel K. Molzahn. pp. 4463–4470."
+    },
+    {
+      "name": "Hardening Strategy to Boost Resilience of Distribution Systems via Harnessing a Proactive Operation Model",
+      "publisher": "2019 Smart Grid Conference",
+      "releaseDate": "2019",
+      "url": "https://ieeexplore.ieee.org/document/9056585",
+      "summary": "Authors: Babak Taheri, Ali Jalilian, and Amir Safdarian. pp. 1–6."
     }
   ],
   "skills": [
     {
-      "name": "Physics",
-      "level": "Master",
-      "icon": "fa-solid fa-hashtag",
+      "name": "Programming",
       "keywords": [
-        "Quantum Mechanics",
-        "Quantum Computing",
-        "Quantum Information",
-        "Quantum Cryptography",
-        "Quantum Communication",
-        "Quantum Teleportation"
+        "Python (PyTorch, Scipy, Numpy, Pandas, Scikit-learn)",
+        "Julia (JuMP)",
+        "C++",
+        "GAMS",
+        "MATLAB"
+      ]
+    },
+    {
+      "name": "Software",
+      "keywords": [
+        "PSS/E",
+        "PSLF",
+        "PowerGEM TARA",
+        "OpenDSS",
+        "PowerWorld",
+        "Pypower"
+      ]
+    },
+    {
+      "name": "Optimization",
+      "keywords": [
+        "Gurobi",
+        "CPLEX",
+        "Ipopt",
+        "Mosek",
+        "CVXPY",
+        "cvxpylayers"
       ]
     }
   ],
   "languages": [
     {
-      "language": "German",
-      "fluency": "Native speaker",
-      "icon": ""
-    },
-    {
       "language": "English",
-      "fluency": "Fluent",
-      "icon": ""
+      "fluency": "Fluent"
     }
   ],
   "interests": [
     {
-      "name": "Physics",
-      "icon": "fa-solid fa-tag",
+      "name": "Research",
       "keywords": [
-        "Quantum Mechanics",
-        "Quantum Computing",
-        "Quantum Information",
-        "Quantum Cryptography",
-        "Quantum Communication",
-        "Quantum Teleportation"
+        "Optimization",
+        "Mathematical Programming",
+        "Electric Power Systems",
+        "Machine Learning",
+        "Renewable Energy"
       ]
-    }
-  ],
-  "references": [
-    {
-      "name": "Professor John Doe",
-      "icon": "fa-solid fa-laptop",
-      "reference": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam condimentum, diam quis convallis euismod, arcu mi ullamcorper lorem, a vestibulum nunc magna at sem. Sed in risus ac felis varius blandit. D"
-    },
-    {
-      "name": "Professor John Doe",
-      "icon": "fa-solid fa-thumbtack",
-      "reference": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam condimentum, diam quis convallis euismod, arcu mi ullamcorper lorem, a vestibulum nunc magna at sem. Sed in risus ac felis varius blandit. D"
-    }
-  ],
-  "projects": [
-    {
-      "name": "Quantum Computing",
-      "summary": "Quantum computing is the use of quantum-mechanical phenomena such as superposition and entanglement to perform computation. Computers that perform quantum computations are known as quantum computers.",
-      "highlights": ["Quantum Teleportation", "Quantum Cryptography"],
-      "startDate": "2018-01-01",
-      "endDate": "2018-01-01",
-      "url": "https://example.com"
     }
   ]
 }
