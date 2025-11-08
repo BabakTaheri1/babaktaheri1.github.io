@@ -7,3 +7,39 @@
 
 "Vision":
   color: "#009f36"
+
+"arXiv":
+  url: https://arxiv.org/
+
+"IEEE TSG":
+  url: https://ieeexplore.ieee.org/xpl/RecentIssue.jsp?punumber=5165411
+
+"IEEE TPWRS":
+  url: https://ieeexplore.ieee.org/xpl/RecentIssue.jsp?punumber=61
+
+"EPSR (PSCC)":
+  url: https://www.sciencedirect.com/journal/electric-power-systems-research
+
+"EPSR":
+  url: https://www.sciencedirect.com/journal/electric-power-systems-research
+
+"IET GTD":
+  url: https://ietresearch.onlinelibrary.wiley.com/journal/17518687
+
+"IEEE TPD":
+  url: https://ieeexplore.ieee.org/xpl/RecentIssue.jsp?punumber=62
+
+"IEEE Access":
+  url: https://ieeexplore.ieee.org/xpl/RecentIssue.jsp?punumber=6287639
+
+"IET SG":
+  url: https://ietresearch.onlinelibrary.wiley.com/journal/25152947
+
+"TPEC":
+  url: https://ieeexplore.ieee.org/xpl/conhome/1800627/all-proceedings
+
+"ACC":
+  url: https://ieeexplore.ieee.org/xpl/conhome/1000010/all-proceedings
+
+"SGC":
+  url: https://ieeexplore.ieee.org/xpl/conhome/1801889/all-proceedings
