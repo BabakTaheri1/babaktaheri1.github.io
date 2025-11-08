@@ -39,9 +39,7 @@
       "endDate": "present",
       "summary": "",
       "highlights": [
-        "Developed a four-wire, three-phase unbalanced load flow (UBLF) engine to serve as a core analytical component for ADMS software.",
-        "Formulated mathematical models for a wide range of network components along with the underlying mismatch equations and Jacobian matrix, establishing foundation for high-fidelity network analysis.",
-        "Validated and benchmarked the engine's performance against existing UBLF solver, OpenDSS, and established IEEE test feeder results."
+        ""
       ]
     },
     {
@@ -52,8 +50,6 @@
       "endDate": "2024-08-01",
       "summary": "",
       "highlights": [
-        "Created a PSS/E model of the Coastal Virginia Offshore Wind (CVOW) system and conducted a transfer limit study using TARA to determine the maximum power transfer capacity from CVOW before requiring system upgrades.",
-        "Performed generation deliverability studies (with PJM rules) under different dispatch scenarios to identify potential thermal violations and executed phasor-domain transient stability studies to analyze system stability and frequency response under sudden loss of CVOW units."
       ]
     },
     {
@@ -64,8 +60,6 @@
       "endDate": "2024-05-01",
       "summary": "",
       "highlights": [
-        "Developed Python scripts to automate the assessment of steady-state power flow and transient dynamics Case Quality Metrics, improving sustainability, efficiency, and accuracy in evaluating model performance in PSLF software.",
-        "Analyzed disturbances in BESS across the Western Interconnection using data from GOs, TOs, and WECC cases."
       ]
     },
     {
@@ -76,8 +70,6 @@
       "endDate": "2023-08-01",
       "summary": "",
       "highlights": [
-        "Developed and validated transmission planning models to support long-term transmission planning for data centers in northern Virginia.",
-        "Proposed and developed an improved DC power flow model for N-1 and N-1-1 contingency analysis."
       ]
     },
     {
@@ -88,8 +80,6 @@
       "endDate": "2024-12-01",
       "summary": "",
       "highlights": [
-        "Conducted research on ML and optimization methods for algorithmic improvements in various power system problems, including DC power flow, network equivalencing, DC-OPF, optimal transmission switching, unit commitment, state estimation, and AC power flow feasibility.",
-        "Assisted in teaching graduate-level courses on networked control and electrical energy conversion."
       ]
     },
     {
