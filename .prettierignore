@@ -1,9 +1,10 @@
+# 1. Ignore ALL minified files
 **/*.min.css
 **/*.min.js
-assets/css/main.scss
-assets/js/search/*.js
-assets/plotly/demo.html
-lighthouse_results/**
-_sass/font-awesome/*.scss
-_sass/tabler-icons/*.scss
-_scripts/*
+
+# 2. Ignore generated reports
+lighthouse_results/
+
+# 3. Ignore third-party libraries
+_sass/font-awesome/
+_sass/tabler-icons/

@@ -29,7 +29,7 @@
       }
     ]
   },
-    "education": [
+  "education": [
     {
       "institution": "Georgia Institute of Technology",
       "location": "Atlanta, GA",
@@ -78,9 +78,7 @@
       "startDate": "2025-01-01",
       "endDate": "present",
       "summary": "",
-      "highlights": [
-        ""
-      ]
+      "highlights": [""]
     },
     {
       "name": "Dominion Energy",
@@ -89,8 +87,7 @@
       "startDate": "2024-05-01",
       "endDate": "2024-08-01",
       "summary": "",
-      "highlights": [
-      ]
+      "highlights": []
     },
     {
       "name": "North American Electric Reliability Corporation (NERC)",
@@ -99,8 +96,7 @@
       "startDate": "2024-01-01",
       "endDate": "2024-05-01",
       "summary": "",
-      "highlights": [
-      ]
+      "highlights": []
     },
     {
       "name": "Dominion Energy",
@@ -109,8 +105,7 @@
       "startDate": "2023-05-01",
       "endDate": "2023-08-01",
       "summary": "",
-      "highlights": [
-      ]
+      "highlights": []
     },
     {
       "name": "Georgia Institute of Technology",
@@ -119,8 +114,7 @@
       "startDate": "2021-08-01",
       "endDate": "2024-12-01",
       "summary": "",
-      "highlights": [
-      ]
+      "highlights": []
     },
     {
       "name": "Sharif University of Technology",
@@ -129,8 +123,7 @@
       "startDate": "2017-09-01",
       "endDate": "2021-05-01",
       "summary": "",
-      "highlights": [
-      ]
+      "highlights": []
     }
   ],
   "volunteer": [
@@ -302,35 +295,15 @@
   "skills": [
     {
       "name": "Programming",
-      "keywords": [
-        "Python (PyTorch, Scipy, Numpy, Pandas, Scikit-learn)",
-        "Julia (JuMP)",
-        "C++",
-        "GAMS",
-        "MATLAB"
-      ]
+      "keywords": ["Python (PyTorch, Scipy, Numpy, Pandas, Scikit-learn)", "Julia (JuMP)", "C++", "GAMS", "MATLAB"]
     },
     {
       "name": "Software",
-      "keywords": [
-        "PSS/E",
-        "PSLF",
-        "PowerGEM TARA",
-        "OpenDSS",
-        "PowerWorld",
-        "Pypower"
-      ]
+      "keywords": ["PSS/E", "PSLF", "PowerGEM TARA", "OpenDSS", "PowerWorld", "Pypower"]
     },
     {
       "name": "Optimization",
-      "keywords": [
-        "Gurobi",
-        "CPLEX",
-        "Ipopt",
-        "Mosek",
-        "CVXPY",
-        "cvxpylayers"
-      ]
+      "keywords": ["Gurobi", "CPLEX", "Ipopt", "Mosek", "CVXPY", "cvxpylayers"]
     }
   ]
 }
