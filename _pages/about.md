@@ -2,7 +2,7 @@
 layout: Home
 title: Home
 permalink: /
-subtitle: <a href='#'>Affiliations</a>. Address. Contacts. Motto. Etc.
+subtitle: <a href='#'>Research Scientist @ Hitachi Energy Research</a>
 
 profile:
   align: right
