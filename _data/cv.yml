@@ -1,85 +1,85 @@
-- title: General Information
-  type: map
-  contents:
-    - name: Full Name
-      value: Babak Taheri
-    - name: Languages
-      value: English # Add other languages if applicable
-
-- title: Education
-  type: time_table
-  contents:
-    - title: Georgia Institute of Technology
-      institution: Atlanta, GA
-      year: 2021 – 2024
-      description:
-        - Ph.D. in Electrical & Computer Engineering
-        - M.Sc. in Electrical & Computer Engineering
-        - Minor in Industrial & Systems Engineering
-    - title: Sharif University of Technology
-      institution: Tehran
-      year: 2017 – 2019
-      description:
-        - M.Sc. in Electrical Engineering (Ranked 2nd/19)
-    - title: University of Tabriz
-      institution: Tabriz
-      year: 2013 – 2017
-      description:
-        - B.Sc. in Electrical Engineering (Ranked 1st/200)
-
-- title: Experience
-  type: time_table
-  contents:
-    - title: Research Scientist
-      institution: <a href="https://www.hitachienergy.com/us/en/about-us" target="_blank">Hitachi Energy Research</a>, Raleigh, NC
-      year: Jan. 2025 - Present
-    - title: Graduate Intern
-      institution: <a href="https://www.dominionenergy.com/" target="_blank">Dominion Energy</a>, Richmond, VA
-      year: May 2024 - Aug. 2024
-    - title: Graduate Intern
-      institution: <a href="https://www.nerc.com/" target="_blank">North American Electric Reliability Corporation</a>, Atlanta, GA
-      year: Jan. 2024 - May 2024
-    - title: Graduate Intern
-      institution: <a href="httpsD://www.dominionenergy.com/" target="_blank">Dominion Energy</a>, Richmond, VA
-      year: May 2023 - Aug. 2023
-    - title: Graduate Research & Teaching Assistant
-      institution: <a href="https://www.gatech.edu/" target="_blank">Georgia Institute of Technology</a>, Atlanta, GA
-      year: Aug. 2021 - Dec. 2024
-
-- title: Honors and Awards
-  type: time_table
-  contents:
-    - year: 2023 & 2024
-      items:
-        - Dominion Energy Scholarship (Awarded twice)
-    - year: 2020
-      items:
-        - ECE Chaddick Fellowship at Georgia Tech
-    - year: 2019
-      items:
-        - Ranked 2nd in M.Sc. Program
-    - year: 2017
-      items:
-        - Ranked 1st in B.Sc. Program
-        - Exceptional Talent Direct Admission to M.Sc. Program
-    - year: 2013
-      items:
-        - Top 0.5% in Nationwide University Entrance Exam
-
-- title: Academic Interests
-  type: nested_list
-  contents:
-    - title: Mathematical Optimization & Machine Learning
-      items:
-        - Applications in power and energy systems.
-        - Fostering a reliable, resilient, affordable, and sustainable energy future.
-    - title: Power Systems
-      items:
-        - Optimal Power Flow (OPF)
-        - Optimal Transmission Switching (OTS)
-        - Power System Approximations (e.g., LinDistFlow)
-
-- title: Other Interests
-  type: list
-  contents:
-    - <u>Hobbies:</u> Traveling, hiking, watching movies, playing soccer, and volleyball.
+#- title: General Information
+#  type: map
+#  contents:
+#    - name: Full Name
+#      value: Babak Taheri
+#    - name: Languages
+#      value: English # Add other languages if applicable
+#
+#- title: Education
+#  type: time_table
+#  contents:
+#    - title: Georgia Institute of Technology
+#      institution: Atlanta, GA
+#      year: 2021 – 2024
+#      description:
+#        - Ph.D. in Electrical & Computer Engineering
+#        - M.Sc. in Electrical & Computer Engineering
+#        - Minor in Industrial & Systems Engineering
+#    - title: Sharif University of Technology
+#      institution: Tehran
+#      year: 2017 – 2019
+#      description:
+#        - M.Sc. in Electrical Engineering (Ranked 2nd/19)
+#    - title: University of Tabriz
+#      institution: Tabriz
+#      year: 2013 – 2017
+#      description:
+#        - B.Sc. in Electrical Engineering (Ranked 1st/200)
+#
+#- title: Experience
+#  type: time_table
+#  contents:
+#    - title: Research Scientist
+#      institution: <a href="https://www.hitachienergy.com/us/en/about-us" target="_blank">Hitachi Energy Research</a>, Raleigh, NC
+#      year: Jan. 2025 - Present
+#    - title: Graduate Intern
+#      institution: <a href="https://www.dominionenergy.com/" target="_blank">Dominion Energy</a>, Richmond, VA
+#      year: May 2024 - Aug. 2024
+#    - title: Graduate Intern
+#      institution: <a href="https://www.nerc.com/" target="_blank">North American Electric Reliability Corporation</a>, Atlanta, GA
+#      year: Jan. 2024 - May 2024
+#    - title: Graduate Intern
+#      institution: <a href="httpsD://www.dominionenergy.com/" target="_blank">Dominion Energy</a>, Richmond, VA
+#      year: May 2023 - Aug. 2023
+#    - title: Graduate Research & Teaching Assistant
+#      institution: <a href="https://www.gatech.edu/" target="_blank">Georgia Institute of Technology</a>, Atlanta, GA
+#      year: Aug. 2021 - Dec. 2024
+#
+#- title: Honors and Awards
+#  type: time_table
+#  contents:
+#    - year: 2023 & 2024
+#      items:
+#        - Dominion Energy Scholarship (Awarded twice)
+#    - year: 2020
+#      items:
+#        - ECE Chaddick Fellowship at Georgia Tech
+#    - year: 2019
+#      items:
+#        - Ranked 2nd in M.Sc. Program
+#    - year: 2017
+#      items:
+#        - Ranked 1st in B.Sc. Program
+#        - Exceptional Talent Direct Admission to M.Sc. Program
+#    - year: 2013
+#      items:
+#        - Top 0.5% in Nationwide University Entrance Exam
+#
+#- title: Academic Interests
+#  type: nested_list
+#  contents:
+#    - title: Mathematical Optimization & Machine Learning
+#      items:
+#        - Applications in power and energy systems.
+#        - Fostering a reliable, resilient, affordable, and sustainable energy future.
+#    - title: Power Systems
+#      items:
+#        - Optimal Power Flow (OPF)
+#        - Optimal Transmission Switching (OTS)
+#        - Power System Approximations (e.g., LinDistFlow)
+#
+#- title: Other Interests
+#  type: list
+#  contents:
+#    - <u>Hobbies:</u> Traveling, hiking, watching movies, playing soccer, and volleyball.
