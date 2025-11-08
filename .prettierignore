@@ -1,10 +1,23 @@
-# 1. Ignore ALL minified files
+# Jekyll build output
+_site/
+.jekyll-cache/
+.jekyll-metadata
+
+# Node.js and Ruby dependencies
+node_modules/
+vendor/
+
+# Minified files
 **/*.min.css
 **/*.min.js
 
-# 2. Ignore generated reports
+# Jekyll template files that Prettier doesn't understand
+_scripts/
+assets/css/main.scss
+
+# Generated reports
 lighthouse_results/
 
-# 3. Ignore third-party libraries
+# Third-party libraries
 _sass/font-awesome/
 _sass/tabler-icons/
