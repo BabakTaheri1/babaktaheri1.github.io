@@ -5,4 +5,4 @@ inline: true
 related_posts: false
 ---
 
-I defended my dissertation on <em>Improving Power System Approximations Through Machine Learning-Inspired Optimization Methods<em> to complete the **Ph.D.** degree.
+I defended my dissertation on Improving Power System Approximations Through Machine Learning-Inspired Optimization Methods to complete the **Ph.D.** degree.

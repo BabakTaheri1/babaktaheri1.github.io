@@ -5,4 +5,4 @@ inline: true
 related_posts: false
 ---
 
-Our paper on <em>AC-Informed DC Optimal Transmission Switching<em> has been accepted to the **IEEE Transactions on Power Systems**.
+Our paper on AC-Informed DC Optimal Transmission Switching has been accepted to the **IEEE Transactions on Power Systems**.
