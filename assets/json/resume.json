@@ -4,7 +4,7 @@
     "label": "Research Scientist",
     "image": "",
     "email": "babaktaheri77@gmail.com",
-    //"url": "https://babaktaheri1.github.io",
+    "url": "https://babaktaheri1.github.io",
     "summary": "Research interests in Power Systems, Optimization, Machine Learning.",
     "location": {
       "city": "Raleigh",
@@ -298,39 +298,39 @@
       "url": "https://ieeexplore.ieee.org/document/9056585",
       "summary": "Authors: Babak Taheri, Ali Jalilian, and Amir Safdarian. pp. 1–6."
     }
+  ],
+  "skills": [
+    {
+      "name": "Programming",
+      "keywords": [
+        "Python (PyTorch, Scipy, Numpy, Pandas, Scikit-learn)",
+        "Julia (JuMP)",
+        "C++",
+        "GAMS",
+        "MATLAB"
+      ]
+    },
+    {
+      "name": "Software",
+      "keywords": [
+        "PSS/E",
+        "PSLF",
+        "PowerGEM TARA",
+        "OpenDSS",
+        "PowerWorld",
+        "Pypower"
+      ]
+    },
+    {
+      "name": "Optimization",
+      "keywords": [
+        "Gurobi",
+        "CPLEX",
+        "Ipopt",
+        "Mosek",
+        "CVXPY",
+        "cvxpylayers"
+      ]
+    }
   ]
-//  "skills": [
-//    {
-//      "name": "Programming",
-//      "keywords": [
-//        "Python (PyTorch, Scipy, Numpy, Pandas, Scikit-learn)",
-//        "Julia (JuMP)",
-//        "C++",
-//        "GAMS",
-//        "MATLAB"
-//      ]
-//    },
-//    {
-//      "name": "Software",
-//      "keywords": [
-//        "PSS/E",
-//        "PSLF",
-//        "PowerGEM TARA",
-//        "OpenDSS",
-//        "PowerWorld",
-//        "Pypower"
-//      ]
-//    },
-//    {
-//      "name": "Optimization",
-//      "keywords": [
-//        "Gurobi",
-//        "CPLEX",
-//        "Ipopt",
-//        "Mosek",
-//        "CVXPY",
-//        "cvxpylayers"
-//      ]
-//    }
-//  ]
 }
