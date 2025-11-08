@@ -35,11 +35,9 @@
       "location": "Atlanta, GA",
       "area": "Electrical and Computer Engineering",
       "studyType": "Ph.D.",
-      "startDate": "2021-08-01",
-      "endDate": "2024-12-01",
+      "startDate": "2021-08",
+      "endDate": "2024-12",
       "courses": [
-        "Dissertation: Improving Power System Approximations Through Machine Learning-Inspired Optimization Methods",
-        "Advisor: Dr. Daniel K. Molzahn",
         "Minor in Industrial and Systems Engineering (ISyE)"
       ]
     },
@@ -48,16 +46,16 @@
       "location": "Atlanta, GA",
       "area": "Electrical and Computer Engineering",
       "studyType": "M.Sc.",
-      "startDate": "2021-08-01",
-      "endDate": "2024-05-01"
+      "startDate": "2021-08",
+      "endDate": "2024-05"
     },
     {
       "institution": "Sharif University of Technology",
       "location": "Tehran",
       "area": "Electrical Engineering - Power Systems",
       "studyType": "M.Sc.",
-      "startDate": "2017-09-01",
-      "endDate": "2019-05-01",
+      "startDate": "2017-09",
+      "endDate": "2019-05",
       "score": "4.00/4.00"
     },
     {
@@ -65,8 +63,8 @@
       "location": "Tabriz",
       "area": "Electrical Engineering - Power",
       "studyType": "B.Sc.",
-      "startDate": "2013-09-01",
-      "endDate": "2017-06-01",
+      "startDate": "2013-09",
+      "endDate": "2017-06",
       "score": "3.94/4.00"
     }
   ],
@@ -75,7 +73,7 @@
       "name": "Hitachi Energy Research",
       "position": "Research Scientist - Power System Optimization",
       "location": "Raleigh, NC",
-      "startDate": "2025-01-01",
+      "startDate": "2025-01",
       "endDate": "present",
       "summary": "",
       "highlights": [""]
@@ -84,8 +82,8 @@
       "name": "Dominion Energy",
       "position": "Graduate Intern, Electric Transmission Strategic Initiatives",
       "location": "Richmond, VA",
-      "startDate": "2024-05-01",
-      "endDate": "2024-08-01",
+      "startDate": "2024-05",
+      "endDate": "2024-08",
       "summary": "",
       "highlights": []
     },
@@ -93,8 +91,8 @@
       "name": "North American Electric Reliability Corporation (NERC)",
       "position": "Graduate Intern, Advanced System Analytics & Modeling",
       "location": "Atlanta, GA",
-      "startDate": "2024-01-01",
-      "endDate": "2024-05-01",
+      "startDate": "2024-01",
+      "endDate": "2024-05",
       "summary": "",
       "highlights": []
     },
@@ -102,8 +100,8 @@
       "name": "Dominion Energy",
       "position": "Graduate Intern, Electric Transmission Planning-Modeling",
       "location": "Richmond, VA",
-      "startDate": "2023-05-01",
-      "endDate": "2023-08-01",
+      "startDate": "2023-05",
+      "endDate": "2023-08",
       "summary": "",
       "highlights": []
     },
@@ -111,8 +109,8 @@
       "name": "Georgia Institute of Technology",
       "position": "Graduate Research and Teaching Assistant",
       "location": "Atlanta, GA",
-      "startDate": "2021-08-01",
-      "endDate": "2024-12-01",
+      "startDate": "2021-08",
+      "endDate": "2024-12",
       "summary": "",
       "highlights": []
     },
@@ -120,8 +118,8 @@
       "name": "Sharif University of Technology",
       "position": "Graduate Research and Teaching Assistant",
       "location": "Tehran",
-      "startDate": "2017-09-01",
-      "endDate": "2021-05-01",
+      "startDate": "2017-09",
+      "endDate": "2021-05",
       "summary": "",
       "highlights": []
     }
@@ -172,138 +170,6 @@
       "date": "2013-01-01",
       "awarder": "National University Entrance Exam",
       "summary": "Ranked within the Top 0.5% in B.Sc. Mathematics and Physics Nationwide University Entrance Exam"
-    }
-  ],
-  "certificates": [
-    {
-      "name": "Deep Learning Specialization (v.2)",
-      "date": "2025-08-01",
-      "issuer": "Coursera",
-      "url": "https://www.credly.com/badges/34247948-2f3e-4fd3-b4c4-509b2f26b577/public_url"
-    },
-    {
-      "name": "Grid Science Winter School and Conference",
-      "date": "2023-01-01",
-      "issuer": "Los Alamos National Laboratory"
-    },
-    {
-      "name": "PSERC Transformation Summer School",
-      "date": "2022-07-01",
-      "issuer": "Arizona State University"
-    }
-  ],
-  "publications": [
-    {
-      "name": "Improving the Accuracy of DC Optimal Power Flow Formulations via Parameter Optimization",
-      "publisher": "arXiv",
-      "releaseDate": "2025-11-08",
-      "url": "https://arxiv.org/abs/2410.11725",
-      "summary": "Authors: Babak Taheri and Daniel K. Molzahn. [under review]"
-    },
-    {
-      "name": "Optimizing Parameters of the LinDistFlow Power Flow Approximation for Distribution Systems",
-      "publisher": "IEEE Transactions on Smart Grid",
-      "releaseDate": "2025-11-07",
-      "url": "https://ieeexplore.ieee.org/document/11230858",
-      "summary": "Authors: Babak Taheri, Rahul K. Gupta, and Daniel K. Molzahn. DOI: 10.1109/TSG.2025.3630047"
-    },
-    {
-      "name": "AC-Informed DC Optimal Transmission Switching Problems via Parameter Optimization",
-      "publisher": "IEEE Transactions on Power Systems",
-      "releaseDate": "2025-11-01",
-      "url": "https://ieeexplore.ieee.org/document/11023158",
-      "summary": "Authors: Babak Taheri and Daniel K. Molzahn. Vol. 40, no. 6, pp. 5422-5433."
-    },
-    {
-      "name": "Co-Optimization of Damage Assessment and Restoration: A Resilience-Driven Dynamic Crew Allocation for Power Distribution Systems",
-      "publisher": "IEEE Transactions on Power Systems",
-      "releaseDate": "2025-01-01",
-      "url": "https://ieeexplore.ieee.org/document/10508102",
-      "summary": "Authors: Ali Jalilian, Babak Taheri, and Daniel K. Molzahn. Vol. 40, no. 1, pp. 676-688."
-    },
-    {
-      "name": "Optimizing Parameters of the DC Power Flow",
-      "publisher": "Electric Power Systems Research (PSCC 2024)",
-      "releaseDate": "2024-10-01",
-      "url": "https://pscc-central.epfl.ch/repo/papers/2024/2024_87.pdf",
-      "summary": "Authors: Babak Taheri and Daniel K. Molzahn. Vol. 235, no. 110719. Presented at the 23rd Power Systems Computation Conference (PSCC), Paris, France."
-    },
-    {
-      "name": "AC Power Flow Feasibility Restoration through State Estimation-Based Post-Processing",
-      "publisher": "Electric Power Systems Research (PSCC 2024)",
-      "releaseDate": "2024",
-      "url": "https://pscc-central.epfl.ch/repo/papers/2024/2024_184.pdf",
-      "summary": "Authors: Babak Taheri and Daniel K. Molzahn. Vol. 235, no. 110642. Presented at the 23rd Power Systems Computation Conference (PSCC), Paris, France."
-    },
-    {
-      "name": "Improving Distribution System Resilience by Undergrounding Lines and Deploying Mobile Generators",
-      "publisher": "Electric Power Systems Research",
-      "releaseDate": "2023",
-      "url": "https://www.sciencedirect.com/science/article/pii/S0378779622008586",
-      "summary": "Authors: Babak Taheri, Daniel K. Molzahn, and Santiago Grijalva. Vol. 214, 108804."
-    },
-    {
-      "name": "Tie-Line Planning for Resilience Enhancement in Unbalanced Distribution Networks",
-      "publisher": "IET Generation, Transmission & Distribution",
-      "releaseDate": "2022",
-      "url": "https://ietresearch.onlinelibrary.wiley.com/doi/epdf/10.1049/gtd2.12347",
-      "summary": "Authors: Babak Taheri and Amir Safdarian. Vol. 16, pp. 1030–1046."
-    },
-    {
-      "name": "Distribution System Resilience Enhancement via Mobile Emergency Generators",
-      "publisher": "IEEE Transactions on Power Delivery",
-      "releaseDate": "2021-08-01",
-      "url": "https://ieeexplore.ieee.org/document/9136725",
-      "summary": "Authors: Babak Taheri, Amir Safdarian, Moein M. Aghtaie, and Matti Lehtonen. Vol. 36, no. 4, pp. 2308–2319."
-    },
-    {
-      "name": "Enhancing Resilience Level of Power Distribution Systems Using Proactive Operational Actions",
-      "publisher": "IEEE Access",
-      "releaseDate": "2019",
-      "url": "https://ieeexplore.ieee.org/document/8839073",
-      "summary": "Authors: Babak Taheri, Amir Safdarian, Moein M. Aghtaie, and Matti Lehtonen. Vol. 7, pp. 137378–137389."
-    },
-    {
-      "name": "Distribution Systems Resilience Enhancement via Pre- and Post-Event Actions",
-      "publisher": "IET Smart Grid",
-      "releaseDate": "2019",
-      "url": "https://ietresearch.onlinelibrary.wiley.com/doi/full/10.1049/iet-stg.2019.0035",
-      "summary": "Authors: Babak Taheri, Amir Safdarian, Moein M. Aghtaie, and Matti Lehtonen. Vol. 2, no. 4, pp. 549–556."
-    },
-    {
-      "name": "AC Power Flow Informed Parameter Learning for DC Power Flow Network Equivalents",
-      "publisher": "2024 IEEE Texas Power and Energy Conference (TPEC)",
-      "releaseDate": "2024",
-      "url": "https://ieeexplore.ieee.org/document/10472173",
-      "summary": "Authors: Babak Taheri and Daniel K. Molzahn. pp. 1–6."
-    },
-    {
-      "name": "Restoring AC Power Flow Feasibility from Relaxed and Approximated Optimal Power Flow Models",
-      "publisher": "2023 American Control Conference (ACC)",
-      "releaseDate": "2023",
-      "url": "https://ieeexplore.ieee.org/document/10156521",
-      "summary": "Authors: Babak Taheri and Daniel K. Molzahn. pp. 4463–4470."
-    },
-    {
-      "name": "Hardening Strategy to Boost Resilience of Distribution Systems via Harnessing a Proactive Operation Model",
-      "publisher": "2019 Smart Grid Conference",
-      "releaseDate": "2019",
-      "url": "https://ieeexplore.ieee.org/document/9056585",
-      "summary": "Authors: Babak Taheri, Ali Jalilian, and Amir Safdarian. pp. 1–6."
-    }
-  ],
-  "skills": [
-    {
-      "name": "Programming",
-      "keywords": ["Python (PyTorch, Scipy, Numpy, Pandas, Scikit-learn)", "Julia (JuMP)", "C++", "GAMS", "MATLAB"]
-    },
-    {
-      "name": "Software",
-      "keywords": ["PSS/E", "PSLF", "PowerGEM TARA", "OpenDSS", "PowerWorld", "Pypower"]
-    },
-    {
-      "name": "Optimization",
-      "keywords": ["Gurobi", "CPLEX", "Ipopt", "Mosek", "CVXPY", "cvxpylayers"]
     }
   ]
 }
