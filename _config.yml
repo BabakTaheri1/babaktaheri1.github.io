@@ -2,12 +2,12 @@
 # Site settings
 # -----------------------------------------------------------------------------
 
-title: Babak Taheri's Website # the website title (if blank, full name will be used instead)
+title: Babak Taheri # the website title (if blank, full name will be used instead)
 first_name: Babak
 middle_name:
 last_name: Taheri
-contact_note: >
-  You can even add a little note about which of these is the best way to reach you.
+#contact_note: >
+  # You can even add a little note about which of these is the best way to reach you.
 description: > # the ">" symbol means to ignore newlines until "footer_text:"
   I am a research scientist at Hitachi Energy Research. I received my PhD in the School of Electrical and Computer Engineering at the Georgia Institute of Technology, and I was fortunate to be advised by Prof. Daniel Molzahn. My passion lies in harnessing the power of mathematical optimization and machine learning techniques to foster a more reliable, resilient, affordable, and sustainable energy future.
 footer_text: >
