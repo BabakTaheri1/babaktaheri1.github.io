@@ -1,45 +1,48 @@
-"AJP":
-  url: https://aapt.scitation.org/journal/ajp
-  color: "#00369f"
-
-"PhysRev":
-  url: https://journals.aps.org/
-
-"Vision":
-  color: "#009f36"
 
 "arXiv":
   url: https://arxiv.org/
+  color: "#b31b1b"
 
 "IEEE TSG":
   url: https://ieeexplore.ieee.org/xpl/RecentIssue.jsp?punumber=5165411
+  color: "#00629b"
 
 "IEEE TPWRS":
   url: https://ieeexplore.ieee.org/xpl/RecentIssue.jsp?punumber=61
+  color: "#0073b0"
 
 "EPSR (PSCC)":
   url: https://www.sciencedirect.com/journal/electric-power-systems-research
+  color: "#f7941d"
 
 "EPSR":
   url: https://www.sciencedirect.com/journal/electric-power-systems-research
+  color: "#f7941d"
 
 "IET GTD":
   url: https://ietresearch.onlinelibrary.wiley.com/journal/17518687
+  color: "#6a0dad"
 
 "IEEE TPD":
   url: https://ieeexplore.ieee.org/xpl/RecentIssue.jsp?punumber=62
+  color: "#4b9be2"
 
 "IEEE Access":
   url: https://ieeexplore.ieee.org/xpl/RecentIssue.jsp?punumber=6287639
+  color: "#00a19a"
 
 "IET SG":
   url: https://ietresearch.onlinelibrary.wiley.com/journal/25152947
+  color: "#800080"
 
 "TPEC":
   url: https://ieeexplore.ieee.org/xpl/conhome/1800627/all-proceedings
+  color: "#008080"
 
 "ACC":
   url: https://ieeexplore.ieee.org/xpl/conhome/1000010/all-proceedings
+  color: "#555555"
 
 "SGC":
   url: https://ieeexplore.ieee.org/xpl/conhome/1801889/all-proceedings
+  color: "#c1272d"
