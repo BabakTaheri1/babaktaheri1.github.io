@@ -29,7 +29,48 @@
       }
     ]
   },
-  "work": [
+    "education": [
+    {
+      "institution": "Georgia Institute of Technology",
+      "location": "Atlanta, GA",
+      "area": "Electrical and Computer Engineering",
+      "studyType": "Ph.D.",
+      "startDate": "2021-08-01",
+      "endDate": "2024-12-01",
+      "courses": [
+        "Dissertation: Improving Power System Approximations Through Machine Learning-Inspired Optimization Methods",
+        "Advisor: Dr. Daniel K. Molzahn",
+        "Minor in Industrial and Systems Engineering (ISyE)"
+      ]
+    },
+    {
+      "institution": "Georgia Institute of Technology",
+      "location": "Atlanta, GA",
+      "area": "Electrical and Computer Engineering",
+      "studyType": "M.Sc.",
+      "startDate": "2021-08-01",
+      "endDate": "2024-05-01"
+    },
+    {
+      "institution": "Sharif University of Technology",
+      "location": "Tehran",
+      "area": "Electrical Engineering - Power Systems",
+      "studyType": "M.Sc.",
+      "startDate": "2017-09-01",
+      "endDate": "2019-05-01",
+      "score": "4.00/4.00"
+    },
+    {
+      "institution": "University of Tabriz",
+      "location": "Tabriz",
+      "area": "Electrical Engineering - Power",
+      "studyType": "B.Sc.",
+      "startDate": "2013-09-01",
+      "endDate": "2017-06-01",
+      "score": "3.94/4.00"
+    }
+  ],
+  "Experience": [
     {
       "name": "Hitachi Energy Research",
       "position": "Research Scientist - Power System Optimization",
@@ -89,8 +130,6 @@
       "endDate": "2021-05-01",
       "summary": "",
       "highlights": [
-        "Conducted research on enhancing the resilience of power systems to natural disasters and other high-impact low-probability disruptions.",
-        "Assisted in teaching a course on electrical distribution systems, graded assignments, and provided feedback to students."
       ]
     }
   ],
@@ -103,47 +142,7 @@
       "summary": "Reviewer for journals and conferences including IEEE (TPWRS, TSG, TPWRD, Power Engineering Letters, CDC), IET (GTD, RPG), EPSR, RESS, IJEPES"
     }
   ],
-  "education": [
-    {
-      "institution": "Georgia Institute of Technology",
-      "location": "Atlanta, GA",
-      "area": "Electrical and Computer Engineering",
-      "studyType": "Ph.D.",
-      "startDate": "2021-08-01",
-      "endDate": "2024-12-01",
-      "courses": [
-        "Dissertation: Improving Power System Approximations Through Machine Learning-Inspired Optimization Methods",
-        "Advisor: Dr. Daniel K. Molzahn",
-        "Minor in Industrial and Systems Engineering (ISyE)"
-      ]
-    },
-    {
-      "institution": "Georgia Institute of Technology",
-      "location": "Atlanta, GA",
-      "area": "Electrical and Computer Engineering",
-      "studyType": "M.Sc.",
-      "startDate": "2021-08-01",
-      "endDate": "2024-05-01"
-    },
-    {
-      "institution": "Sharif University of Technology",
-      "location": "Tehran",
-      "area": "Electrical Engineering - Power Systems",
-      "studyType": "M.Sc.",
-      "startDate": "2017-09-01",
-      "endDate": "2019-05-01",
-      "score": "4.00/4.00"
-    },
-    {
-      "institution": "University of Tabriz",
-      "location": "Tabriz",
-      "area": "Electrical Engineering - Power",
-      "studyType": "B.Sc.",
-      "startDate": "2013-09-01",
-      "endDate": "2017-06-01",
-      "score": "3.94/4.00"
-    }
-  ],
+
   "awards": [
     {
       "title": "Dominion Energy Scholarship",
