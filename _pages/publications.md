@@ -2,7 +2,7 @@
 layout: page
 permalink: /publications/
 title: publications
-description: You can also browse my Google Scholar profile.
+description: You can also browse my href="https://scholar.google.com/citations?user=7_H8IkUAAAAJ&hl=en" target="_blank"> Google Scholar</a> profile.
 nav: true
 nav_order: 2
 ---
