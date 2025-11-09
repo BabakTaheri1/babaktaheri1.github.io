@@ -5,4 +5,4 @@ inline: true
 related_posts: false
 ---
 
-Began my part-time internship at <a href="https://www.nerc.com/" target="_blank"> North American Electric Reliability Corporation (NERC)</a> in the Advanced System Analytics & Modeling (ASAM) department.
+Began my internship at <a href="https://www.nerc.com/" target="_blank"> North American Electric Reliability Corporation (NERC)</a> in the Advanced System Analytics & Modeling (ASAM) department.
