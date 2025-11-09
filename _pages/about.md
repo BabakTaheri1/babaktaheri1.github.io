@@ -30,6 +30,6 @@ latest_posts:
 
 I received my Ph.D. from the <a href="https://ece.gatech.edu/" target="_blank">School of Electrical and Computer Engineering</a> at the <a href="https://www.gatech.edu/" target="_blank">Georgia Institute of Technology</a>, and I was fortunate to be advised by Prof. <a href="https://molzahn.github.io" target="_blank">Daniel Molzahn</a>.
 
-My passion lies in harnessing the power of mathematical optimization and machine learning techniques to foster a more reliable, resilient, affordable, and sustainable energy future. My doctoral research, for instance, focused on using ML-inspired optimization methods to improve the accuracy of foundational power system approximations. 
+My research goal is to use mathematical optimization and machine learning techniques to help build a more reliable, resilient, affordable, and sustainable energy future. My doctoral research, for instance, focused on using ML-inspired optimization methods to improve the accuracy of foundational power system approximations.
 
 Outside of my work in research, I enjoy traveling, hiking, watching movies, and playing soccer and volleyball.
