@@ -2,9 +2,9 @@
 layout: page
 title: code
 permalink: /code/
-s
+nav: true
+nav_order: 3
 ---
-
 
 I enjoy animating basic concepts and here you can find some of them.
 
