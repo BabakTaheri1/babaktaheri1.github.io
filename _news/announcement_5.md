@@ -5,4 +5,4 @@ inline: true
 related_posts: false
 ---
 
-I received the Dominion Energy **Inclusion, Equity, and Diversity Scholarship** Award for the second consecutive time.
+Awarded the <a href="https://www.dominionenergy.com/" target="_blank"> Dominion Energy</a> **Inclusion, Equity, and Diversity Scholarship** for the second time.
