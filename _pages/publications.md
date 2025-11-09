@@ -1,5 +1,5 @@
 ---
-layout: bib
+layout: page
 permalink: /publications/
 title: publications
 description: You can also browse my Google Scholar profile.
