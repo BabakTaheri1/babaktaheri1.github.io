@@ -5,4 +5,4 @@ inline: true
 related_posts: false
 ---
 
-Our paper on improving the LinDistFlow approximation in distribution systems has been accepted to the **IEEE Transactions on Smart Grid**.
+Paper accepted to the **IEEE Transactions on Smart Grid**.
