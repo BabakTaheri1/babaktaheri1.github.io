@@ -1,34 +1,23 @@
-"adams":
-  - firstname: ["Edwin", "E.", "E. P.", "Edwin Plimpton"]
-    url: https://en.wikipedia.org/wiki/Edwin_Plimpton_Adams
+"molzahn":
+  - firstname: ["Daniel", "Daniel K.", "D. K."]
+    url: https://molzahn.github.io/index.html
 
-"podolsky":
-  - firstname: ["Boris", "B.", "B. Y.", "Boris Yakovlevich"]
-    url: https://en.wikipedia.org/wiki/Boris_Podolsky
+"gupta":
+  - firstname: ["Rahul", "Rahul K.", "R. K."]
+    url: https://school.eecs.wsu.edu/directory/wsu-profile/rahul.k.gupta/
 
-"rosen":
-  - firstname: ["Nathan", "N."]
-    url: https://en.wikipedia.org/wiki/Nathan_Rosen
+"grijalva":
+  - firstname: ["Santiago", "S."]
+    url: https://ece.gatech.edu/directory/santiago-carlos-grijalva
 
-"bach":
-  - firstname: ["Johann Sebastian", "J. S."]
-    url: https://en.wikipedia.org/wiki/Johann_Sebastian_Bach
+"safdarian":
+  - firstname: ["Amir", "A."]
+    url: https://scholar.google.com/citations?user=YnOgPDAAAAAJ&hl=en
 
-  - firstname: ["Carl Philipp Emanuel", "C. P. E."]
-    url: https://en.wikipedia.org/wiki/Carl_Philipp_Emanuel_Bach
+"aghtaie":
+  - firstname: ["Moein", "Moein M.", "M. M."]
+    url: https://scholar.google.com/citations?user=5f6pwJcAAAAJ&hl=en
 
-"przibram":
-  - firstname: ["Karl"]
-    url: https://link.springer.com/article/10.1007/s00016-019-00242-z
-
-"schrodinger":
-  - firstname: ["Erwin"]
-    url: https://en.wikipedia.org/wiki/Erwin_Schr%C3%B6dinger
-
-"lorentz":
-  - firstname: ["Hendrik Antoon"]
-    url: https://en.wikipedia.org/wiki/Hendrik_Lorentz
-
-"planck":
-  - firstname: ["Max"]
-    url: https://en.wikipedia.org/wiki/Max_Planck
+"lehtonen":
+  - firstname: ["Matti", "M."]
+    url: https://www.aalto.fi/en/people/matti-lehtonen
