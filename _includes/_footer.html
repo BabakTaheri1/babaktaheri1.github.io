@@ -1,14 +1,1 @@
 <span>&copy; {{ site.time | date: '%Y' }} {{ site.owner.name }}. Powered by <a href="http://jekyllrb.com">Jekyll</a> using the <a href="http://mademistakes.com/minimal-mistakes/">Minimal Mistakes</a> theme.</span>
-
-{%- if site.impressum_path -%}
-    <a href="{{ site.impressum_path | relative_url }}">{{ site.data.strings.impressum | default: "Impressum" }}</a>.
-    {%- endif -%}
-    {%- if site.last_updated -%}
-    Last updated: {{ "now" | date: '%B %d, %Y' }}.
-    {%- endif %}
-  </div>
-
-  <div style="text-align: center; transform: scale(0.5);">
-    <script type="text/javascript" id="mapmyvisitors" src="//mapmyvisitors.com/map.js?d=XP-MrktceiijarYMkZY6RXtWwaZeYl_0fRJw1BbIApM&cl=ffffff&w=a"></script>
-  </div>
-  </footer>
