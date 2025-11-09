@@ -2,7 +2,7 @@
 layout: about
 title: about
 permalink: /
-subtitle: <a href='#'>Research Scientist @ Hitachi Energy Research</a>
+subtitle: <a href=https://www.hitachienergy.com/us/en>Research Scientist @ Hitachi Energy Research</a>
 
 profile:
   align: right
@@ -27,8 +27,7 @@ latest_posts:
   limit: 3 # leave blank to include all the blog posts
 ---
 
-I am a research scientist at <a href="https://www.hitachienergy.com/us/en" target="_blank">Hitachi Energy Research</a>.
 
-I received my PhD from the School of Electrical and Computer Engineering at the Georgia Institute of Technology, and I was fortunate to be advised by Prof. <a href="https://molzahn.github.io" target="_blank">Daniel Molzahn</a>.
+I received my Ph.D. from the <a href="https://ece.gatech.edu/" target="_blank">School of Electrical and Computer Engineering</a> at the <a href="https://www.gatech.edu/" target="_blank">Georgia Institute of Technology</a>, and I was fortunate to be advised by Prof. <a href="https://molzahn.github.io" target="_blank">Daniel Molzahn</a>.
 
 My passion lies in harnessing the power of mathematical optimization and machine learning techniques to foster a more reliable, resilient, affordable, and sustainable energy future. Outside of my work in research, I enjoy traveling, hiking, watching movies, and playing soccer and volleyball.

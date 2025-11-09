@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Euler's Identity: An Interactive Explanation</title>
+    
+    <!-- Google Fonts: Inter for text, and a monospace for the display -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+    <!-- MathJax for LaTeX rendering -->
+    <script>
+      MathJax = {
+        tex: {
+          inlineMath: [['$', '$'], ['\\(', '\\)']],
+          displayMath: [['$$', '$$'], ['\\[', '\\]']]
+        },
+        svg: {
+          fontCache: 'global'
+        }
+      };
+    </script>
+    <script type="text/javascript" id="MathJax-script" async
+      src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js">
+    </script>
+
+    <style>
+        /* General Styling */
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.7;
+            color: #e0e0e0;
+            background-color: #121212;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Container for the content */
+        .container {
+            max-width: 900px;
+            width: 100%;
+            padding: 2rem;
+            box-sizing: border-box;
+        }
+
+        /* Headings and Text */
+        h1, h2 {
+            color: #ffffff;
+            border-bottom: 2px solid #00aaff;
+            padding-bottom: 10px;
+            margin-top: 2rem;
+            font-weight: 500;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.5rem;
+        }
+
+        p, li {
+            font-size: 1.1rem;
+            color: #cccccc;
+        }
+
+        /* Equation Styling */
+        .equation-box {
+            background-color: #1a1a1a;
+            border: 1px solid #333;
+            border-left: 5px solid #00aaff;
+            padding: 2rem;
+            margin: 2rem 0;
+            text-align: center;
+            font-size: 2.5rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 25px rgba(0, 170, 255, 0.1);
+            color: #00d1ff;
+        }
+        
+        .math-section {
+            background-color: #1a1a1a;
+            border: 1px solid #282828;
+            border-radius: 8px;
+            padding: 1.5rem 2rem;
+            margin-top: 1.5rem;
+        }
+
+        /* Visualization and Controls Styling */
+        .visualization-container {
+            position: relative;
+            width: 100%;
+            margin: 2rem auto;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.5);
+            background: #181818;
+            border: 1px solid #282828;
+        }
+        
+        #decomposition-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            padding: 1rem;
+        }
+        
+        #main-vis {
+            flex: 2;
+            min-width: 300px;
+        }
+        
+        #wave-vis {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            min-width: 200px;
+        }
+
+        .canvas-wrapper {
+            position: relative;
+            border: 1px solid #2a2a2a;
+            border-radius: 8px;
+            background-color: #000000;
+            overflow: hidden;
+        }
+        
+        .canvas-title {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 0.8rem;
+            font-weight: 400;
+            color: #00aaff;
+            background: rgba(0,0,0,0.7);
+            padding: 3px 8px;
+            border-radius: 4px;
+            z-index: 10;
+            border: 1px solid #00aaff33;
+        }
+
+        canvas {
+            display: block;
+            width: 100% !important;
+            height: auto !important;
+        }
+
+        .controls {
+            padding: 1.5rem;
+            background-color: #1f1f1f;
+            text-align: center;
+            border-top: 1px solid #282828;
+        }
+        
+        .button-group {
+            margin-bottom: 1.5rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .control-button {
+            background-color: transparent;
+            color: #00aaff;
+            border: 1px solid #00aaff;
+            width: 44px;
+            height: 44px;
+            font-size: 1.5rem;
+            border-radius: 50%;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease-in-out;
+        }
+        .control-button:hover {
+            background-color: #00aaff;
+            color: #121212;
+            box-shadow: 0 0 15px #00aaff;
+        }
+
+        .slider {
+            -webkit-appearance: none;
+            width: 80%;
+            height: 4px;
+            border-radius: 2px;
+            background: #444;
+            outline: none;
+            transition: opacity .2s;
+            cursor: pointer;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #00aaff;
+            border: 3px solid #121212;
+            box-shadow: 0 0 10px #00aaff;
+        }
+        
+        #theta-value {
+            font-family: 'Roboto Mono', monospace;
+            font-weight: 700;
+            color: #00d1ff;
+            font-size: 1.2rem;
+            margin-top: 1.5rem;
+            text-shadow: 0 0 5px #00aaff88;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Euler's Identity: The Most Beautiful Equation</h1>
+        <p>
+            Often cited as the most beautiful equation in mathematics, Euler's Identity is remarkable for its ability to link five of the most fundamental mathematical constants in a single, concise formula. It is a special case of Euler's formula, which establishes the deep relationship between trigonometric functions and the complex exponential function.
+        </p>
+
+        <div class="equation-box">
+            $$ e^{i\pi} + 1 = 0 $$
+        </div>
+        
+        <h2>Live Dynamics: The "Sideways Growth" of $e^{i\theta}$</h2>
+        <p>
+            To truly understand $e^{i\pi} = -1$, we must visualize its foundation: Euler's formula, $e^{i\theta} = \cos(\theta) + i\sin(\theta)$. The number $e$ represents continuous growth. The imaginary unit $i$ represents a 90-degree rotation. So, $e^{i\theta}$ describes a process where you are constantly "growing" sideways.
+        </p>
+        <p>
+            Press play and watch the main vector. Notice the small, yellow velocity arrow at its tip. This arrow is always perpendicular to the main vector, forcing it into a circular path. This is the dynamic heart of Euler's formula, and it's why an exponential function can describe a circle.
+        </p>
+
+        <div class="visualization-container">
+            <div id="decomposition-container">
+                <div id="main-vis" class="canvas-wrapper">
+                     <div class="canvas-title">Complex Plane</div>
+                </div>
+                <div id="wave-vis">
+                    <div id="cos-vis" class="canvas-wrapper">
+                        <div class="canvas-title">Real: $\cos(\theta)$</div>
+                    </div>
+                    <div id="sin-vis" class="canvas-wrapper">
+                        <div class="canvas-title">Imaginary: $\sin(\theta)$</div>
+                    </div>
+                </div>
+            </div>
+            <div class="controls">
+                <div class="button-group">
+                    <button id="play-pause-button" class="control-button" title="Play/Pause">
+                        <svg id="play-icon" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                        <svg id="pause-icon" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" style="display:none;"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+                    </button>
+                    <button id="reset-button" class="control-button" title="Reset">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/></svg>
+                    </button>
+                </div>
+                <input type="range" min="0" max="6.28318" value="0" step="0.01" class="slider" id="theta-slider">
+                <div id="theta-value">θ = 0.00 | e^iθ ≈ 1.00 + 0.00i</div>
+            </div>
+        </div>
+
+        <h2>The Proof via Taylor Series</h2>
+        <p>
+            While the dynamic visualization provides a beautiful intuition, the rigorous proof of Euler's formula comes from calculus, specifically from Taylor series. A Taylor series is a way to represent a function as an infinite sum of its derivatives. By comparing the series for $e^x$, $\cos(x)$, and $\sin(x)$, the relationship becomes undeniable.
+        </p>
+        <div class="math-section">
+            <p>First, let's recall the fundamental Taylor series expansions:</p>
+            <p>For $e^x$:</p>
+            $$ e^x = 1 + x + \frac{x^2}{2!} + \frac{x^3}{3!} + \frac{x^4}{4!} + \frac{x^5}{5!} + \cdots $$
+            <p>For $\cos(x)$:</p>
+            $$ \cos(x) = 1 - \frac{x^2}{2!} + \frac{x^4}{4!} - \frac{x^6}{6!} + \cdots $$
+            <p>For $\sin(x)$:</p>
+            $$ \sin(x) = x - \frac{x^3}{3!} + \frac{x^5}{5!} - \frac{x^7}{7!} + \cdots $$
+            <hr style="border-color: #333; margin: 2rem 0;">
+            <p>Now, the crucial step is to substitute $x$ with $i\theta$ in the series for $e^x$:</p>
+            $$ e^{i\theta} = 1 + (i\theta) + \frac{(i\theta)^2}{2!} + \frac{(i\theta)^3}{3!} + \frac{(i\theta)^4}{4!} + \frac{(i\theta)^5}{5!} + \cdots $$
+            <p>We simplify this using the powers of $i$ (where $i^2 = -1$, $i^3 = -i$, $i^4 = 1$, etc.):</p>
+            $$ e^{i\theta} = 1 + i\theta - \frac{\theta^2}{2!} - i\frac{\theta^3}{3!} + \frac{\theta^4}{4!} + i\frac{\theta^5}{5!} + \cdots $$
+            <p>Next, we group the terms with $i$ (the imaginary part) and the terms without $i$ (the real part):</p>
+            $$ e^{i\theta} = \left(1 - \frac{\theta^2}{2!} + \frac{\theta^4}{4!} - \cdots\right) + i\left(\theta - \frac{\theta^3}{3!} + \frac{\theta^5}{5!} - \cdots\right) $$
+            <p>Look closely. The first group of terms is the exact Taylor series for $\cos(\theta)$. The second group is the exact Taylor series for $\sin(\theta)$.</p>
+            <p>Therefore, we have proven that:</p>
+            <h3 style="text-align: center; color: #00d1ff; margin-top: 1rem;">$ e^{i\theta} = \cos(\theta) + i\sin(\theta) $</h3>
+        </div>
+
+    </div>
+
+    <!-- Three.js Library -->
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"
+            }
+        }
+    </script>
+
+    <script type="module">
+        import * as THREE from 'three';
+
+        // --- GLOBAL SETTINGS ---
+        let isAnimating = false;
+        let animationFrameId;
+        const slider = document.getElementById('theta-slider');
+        const valueDisplay = document.getElementById('theta-value');
+        const playPauseButton = document.getElementById('play-pause-button');
+        const resetButton = document.getElementById('reset-button');
+        const playIcon = document.getElementById('play-icon');
+        const pauseIcon = document.getElementById('pause-icon');
+        const clock = new THREE.Clock();
+
+        const colors = {
+            bg: 0x000000,
+            grid: 0x1a1a1a,
+            axis: 0x444444,
+            label: 0x888888,
+            circle: 0x00aaff,
+            vector: 0xffffff,
+            velocity: 0xffff00,
+            real: 0x00ffaa,
+            imaginary: 0xff00ff,
+            projection: 0x666666
+        };
+
+        // --- SCENE 1: COMPLEX PLANE ---
+        const mainContainer = document.getElementById('main-vis');
+        const mainScene = new THREE.Scene();
+        mainScene.background = new THREE.Color(colors.bg);
+        const mainCamera = new THREE.OrthographicCamera(-1.7, 1.7, 1.7, -1.7, 1, 10);
+        mainCamera.position.z = 5;
+        const mainRenderer = new THREE.WebGLRenderer({ antialias: true });
+        mainContainer.appendChild(mainRenderer.domElement);
+        const mainGroup = new THREE.Group();
+        mainScene.add(mainGroup);
+        
+        // Trace line
+        const traceMaterial = new THREE.LineBasicMaterial({ color: colors.circle, transparent: true, opacity: 0.3 });
+        let traceLine;
+        const tracePoints = [];
+
+        // --- SCENE 2 & 3: WAVES ---
+        const cosContainer = document.getElementById('cos-vis');
+        const sinContainer = document.getElementById('sin-vis');
+        const cosScene = new THREE.Scene();
+        const sinScene = new THREE.Scene();
+        cosScene.background = new THREE.Color(colors.bg);
+        sinScene.background = new THREE.Color(colors.bg);
+        const waveCamera = new THREE.OrthographicCamera(0, 2 * Math.PI, 1.5, -1.5, 1, 10);
+        waveCamera.position.z = 5;
+        const cosRenderer = new THREE.WebGLRenderer({ antialias: true });
+        const sinRenderer = new THREE.WebGLRenderer({ antialias: true });
+        cosContainer.appendChild(cosRenderer.domElement);
+        sinContainer.appendChild(sinRenderer.domElement);
+        const cosGroup = new THREE.Group();
+        const sinGroup = new THREE.Group();
+        cosScene.add(cosGroup);
+        sinScene.add(sinGroup);
+        
+        // Custom Shader for pulsing waves
+        const waveShaderMaterial = (color) => new THREE.ShaderMaterial({
+            uniforms: {
+                time: { value: 0.0 },
+                color: { value: new THREE.Color(color) }
+            },
+            vertexShader: `
+                varying float vUv;
+                void main() {
+                    vUv = position.x;
+                    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+                }
+            `,
+            fragmentShader: `
+                uniform float time;
+                uniform vec3 color;
+                varying float vUv;
+                void main() {
+                    float alpha = 0.6 + 0.4 * sin(vUv * 2.0 - time * 5.0);
+                    gl_FragColor = vec4(color, alpha);
+                }
+            `
+        });
+
+        // --- HELPER TO CREATE TEXT LABELS ---
+        function createTextLabel(text, position, color, size) {
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
+            const fontSize = 64;
+            context.font = `bold ${fontSize}px Inter, sans-serif`;
+            const textWidth = context.measureText(text).width;
+
+            canvas.width = textWidth + 20; // some padding
+            canvas.height = fontSize + 20;
+
+            context.font = `bold ${fontSize}px Inter, sans-serif`;
+            context.fillStyle = `#${new THREE.Color(color).getHexString()}`;
+            context.textAlign = 'center';
+            context.textBaseline = 'middle';
+            context.fillText(text, canvas.width / 2, canvas.height / 2);
+
+            const texture = new THREE.CanvasTexture(canvas);
+            const material = new THREE.SpriteMaterial({ map: texture, transparent: true, alphaTest: 0.1 });
+            const sprite = new THREE.Sprite(material);
+            
+            sprite.scale.set(size * (canvas.width / canvas.height), size, 1);
+            sprite.position.copy(position);
+            
+            return sprite;
+        }
+
+        // --- INITIALIZATION ---
+        function init() {
+            // Main Plane Setup
+            mainScene.add(new THREE.GridHelper(3.4, 10, colors.grid, colors.grid));
+            const mainLabels = [
+                { text: '1', pos: new THREE.Vector3(1, -0.15, 0) },
+                { text: '-1', pos: new THREE.Vector3(-1, -0.15, 0) },
+                { text: 'i', pos: new THREE.Vector3(0.15, 1, 0) },
+                { text: '-i', pos: new THREE.Vector3(0.15, -1, 0) }
+            ];
+            drawInfrastructure(mainScene, [-1.7, 1.7], [-1.7, 1.7], mainLabels);
+            const circleGeom = new THREE.BufferGeometry().setFromPoints(new THREE.Path().absarc(0, 0, 1, 0, Math.PI * 2, false).getSpacedPoints(100));
+            mainScene.add(new THREE.Line(circleGeom, new THREE.LineBasicMaterial({ color: colors.circle, transparent: true, opacity: 0.5 })));
+
+            // Wave Graphs Setup
+            setupWaveScene(cosScene, Math.cos, colors.real);
+            setupWaveScene(sinScene, Math.sin, colors.imaginary);
+
+            window.addEventListener('resize', onWindowResize, false);
+            onWindowResize();
+            resetVisuals();
+        }
+        
+        function setupWaveScene(scene, func, color) {
+            scene.add(new THREE.GridHelper(100, 50, colors.grid, colors.grid));
+            const waveLabels = [
+                { text: '1', pos: new THREE.Vector3(-0.35, 1, 0) },
+                { text: '0.5', pos: new THREE.Vector3(-0.35, 0.5, 0) },
+                { text: '-0.5', pos: new THREE.Vector3(-0.35, -0.5, 0) },
+                { text: '-1', pos: new THREE.Vector3(-0.35, -1, 0) },
+                { text: 'π', pos: new THREE.Vector3(Math.PI, -0.25, 0) },
+                { text: '2π', pos: new THREE.Vector3(2 * Math.PI, -0.25, 0) }
+            ];
+            drawInfrastructure(scene, [0, 100], [-1.5, 1.5], waveLabels);
+            
+            const points = [];
+            for (let i = 0; i <= 100; i += 0.05) {
+                points.push(new THREE.Vector3(i, func(i), 0));
+            }
+            const geom = new THREE.BufferGeometry().setFromPoints(points);
+            scene.add(new THREE.Line(geom, waveShaderMaterial(color)));
+        }
+        
+        function drawInfrastructure(scene, xRange, yRange, labels) {
+            const mat = new THREE.LineBasicMaterial({ color: colors.axis, transparent: true, opacity: 0.5 });
+            scene.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(xRange[0], 0, 0), new THREE.Vector3(xRange[1], 0, 0)]), mat));
+            scene.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(0, yRange[0], 0), new THREE.Vector3(0, yRange[1], 0)]), mat));
+            
+            labels.forEach(label => {
+                const sprite = createTextLabel(label.text, label.pos, colors.label, 0.2);
+                scene.add(sprite);
+            });
+        }
+
+        // --- UPDATE & ANIMATION ---
+        function updateVisuals(theta) {
+            const x = Math.cos(theta);
+            const y = Math.sin(theta);
+
+            mainGroup.clear();
+            cosGroup.clear();
+            sinGroup.clear();
+
+            // Main position vector
+            const positionVector = new THREE.Vector3(x, y, 0);
+            const arrow = new THREE.ArrowHelper(positionVector.clone().normalize(), new THREE.Vector3(0,0,0), 1, colors.vector, 0.1, 0.07);
+            mainGroup.add(arrow);
+
+            // Velocity vector (perpendicular)
+            const velocityVector = new THREE.Vector3(-y, x, 0);
+            const velocityArrow = new THREE.ArrowHelper(velocityVector.clone().normalize(), positionVector, 0.5, colors.velocity, 0.08, 0.05);
+            mainGroup.add(velocityArrow);
+
+            // Projection lines
+            const projMat = new THREE.LineDashedMaterial({ color: colors.projection, dashSize: 0.05, gapSize: 0.05 });
+            const xProjGeom = new THREE.BufferGeometry().setFromPoints([positionVector, new THREE.Vector3(x, 0, 0)]);
+            const yProjGeom = new THREE.BufferGeometry().setFromPoints([positionVector, new THREE.Vector3(0, y, 0)]);
+            const xProj = new THREE.Line(xProjGeom, projMat);
+            const yProj = new THREE.Line(yProjGeom, projMat);
+            xProj.computeLineDistances();
+            yProj.computeLineDistances();
+            mainGroup.add(xProj, yProj);
+
+            // Wave points
+            const pointGeom = new THREE.SphereGeometry(0.05, 16, 16);
+            const cosPoint = new THREE.Mesh(pointGeom, new THREE.MeshBasicMaterial({ color: colors.real }));
+            cosPoint.position.set(theta, x, 0);
+            cosGroup.add(cosPoint);
+            const sinPoint = new THREE.Mesh(pointGeom, new THREE.MeshBasicMaterial({ color: colors.imaginary }));
+            sinPoint.position.set(theta, y, 0);
+            sinGroup.add(sinPoint);
+            
+            // Trace
+            if (isAnimating || tracePoints.length === 0) {
+                tracePoints.push(positionVector.clone());
+                if (tracePoints.length > 200) tracePoints.shift();
+            }
+            if (traceLine) mainScene.remove(traceLine);
+            traceLine = new THREE.Line(new THREE.BufferGeometry().setFromPoints(tracePoints), traceMaterial);
+            mainScene.add(traceLine);
+            
+            // Camera Pan
+            const cameraOffset = Math.max(0, theta - Math.PI);
+            waveCamera.left = cameraOffset;
+            waveCamera.right = cameraOffset + 2 * Math.PI;
+            waveCamera.updateProjectionMatrix();
+
+            slider.value = theta;
+            valueDisplay.innerHTML = `θ = ${theta.toFixed(2)} | e<sup>iθ</sup> ≈ ${x.toFixed(2)} + ${y.toFixed(2)}i`;
+
+            mainRenderer.render(mainScene, mainCamera);
+            cosRenderer.render(cosScene, waveCamera);
+            sinRenderer.render(sinScene, waveCamera);
+        }
+
+        function animate() {
+            if (!isAnimating) return;
+            
+            const speed = 0.5;
+            let currentTheta = (parseFloat(slider.value) + speed * clock.getDelta()) % (2 * Math.PI);
+            
+            const cosLine = cosScene.children.find(c => c.material && c.material.uniforms);
+            if(cosLine) cosLine.material.uniforms.time.value = clock.elapsedTime;
+
+            const sinLine = sinScene.children.find(c => c.material && c.material.uniforms);
+            if(sinLine) sinLine.material.uniforms.time.value = clock.elapsedTime;
+
+            updateVisuals(currentTheta);
+            animationFrameId = requestAnimationFrame(animate);
+        }
+        
+        function onWindowResize() {
+            const mainWidth = mainContainer.clientWidth;
+            mainRenderer.setSize(mainWidth, mainWidth);
+
+            const waveWidth = cosContainer.clientWidth;
+            const waveHeight = waveWidth * 0.9;
+            cosRenderer.setSize(waveWidth, waveHeight);
+            sinRenderer.setSize(waveWidth, waveHeight);
+            
+            updateVisuals(parseFloat(slider.value));
+        }
+        
+        slider.addEventListener('input', () => {
+            if (isAnimating) pauseAnimation();
+            tracePoints.length = 0;
+            updateVisuals(parseFloat(slider.value));
+        });
+        
+        playPauseButton.addEventListener('click', () => {
+            isAnimating ? pauseAnimation() : playAnimation();
+        });
+
+        resetButton.addEventListener('click', resetVisuals);
+
+        function playAnimation() {
+            isAnimating = true;
+            playIcon.style.display = 'none';
+            pauseIcon.style.display = 'block';
+            clock.start();
+            if (parseFloat(slider.value) >= 2 * Math.PI - 0.01) {
+                resetVisuals(false);
+            }
+            animate();
+        }
+
+        function pauseAnimation() {
+            isAnimating = false;
+            playIcon.style.display = 'block';
+            pauseIcon.style.display = 'none';
+            cancelAnimationFrame(animationFrameId);
+            clock.stop();
+        }
+        
+        function resetVisuals(shouldPause = true) {
+            if (isAnimating && shouldPause) pauseAnimation();
+            tracePoints.length = 0;
+            slider.value = 0;
+            updateVisuals(0);
+        }
+
+        init();
+    </script>
+
+</body>
+</html>

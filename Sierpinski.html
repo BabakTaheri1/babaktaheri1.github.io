@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Sierpinski Triangle</title>
+    <style>
+        :root {
+            --primary-color: #34495e;
+            --secondary-color: #2980b9;
+            --accent-color: #2ecc71;
+            --warning-color: #f1c40f;
+            --danger-color: #e74c3c;
+            --background-color: #f8f9fa;
+            --canvas-bg-color: #fff;
+            --text-color: #555;
+            --shadow-color: rgba(0, 0, 0, 0.15);
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--background-color);
+            margin: 0;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 900px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        h1 {
+            color: var(--primary-color);
+            font-size: 2.5em;
+            margin: 0;
+        }
+
+        .description {
+            max-width: 700px;
+            text-align: center;
+            line-height: 1.6;
+            color: var(--text-color);
+            font-size: 1.1em;
+            margin: 10px auto 20px auto;
+        }
+
+        canvas {
+            border: 2px solid var(--primary-color);
+            background-color: var(--canvas-bg-color);
+            box-shadow: 0 8px 16px var(--shadow-color);
+            margin-top: 20px;
+        }
+
+        .controls {
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 1em;
+            cursor: pointer;
+            border: none;
+            border-radius: 6px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            color: white;
+            font-weight: bold;
+        }
+        
+        #play-btn, #next-btn { background-color: var(--accent-color); }
+        #pause-btn { background-color: var(--warning-color); }
+        #reset-btn { background-color: var(--danger-color); }
+        #toggle-line-btn { background-color: var(--secondary-color); }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        label {
+            font-size: 1em;
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+        
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 150px;
+            height: 8px;
+            background: #dcdcdc;
+            border-radius: 4px;
+            outline: none;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: var(--secondary-color);
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        #speed-value {
+            font-weight: bold;
+            color: var(--secondary-color);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>The Sierpinski Triangle: A Chaos Game Visualization</h1>
+            <p class="description">
+                This visualization demonstrates the Chaos Game, a stochastic process that beautifully generates the deterministic fractal known as the Sierpinski Triangle. The process begins with three fixed vertices and a random starting point. At each step, a new point is generated exactly halfway between the current point and a randomly selected vertex. As the process iterates, the points converge to form the intricate, self-similar structure of the fractal.
+            </p>
+        </header>
+
+        <canvas id="chaosCanvas" width="800" height="800"></canvas>
+
+        <div class="controls">
+            <div class="control-group">
+                <label for="speed-slider">Speed (ms/step):</label>
+                <input type="range" id="speed-slider" min="1" max="1000" value="50">
+                <span id="speed-value">50</span>
+            </div>
+            <button id="play-btn">Play</button>
+            <button id="pause-btn">Pause</button>
+            <button id="next-btn">Next Step</button>
+            <button id="reset-btn">Reset</button>
+            <button id="toggle-line-btn">Toggle Lines</button>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('chaosCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        const speedSlider = document.getElementById('speed-slider');
+        const speedValueSpan = document.getElementById('speed-value');
+        const playButton = document.getElementById('play-btn');
+        const pauseButton = document.getElementById('pause-btn');
+        const nextButton = document.getElementById('next-btn');
+        const resetButton = document.getElementById('reset-btn');
+        const toggleLineButton = document.getElementById('toggle-line-btn');
+
+        const width = canvas.width;
+        const height = canvas.height;
+
+        let animationTimeout;
+        let animationSpeed = 50; // Milliseconds
+        let isPlaying = false;
+        let showLines = true;
+        
+        const vertices = [
+            { x: width / 2, y: 50 },
+            { x: 50, y: height - 50 },
+            { x: width - 50, y: height - 50 }
+        ];
+
+        let currentPoint;
+        let points = [];
+
+        function clearCanvas() {
+            ctx.fillStyle = '#fff';
+            ctx.fillRect(0, 0, width, height);
+        }
+
+        function drawVertices() {
+            vertices.forEach(v => {
+                ctx.beginPath();
+                ctx.arc(v.x, v.y, 5, 0, Math.PI * 2);
+                ctx.fillStyle = '#34495e';
+                ctx.fill();
+            });
+        }
+        
+        function drawAllPermanentPoints() {
+            points.forEach(p => {
+                ctx.fillStyle = '#2980b9';
+                ctx.fillRect(p.x, p.y, 1, 1);
+            });
+        }
+        
+        function drawCurrentPoint(point) {
+            ctx.beginPath();
+            ctx.arc(point.x, point.y, 2.5, 0, Math.PI * 2);
+            ctx.fillStyle = '#e74c3c';
+            ctx.fill();
+        }
+
+        function drawConnectingLine(startPoint, endPoint) {
+            if (!showLines) return;
+            ctx.beginPath();
+            ctx.moveTo(startPoint.x, startPoint.y);
+            ctx.lineTo(endPoint.x, endPoint.y);
+            ctx.strokeStyle = 'rgba(52, 73, 94, 0.3)';
+            ctx.lineWidth = 1;
+            ctx.stroke();
+        }
+
+        function reset() {
+            clearTimeout(animationTimeout);
+            isPlaying = false;
+            points = [];
+            
+            clearCanvas();
+            drawVertices();
+
+            currentPoint = {
+                x: Math.random() * width,
+                y: Math.random() * height
+            };
+            drawCurrentPoint(currentPoint);
+        }
+
+        function takeOneStep() {
+            const randomVertex = vertices[Math.floor(Math.random() * 3)];
+            
+            const newPoint = {
+                x: (currentPoint.x + randomVertex.x) / 2,
+                y: (currentPoint.y + randomVertex.y) / 2
+            };
+            
+            points.push(newPoint);
+
+            clearCanvas();
+            drawVertices();
+            drawAllPermanentPoints();
+
+            if (showLines) {
+                drawConnectingLine(currentPoint, randomVertex);
+            }
+            
+            currentPoint = newPoint;
+            drawCurrentPoint(currentPoint);
+        }
+
+        function animate() {
+            if (!isPlaying) return;
+            takeOneStep();
+            animationTimeout = setTimeout(animate, animationSpeed);
+        }
+
+        // Event Listeners
+        playButton.addEventListener('click', () => {
+            if (!isPlaying) {
+                isPlaying = true;
+                animate();
+            }
+        });
+
+        pauseButton.addEventListener('click', () => {
+            isPlaying = false;
+            clearTimeout(animationTimeout);
+        });
+
+        nextButton.addEventListener('click', () => {
+            pauseButton.click();
+            takeOneStep();
+        });
+
+        resetButton.addEventListener('click', () => {
+            reset();
+        });
+        
+        toggleLineButton.addEventListener('click', () => {
+            showLines = !showLines;
+            // Redraw everything to reflect the line change without taking a new step
+            clearCanvas();
+            drawVertices();
+            drawAllPermanentPoints();
+            drawCurrentPoint(currentPoint);
+            // Re-draw the connecting line if enabled
+            if (showLines) {
+                 const randomVertex = vertices[Math.floor(Math.random() * 3)];
+                 drawConnectingLine(currentPoint, randomVertex);
+            }
+        });
+
+        speedSlider.addEventListener('input', (e) => {
+            animationSpeed = parseInt(e.target.value);
+            speedValueSpan.textContent = animationSpeed;
+        });
+
+        reset();
+    </script>
+</body>
+</html>

@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Braess Paradox: A Technical Analysis</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color-main: #f8fafc;
+            --text-color-main: #1f2937;
+            --text-color-subtle: #4b5563;
+            --node-size: 50px;
+            --canvas-width: 400px;
+            --canvas-height: 250px;
+            --congested-color: #ef4444;
+            --congested-color-light: rgba(239, 68, 68, 0.5);
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color-main);
+            color: var(--text-color-main);
+        }
+        section + section {
+            border-top: 1px solid #e5e7eb;
+            padding-top: 4rem;
+        }
+        .node {
+            width: var(--node-size); 
+            height: var(--node-size); 
+            border-radius: 50%;
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            font-weight: bold; 
+            font-size: 1.25rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            position: absolute; 
+            z-index: 10;
+            transform: translate(-50%, -50%);
+        }
+        .canvas-container {
+            position: relative;
+            width: 100%;
+            max-width: var(--canvas-width);
+            height: var(--canvas-height);
+            margin: 1rem auto;
+        }
+        canvas {
+            position: absolute; 
+            top: 0; 
+            left: 0;
+            width: 100%; 
+            height: 100%;
+        }
+        .line-label {
+            background-color: rgba(248, 250, 252, 0.9);
+            padding: 2px 6px; 
+            border-radius: 4px; 
+            font-size: 0.85rem;
+            color: var(--text-color-main); 
+            font-weight: 500; 
+            text-align: center;
+            position: absolute; 
+            transform: translate(-50%, -50%);
+            z-index: 20;
+            white-space: nowrap;
+        }
+        .line-label-details {
+            font-size: 0.75rem; 
+            color: var(--text-color-subtle); 
+            display: block;
+        }
+        .line-label-details.congested {
+            color: var(--congested-color);
+            font-weight: bold;
+        }
+        .generator-label {
+            position: absolute; 
+            font-size: 0.8rem; 
+            font-weight: 500;
+            color: #374151; 
+            text-align: center; 
+            z-index: 20;
+            padding: 2px 4px; 
+            background-color: rgba(248, 250, 252, 0.9);
+            border-radius: 4px;
+        }
+        .param-slider-label {
+             display: block; font-weight: 500; font-size: 0.9rem; color: #374151;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <div class="container mx-auto p-4 sm:p-6 md:p-8">
+        <header class="text-center mb-12">
+            <h1 class="text-4xl md:text-5xl font-bold text-gray-900">Braess's Paradox</h1>
+            <p class="mt-4 text-lg text-gray-600 max-w-3xl mx-auto">Why removing capacity from a network can sometimes increase its overall efficiency.</p>
+        </header>
+
+        <main class="space-y-16">
+
+            <section class="bg-white p-8 rounded-xl shadow-lg">
+                <h2 class="text-3xl font-bold mb-4 text-gray-900">What is Braess's Paradox?</h2>
+                <p class="text-lg leading-relaxed">
+                    Braess's Paradox is the counter-intuitive observation that removing capacity from a network, can paradoxically increase the network's overall performance. Discovered by mathematician Dietrich Braess in 1968, this principle reveals a fundamental conflict between individual incentives and the collective good.
+                </p>
+                <p class="mt-4 text-lg leading-relaxed">
+                    It applies to any decentralized network where users make individual routing decisions—from road traffic and data packets to electrical grids. The paradox arises when a new, seemingly superior path diverts flow in a way that creates new system-wide bottlenecks, leading to a worse outcome for every single user.
+                </p>
+            </section>
+            
+            <section class="bg-white p-8 rounded-xl shadow-lg">
+                <h2 class="text-3xl font-bold mb-6 text-gray-900">Classic Example: Traffic Flow 🚗</h2>
+                <p class="text-lg mb-6">The canonical example involves traffic. Each driver, acting selfishly, chooses the route they believe is fastest. The system eventually settles into a Nash Equilibrium, a stable state where no single driver can improve their travel time by unilaterally changing their route. The paradox shows how adding a "shortcut" can lead to a new, but worse, Nash Equilibrium.</p>
+
+                <div class="mb-8 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                    <label id="carLabel" for="carSlider" class="block text-lg font-medium text-gray-700">Number of Cars (N): <span id="carCount" class="font-bold text-blue-600">4000</span></label>
+                    <input id="carSlider" type="range" min="100" max="6000" value="4000" step="100" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer" aria-labelledby="carLabel">
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-8 items-start">
+                    <div class="border p-6 rounded-lg bg-gray-50">
+                        <h3 class="text-2xl font-bold mb-4 text-center">Scenario 1: Original Network</h3>
+                        <div id="canvas-container-1" class="canvas-container">
+                            <canvas id="traffic-canvas-1-bg"></canvas> 
+                            <canvas id="traffic-canvas-1-fg"></canvas> 
+                        </div>
+                       <div class="mt-4 text-xs text-gray-500 text-center space-y-1">
+                            <p><span class="font-semibold">Top Path (S-A-E):</span> Time = T(x) + 45</p>
+                            <p><span class="font-semibold">Bottom Path (S-B-E):</span> Time = 45 + T(x)</p>
+                            <p>where T(x) is a variable delay based on cars (x) on that road segment.</p>
+                        </div>
+                        <div class="mt-4 p-4 bg-green-100 rounded-lg">
+                            <p class="text-xl text-center font-semibold">Equilibrium Travel Time:</p>
+                            <p id="time_before" class="text-center text-3xl font-bold text-green-700">65 minutes</p>
+                        </div>
+                    </div>
+
+                    <div class="border p-6 rounded-lg bg-gray-50">
+                        <h3 class="text-2xl font-bold mb-4 text-center">Scenario 2: New "Shortcut" Added</h3>
+                        <div id="canvas-container-2" class="canvas-container">
+                             <canvas id="traffic-canvas-2-bg"></canvas>
+                             <canvas id="traffic-canvas-2-fg"></canvas>
+                        </div>
+                        <div class="mt-4 text-xs text-gray-500 text-center space-y-1">
+                            <p>A new, zero-delay road from A to B is added.</p>
+                            <p><span class="font-semibold">Dominant Path (S-A-B-E):</span> Time = T(N) + 0 + T(N)</p>
+                            <p>Every driver takes the new path, creating two new bottlenecks.</p>
+                        </div>
+                        <div class="mt-4 p-4 bg-red-100 rounded-lg">
+                            <p class="text-xl text-center font-semibold">New Equilibrium Travel Time:</p>
+                            <p id="time_after" class="text-center text-3xl font-bold text-red-700">80 minutes</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <section class="bg-white p-8 rounded-xl shadow-lg">
+                <h2 class="text-3xl font-bold mb-4 text-gray-900">Modern Example: Power Grids ⚡️</h2>
+                 <p class="text-lg leading-relaxed">
+                     In power systems, electricity flow follows the laws of physics (specifically, the path of least impedance), not driver choice. An Optimal Power Flow (OPF) calculation finds the most economic dispatch of generators to meet load while respecting grid constraints. The paradox can occur when adding a new transmission line creates loop flows and congestion. This may force the system operator to perform a costly redispatch—turning down cheap generators and turning up expensive ones—to avoid overloading lines, paradoxically increasing the total cost of electricity.
+                 </p>
+
+                <div class="mt-6 mb-4 p-4 bg-gray-50 border border-gray-200 rounded-lg">
+                    <button onclick="document.getElementById('powerParams').classList.toggle('hidden')" 
+                            class="w-full flex justify-between items-center text-left text-lg font-semibold text-gray-700 hover:text-gray-900">
+                        <span>⚙️ Adjust System Parameters</span>
+                        <span class="text-sm text-gray-500">Click to expand</span>
+                    </button>
+                    <div id="powerParams" class="hidden mt-6 pt-4 border-t border-gray-200 space-y-6">
+                        <div>
+                            <h4 class="font-semibold text-gray-700 mb-3">Interactive Parameters:</h4>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-4">
+                                <div>
+                                    <label for="gen1CostSlider" class="param-slider-label">G1 Cost: <span id="gen1CostValue" class="font-bold text-blue-600">$10</span>/MWh</label>
+                                    <input id="gen1CostSlider" type="range" min="5" max="50" value="10" step="1" class="w-full h-2 bg-blue-100 rounded-lg appearance-none cursor-pointer">
+                                </div>
+                                 <div>
+                                    <label for="gen2CostSlider" class="param-slider-label">G2 Cost: <span id="gen2CostValue" class="font-bold text-red-600">$75</span>/MWh</label>
+                                    <input id="gen2CostSlider" type="range" min="55" max="150" value="75" step="1" class="w-full h-2 bg-red-100 rounded-lg appearance-none cursor-pointer">
+                                </div>
+                                <div>
+                                    <label for="lineLimitSlider" class="param-slider-label">Line 2-3 Limit: <span id="lineLimitValue" class="font-bold text-yellow-700">100</span> MW</label>
+                                    <input id="lineLimitSlider" type="range" min="10" max="300" value="100" step="5" class="w-full h-2 bg-yellow-100 rounded-lg appearance-none cursor-pointer">
+                                </div>
+                                <div>
+                                    <label for="pmaxG1Slider" class="param-slider-label">G1 Pmax: <span id="pmaxG1Value" class="font-bold text-blue-600">500</span> MW</label>
+                                    <input id="pmaxG1Slider" type="range" min="50" max="1000" value="500" step="10" class="w-full h-2 bg-blue-100 rounded-lg appearance-none cursor-pointer">
+                                </div>
+                                <div>
+                                    <label for="pmaxG2Slider" class="param-slider-label">G2 Pmax: <span id="pmaxG2Value" class="font-bold text-red-600">500</span> MW</label>
+                                    <input id="pmaxG2Slider" type="range" min="50" max="1000" value="500" step="10" class="w-full h-2 bg-red-100 rounded-lg appearance-none cursor-pointer">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h4 class="font-semibold text-gray-700 mb-2">Fixed Physical Parameters:</h4>
+                            <div class="p-4 bg-white rounded-lg shadow-sm font-mono text-sm space-y-2 text-gray-800">
+                                <p class="font-bold">Power Transfer Distribution Factors (PTDFs):</p>
+                                <div class="pl-4">
+                                    <span>For Line 2-3:</span>
+                                    <p class="pl-4">• From G1: -0.25 (25% of G1's power creates a counter-flow from Bus 3 to 2)</p>
+                                    <p class="pl-4">• From G2: +0.75 (75% of G2's power flows from Bus 2 to 3)</p>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="mb-8 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                    <label id="loadLabel" for="loadSlider" class="block text-lg font-medium text-gray-700">System Load: <span id="loadValue" class="font-bold text-yellow-700">500</span> MW</label>
+                    <input id="loadSlider" type="range" min="50" max="2000" value="500" step="10" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer" aria-labelledby="loadLabel">
+                </div>
+
+                <div class="mt-8 grid md:grid-cols-2 gap-8 items-start">
+                    <div class="border p-6 rounded-lg bg-gray-50">
+                        <h3 class="text-2xl font-bold mb-4 text-center">Scenario A: Original Network</h3>
+                        <div id="canvas-container-a" class="canvas-container relative">
+                            <canvas id="power-canvas-a-bg"></canvas>
+                            <canvas id="power-canvas-a-fg"></canvas>
+                            <div id="power-label-13a" class="line-label"></div>
+                            <div id="power-label-24a" class="line-label"></div>
+                            <div id="power-label-34a" class="line-label"></div>
+                            <div id="power-label-23a" class="line-label"></div>
+                            <div id="gen-label-g1a" class="generator-label"></div>
+                            <div id="gen-label-g2a" class="generator-label"></div>
+                            <div id="load-label-a" class="generator-label"></div> <div id="congestion-badge-a" class="absolute top-2 right-2 hidden text-xs font-bold text-white bg-red-500 px-2 py-1 rounded-full">CONGESTED</div>
+                        </div>
+                        <div id="cost-box-a" class="mt-6 p-4 rounded-lg transition-colors duration-300">
+                            <p class="text-xl text-center font-semibold">Total Generation Cost:</p>
+                            <p id="cost_a" class="text-3xl text-center font-bold">$0/hr</p>
+                        </div>
+                    </div>
+
+                    <div class="border p-6 rounded-lg bg-gray-50">
+                        <h3 class="text-2xl font-bold mb-4 text-center">Scenario B: Removed Line (Optimal)</h3>
+                        <div id="canvas-container-b" class="canvas-container">
+                            <canvas id="power-canvas-b-bg"></canvas>
+                            <canvas id="power-canvas-b-fg"></canvas>
+                            <div id="power-label-13b" class="line-label"></div>
+                            <div id="power-label-24b" class="line-label"></div>
+                            <div id="power-label-34b" class="line-label"></div>
+                            <div id="gen-label-g1b" class="generator-label"></div>
+                            <div id="gen-label-g2b" class="generator-label"></div>
+                            <div id="load-label-b" class="generator-label"></div> </div>
+                        <div class="mt-6 p-4 bg-green-100 rounded-lg">
+                            <p class="text-xl text-center font-semibold">Total Generation Cost:</p>
+                            <p id="cost_b" class="text-3xl text-center font-bold text-green-700">$0/hr</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+        </main>
+
+        <footer class="text-center mt-16 py-6 border-t border-gray-200">
+            <p class="text-gray-500">A technical demonstration of network equilibrium and systemic efficiency.</p>
+        </footer>
+    </div>
+
+    <script>
+    (() => {
+        'use strict';
+
+        const TRAFFIC_CONFIG = {
+            VARIABLE_DELAY_FACTOR: 100,
+            FIXED_DELAY: 45,
+        };
+
+        const POWER_CONFIG = {
+            PTDF: {
+                LINE_23: { FROM_G1: -0.25, FROM_G2: 0.75 }
+            }
+        };
+
+        const ANIMATION_CONFIG = {
+            MAX_PARTICLES_PER_ROUTE: 150,
+            PARTICLE_SIZE_TRAFFIC: 2,
+            PARTICLE_SIZE_POWER: 2.5,
+            PARTICLE_FACTOR_TRAFFIC: 40, 
+            PARTICLE_FACTOR_POWER: 8,   
+        };
+
+        const state = {
+            traffic: {
+                totalCars: 4000,
+                timeBefore: 0,
+                timeAfter: 0,
+            },
+            power: {
+                systemLoad: 500,
+                gen1Cost: 10,
+                gen2Cost: 75,
+                line23Limit: 100,
+                pmax_g1: 500,
+                pmax_g2: 500,
+                isCongested: false,
+                costA: 0, costB: 0,
+                gen1_A: 0, gen2_A: 0,
+                gen1_B: 0, gen2_B: 0,
+                flowsA: {}, flowsB: {}
+            },
+            particles: {
+                traffic1_SAE: [], traffic1_SBE: [],
+                traffic2_SABE: [],
+                powerA_13: [], powerA_23: [], powerA_24: [], powerA_34: [],
+                powerB: [],
+            },
+            canvases: {}
+        };
+
+        const DOM = {
+            carSlider: document.getElementById('carSlider'),
+            carCount: document.getElementById('carCount'),
+            timeBefore: document.getElementById('time_before'),
+            timeAfter: document.getElementById('time_after'),
+            loadSlider: document.getElementById('loadSlider'),
+            loadValue: document.getElementById('loadValue'),
+            gen1CostSlider: document.getElementById('gen1CostSlider'),
+            gen1CostValue: document.getElementById('gen1CostValue'),
+            gen2CostSlider: document.getElementById('gen2CostSlider'),
+            gen2CostValue: document.getElementById('gen2CostValue'),
+            lineLimitSlider: document.getElementById('lineLimitSlider'),
+            lineLimitValue: document.getElementById('lineLimitValue'),
+            pmaxG1Slider: document.getElementById('pmaxG1Slider'),
+            pmaxG1Value: document.getElementById('pmaxG1Value'),
+            pmaxG2Slider: document.getElementById('pmaxG2Slider'),
+            pmaxG2Value: document.getElementById('pmaxG2Value'),
+            costA: document.getElementById('cost_a'),
+            costB: document.getElementById('cost_b'),
+            costBoxA: document.getElementById('cost-box-a'),
+            congestionBadge: document.getElementById('congestion-badge-a'),
+            labels: {
+                p13a: document.getElementById('power-label-13a'), p24a: document.getElementById('power-label-24a'),
+                p34a: document.getElementById('power-label-34a'), p23a: document.getElementById('power-label-23a'),
+                g1a: document.getElementById('gen-label-g1a'), g2a: document.getElementById('gen-label-g2a'),
+                la: document.getElementById('load-label-a'), // Added Load Label Ref
+                p13b: document.getElementById('power-label-13b'), p24b: document.getElementById('power-label-24b'),
+                p34b: document.getElementById('power-label-34b'), g1b: document.getElementById('gen-label-g1b'),
+                g2b: document.getElementById('gen-label-g2b'),
+                lb: document.getElementById('load-label-b'), // Added Load Label Ref
+            }
+        };
+        
+        function calculateTraffic() {
+            const totalCars = state.traffic.totalCars;
+            const carsPerRouteBefore = totalCars / 2;
+            state.traffic.timeBefore = (carsPerRouteBefore / TRAFFIC_CONFIG.VARIABLE_DELAY_FACTOR) + TRAFFIC_CONFIG.FIXED_DELAY;
+            state.traffic.timeAfter = (totalCars / TRAFFIC_CONFIG.VARIABLE_DELAY_FACTOR) * 2;
+        }
+
+        function calculatePower() {
+            const { systemLoad, gen1Cost, gen2Cost, line23Limit, pmax_g1, pmax_g2 } = state.power;
+            
+            state.power.gen1_B = Math.min(systemLoad, pmax_g1);
+            state.power.gen2_B = systemLoad - state.power.gen1_B;
+            if (state.power.gen2_B > pmax_g2) { /* Handle unserved energy */ }
+            state.power.costB = (state.power.gen1_B * gen1Cost) + (state.power.gen2_B * gen2Cost);
+
+            let gen1_A = state.power.gen1_B;
+            let gen2_A = state.power.gen2_B;
+
+            const initialFlow23 = (POWER_CONFIG.PTDF.LINE_23.FROM_G1 * gen1_A) + (POWER_CONFIG.PTDF.LINE_23.FROM_G2 * gen2_A);
+            const ptdf_g1 = POWER_CONFIG.PTDF.LINE_23.FROM_G1;
+            const ptdf_g2 = POWER_CONFIG.PTDF.LINE_23.FROM_G2;
+            const shift_factor = ptdf_g1 - ptdf_g2;
+
+            if (initialFlow23 > line23Limit) {
+                state.power.isCongested = true;
+                const overflow = initialFlow23 - line23Limit;
+                let requiredRedispatch = Math.abs(overflow / shift_factor);
+                let actualRedispatch = Math.min(requiredRedispatch, gen2_A);
+                
+                gen1_A += actualRedispatch;
+                gen2_A -= actualRedispatch;
+
+            } else if (initialFlow23 < -line23Limit) {
+                state.power.isCongested = true;
+                const overflow = -line23Limit - initialFlow23;
+                let requiredRedispatch = Math.abs(overflow / shift_factor);
+                let actualRedispatch = Math.min(requiredRedispatch, gen1_A);
+
+                gen1_A -= actualRedispatch;
+                gen2_A += actualRedispatch;
+            } else {
+                state.power.isCongested = false;
+            }
+            
+            state.power.gen1_A = Math.max(0, Math.min(gen1_A, pmax_g1));
+            state.power.gen2_A = Math.max(0, Math.min(systemLoad - state.power.gen1_A, pmax_g2));
+            state.power.gen1_A = systemLoad - state.power.gen2_A;
+
+            state.power.costA = (state.power.gen1_A * gen1Cost) + (state.power.gen2_A * gen2Cost);
+            
+            calculatePowerFlows();
+        }
+        
+        function calculatePowerFlows() {
+            const { gen1_A, gen2_A, gen1_B, gen2_B } = state.power;
+            const { FROM_G1, FROM_G2 } = POWER_CONFIG.PTDF.LINE_23;
+
+            const flow_23a = (FROM_G1 * gen1_A) + (FROM_G2 * gen2_A);
+            const flow_13a = gen1_A;
+            const flow_24a = gen2_A - flow_23a;
+            const flow_34a = flow_13a + flow_23a; 
+            
+            state.power.flowsA = { '13': flow_13a, '24': flow_24a, '34': flow_34a, '23': flow_23a };
+            state.power.flowsB = { '13': gen1_B, '24': gen2_B, '34': gen1_B };
+        }
+
+        function updateUIText() {
+            const { traffic, power } = state;
+            DOM.carCount.textContent = traffic.totalCars;
+            DOM.timeBefore.textContent = `${traffic.timeBefore.toFixed(0)} minutes`;
+            DOM.timeAfter.textContent = `${traffic.timeAfter.toFixed(0)} minutes`;
+            
+            DOM.loadValue.textContent = power.systemLoad;
+            DOM.gen1CostValue.textContent = `$${power.gen1Cost}`;
+            DOM.gen2CostValue.textContent = `$${power.gen2Cost}`;
+            DOM.lineLimitValue.textContent = power.line23Limit;
+            DOM.pmaxG1Value.textContent = power.pmax_g1;
+            DOM.pmaxG2Value.textContent = power.pmax_g2;
+
+            DOM.costA.textContent = `$${power.costA.toLocaleString(undefined, {maximumFractionDigits:0})}/hr`;
+            DOM.costB.textContent = `$${power.costB.toLocaleString(undefined, {maximumFractionDigits:0})}/hr`;
+            DOM.congestionBadge.classList.toggle('hidden', !power.isCongested);
+            
+            if (power.isCongested && power.costA > power.costB) {
+                DOM.costBoxA.className = 'mt-6 p-4 rounded-lg transition-colors duration-300 bg-red-100';
+                DOM.costA.className = 'text-3xl text-center font-bold text-red-700';
+            } else {
+                DOM.costBoxA.className = 'mt-6 p-4 rounded-lg transition-colors duration-300 bg-green-100';
+                DOM.costA.className = 'text-3xl text-center font-bold text-green-700';
+            }
+            
+            DOM.labels.g1a.innerHTML = `G1 (Cheap)<br>${power.gen1_A.toFixed(0)} MW`;
+            DOM.labels.g2a.innerHTML = `G2 (Expensive)<br>${power.gen2_A.toFixed(0)} MW`;
+            DOM.labels.p13a.innerHTML = `${power.flowsA['13'].toFixed(0)} MW`;
+            DOM.labels.p24a.innerHTML = `${power.flowsA['24'].toFixed(0)} MW`;
+            DOM.labels.p34a.innerHTML = `${power.flowsA['34'].toFixed(0)} MW`;
+            DOM.labels.p23a.innerHTML = `${power.flowsA['23'].toFixed(0)} MW <span class="line-label-details ${power.isCongested ? 'congested' : ''}">Limit: ${power.line23Limit} MW</span>`;
+            
+            DOM.labels.g1b.innerHTML = `G1 (Cheap)<br>${power.gen1_B.toFixed(0)} MW`;
+            DOM.labels.g2b.innerHTML = `G2 (Expensive)<br>${power.gen2_B.toFixed(0)} MW`;
+            DOM.labels.p13b.innerHTML = `${power.flowsB['13'].toFixed(0)} MW`;
+            DOM.labels.p24b.innerHTML = `${power.flowsB['24'].toFixed(0)} MW`;
+            DOM.labels.p34b.innerHTML = `${power.flowsB['34'].toFixed(0)} MW`;
+            
+            // --- CODE REVISION ---
+            // Update the new load labels in the animation window
+            const loadText = `Load<br>${power.systemLoad.toFixed(0)} MW`;
+            DOM.labels.la.innerHTML = loadText;
+            DOM.labels.lb.innerHTML = loadText;
+        }
+        
+        function handleInterfaceChange() {
+            state.traffic.totalCars = parseInt(DOM.carSlider.value, 10);
+            state.power.systemLoad = parseInt(DOM.loadSlider.value, 10);
+            state.power.gen1Cost = parseInt(DOM.gen1CostSlider.value, 10);
+            state.power.gen2Cost = parseInt(DOM.gen2CostSlider.value, 10);
+            state.power.line23Limit = parseInt(DOM.lineLimitSlider.value, 10);
+            state.power.pmax_g1 = parseInt(DOM.pmaxG1Slider.value, 10);
+            state.power.pmax_g2 = parseInt(DOM.pmaxG2Slider.value, 10);
+            
+            calculateTraffic();
+            calculatePower();
+            updateUIText();
+            updateParticleSystems();
+        }
+
+        const W = 400, H = 250;
+        const paths = {
+            t_sae:  [{x: W*0.1, y: H*0.5}, {x: W*0.5, y: H*0.2}, {x: W*0.9, y: H*0.5}],
+            t_sbe:  [{x: W*0.1, y: H*0.5}, {x: W*0.5, y: H*0.8}, {x: W*0.9, y: H*0.5}],
+            t_sabe: [{x: W*0.1, y: H*0.5}, {x: W*0.5, y: H*0.2}, {x: W*0.5, y: H*0.8}, {x: W*0.9, y: H*0.5}],
+            p_13: [{x: W*0.1, y: H*0.25}, {x: W*0.5, y: H*0.5}],
+            p_24: [{x: W*0.1, y: H*0.75}, {x: W*0.9, y: H*0.75}],
+            p_34: [{x: W*0.5, y: H*0.5}, {x: W*0.9, y: H*0.75}],
+            p_23: [{x: W*0.1, y: H*0.75}, {x: W*0.5, y: H*0.5}],
+            p_134: [{x: W*0.1, y: H*0.25}, {x: W*0.5, y: H*0.5}, {x: W*0.9, y: H*0.75}],
+        };
+        const reversePath = (p) => [...p].reverse();
+
+        class Particle {
+            constructor(path, speed, size, color) { this.path = path; this.speed = Math.max(0.5, speed); this.size = size; this.color = color; this.life = Math.random(); }
+            update() {
+                this.life += this.speed / 200;
+                if (this.life > 1) this.life = 0;
+                const totalDist = (this.path.length - 1) * this.life;
+                const segment = Math.floor(totalDist);
+                const segmentProgress = totalDist - segment;
+                const start = this.path[segment];
+                const end = this.path[segment + 1] || start;
+                this.x = start.x + (end.x - start.x) * segmentProgress;
+                this.y = start.y + (end.y - start.y) * segmentProgress;
+            }
+            draw(ctx) { ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fillStyle = this.color; ctx.fill(); }
+        }
+        
+        function adjustParticleCount(particleArray, desiredCount, path, speed, size, color) {
+            while (particleArray.length < desiredCount) { particleArray.push(new Particle(path, speed, size, color)); }
+            while (particleArray.length > desiredCount) { particleArray.pop(); }
+        }
+        
+        function updateParticleSystems() {
+            const { MAX_PARTICLES_PER_ROUTE, PARTICLE_FACTOR_TRAFFIC, PARTICLE_FACTOR_POWER, PARTICLE_SIZE_TRAFFIC, PARTICLE_SIZE_POWER } = ANIMATION_CONFIG;
+            
+            const carsPerRoute1 = state.traffic.totalCars / 2;
+            adjustParticleCount(state.particles.traffic1_SAE, Math.min(MAX_PARTICLES_PER_ROUTE, carsPerRoute1 / PARTICLE_FACTOR_TRAFFIC), paths.t_sae, 1.5, PARTICLE_SIZE_TRAFFIC, '#3b82f6');
+            adjustParticleCount(state.particles.traffic1_SBE, Math.min(MAX_PARTICLES_PER_ROUTE, carsPerRoute1 / PARTICLE_FACTOR_TRAFFIC), paths.t_sbe, 1.5, PARTICLE_SIZE_TRAFFIC, '#a855f7');
+            adjustParticleCount(state.particles.traffic2_SABE, Math.min(MAX_PARTICLES_PER_ROUTE*2, state.traffic.totalCars / PARTICLE_FACTOR_TRAFFIC), paths.t_sabe, 1.5, PARTICLE_SIZE_TRAFFIC, '#f97316');
+
+            const { flowsA, isCongested } = state.power;
+            const powerFlowsToAnimate = [
+                { array: state.particles.powerA_13, flow: flowsA['13'], path: paths.p_13, color: '#60a5fa' },
+                { array: state.particles.powerA_24, flow: flowsA['24'], path: paths.p_24, color: '#f87171' },
+                { array: state.particles.powerA_34, flow: flowsA['34'], path: paths.p_34, color: '#a3e635' },
+                { array: state.particles.powerA_23, flow: flowsA['23'], path: paths.p_23, color: isCongested ? '#ef4444' : '#fbbf24' },
+            ];
+
+            powerFlowsToAnimate.forEach(({ array, flow, path, color }) => {
+                const numParticles = Math.min(MAX_PARTICLES_PER_ROUTE, Math.abs(flow) / PARTICLE_FACTOR_POWER);
+                const directionalPath = flow >= 0 ? path : reversePath(path);
+                adjustParticleCount(array, numParticles, directionalPath, 2, PARTICLE_SIZE_POWER, color);
+            });
+            
+            const totalLoadB = state.power.gen1_B + state.power.gen2_B;
+            const numParticlesB = Math.min(MAX_PARTICLES_PER_ROUTE*2, totalLoadB / PARTICLE_FACTOR_POWER);
+            adjustParticleCount(state.particles.powerB, numParticlesB, paths.p_134, 2, PARTICLE_SIZE_POWER, '#22c55e');
+        }
+        
+        function drawStaticNetwork(ctx, type, scenario) {
+            if (!ctx) return;
+            const { width, height } = ctx.canvas;
+            ctx.clearRect(0, 0, width, height);
+            ctx.lineWidth = type === 'traffic' ? 8 : 6;
+            ctx.lineCap = 'round';
+            ctx.strokeStyle = 'rgba(107, 114, 128, 0.4)';
+            ctx.shadowColor = 'rgba(107, 114, 128, 0.4)';
+            ctx.shadowBlur = 4;
+            const drawLine = (p) => { ctx.beginPath(); ctx.moveTo(p[0].x, p[0].y); p.slice(1).forEach(pt => ctx.lineTo(pt.x, pt.y)); ctx.stroke(); };
+            
+            if (type === 'traffic') {
+                drawLine(paths.t_sae); drawLine(paths.t_sbe);
+                if (scenario === 2) {
+                    ctx.save();
+                    ctx.strokeStyle = 'rgba(249, 115, 22, 0.6)';
+                    drawLine([paths.t_sabe[1], paths.t_sabe[2]]);
+                    ctx.restore();
+                }
+            } else {
+                drawLine(paths.p_13); drawLine(paths.p_24); drawLine(paths.p_34);
+                if (scenario === 'A') {
+                    ctx.save();
+                    ctx.strokeStyle = state.power.isCongested ? 'var(--congested-color-light)' : 'rgba(251, 191, 36, 0.5)';
+                    drawLine(paths.p_23);
+                    ctx.restore();
+                }
+            }
+            ctx.shadowBlur = 0;
+        }
+        
+        function drawAllStaticBackgrounds() {
+            drawStaticNetwork(state.canvases['traffic-canvas-1-bg']?.ctx, 'traffic', 1);
+            drawStaticNetwork(state.canvases['traffic-canvas-2-bg']?.ctx, 'traffic', 2);
+            drawStaticNetwork(state.canvases['power-canvas-a-bg']?.ctx, 'power', 'A');
+            drawStaticNetwork(state.canvases['power-canvas-b-bg']?.ctx, 'power', 'B');
+        }
+
+        function animate() {
+            const animationMap = {
+                'traffic-canvas-1-fg': [state.particles.traffic1_SAE, state.particles.traffic1_SBE],
+                'traffic-canvas-2-fg': [state.particles.traffic2_SABE],
+                'power-canvas-a-fg':  [state.particles.powerA_13, state.particles.powerA_23, state.particles.powerA_24, state.particles.powerA_34],
+                'power-canvas-b-fg':  [state.particles.powerB]
+            };
+            for (const [canvasId, particleGroups] of Object.entries(animationMap)) {
+                const canvasInfo = state.canvases[canvasId];
+                if (!canvasInfo) continue;
+                canvasInfo.ctx.clearRect(0, 0, canvasInfo.width, canvasInfo.height);
+                particleGroups.flat().forEach(p => { p.update(); p.draw(canvasInfo.ctx); });
+            }
+            requestAnimationFrame(animate);
+        }
+        
+        function setupCanvas(id) {
+            const canvas = document.getElementById(id);
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const dpr = window.devicePixelRatio || 1;
+            const rect = canvas.parentElement.getBoundingClientRect();
+            canvas.width = rect.width * dpr;
+            canvas.height = rect.height * dpr;
+            ctx.scale(dpr, dpr);
+            state.canvases[id] = { ctx, width: rect.width, height: rect.height, dpr };
+        }
+
+        function drawAllNodesAndLabels() { 
+            const createNodes = (containerId, nodeConfig) => {
+                const container = document.getElementById(containerId);
+                if (!container) return;
+                container.querySelectorAll('.node').forEach(n => n.remove());
+                nodeConfig.forEach(n => {
+                    const el = document.createElement('div');
+                    el.className = `node text-white ${n.color}`;
+                    if (n.color === 'bg-yellow-400') el.classList.add('text-gray-800');
+                    el.style.cssText = n.style;
+                    el.textContent = n.id;
+                    container.appendChild(el);
+                });
+            };
+            const trafficNodes = [
+                { id: 'S',  style: `left:${paths.t_sae[0].x / W * 100}%; top:${paths.t_sae[0].y / H * 100}%;`, color: 'bg-slate-500' },
+                { id: 'A',  style: `left:${paths.t_sae[1].x / W * 100}%; top:${paths.t_sae[1].y / H * 100}%;`, color: 'bg-blue-500' },
+                { id: 'B',  style: `left:${paths.t_sbe[1].x / W * 100}%; top:${paths.t_sbe[1].y / H * 100}%;`, color: 'bg-purple-500' },
+                { id: 'E',  style: `left:${paths.t_sae[2].x / W * 100}%; top:${paths.t_sae[2].y / H * 100}%;`, color: 'bg-slate-500' }
+            ];
+            const powerNodes = [
+                { id: 'G1', style: `left:${paths.p_13[0].x / W * 100}%; top:${paths.p_13[0].y / H * 100}%;`, color: 'bg-blue-500' },
+                { id: 'G2', style: `left:${paths.p_24[0].x / W * 100}%; top:${paths.p_24[0].y / H * 100}%;`, color: 'bg-red-500' },
+                { id: 'B3', style: `left:${paths.p_13[1].x / W * 100}%; top:${paths.p_13[1].y / H * 100}%;`, color: 'bg-yellow-400' },
+                { id: 'L',  style: `left:${paths.p_24[1].x / W * 100}%; top:${paths.p_24[1].y / H * 100}%;`, color: 'bg-green-500' }
+            ];
+            createNodes('canvas-container-1', trafficNodes);
+            createNodes('canvas-container-2', trafficNodes);
+            createNodes('canvas-container-a', powerNodes);
+            createNodes('canvas-container-b', powerNodes);
+            
+            // --- CODE REVISION ---
+            // Positioning the new load labels
+            DOM.labels.p13a.style.cssText = `left:30%; top:37.5%`; DOM.labels.p24a.style.cssText = `left:50%; top:75%`;
+            DOM.labels.p34a.style.cssText = `left:70%; top:62.5%`; DOM.labels.p23a.style.cssText = `left:30%; top:62.5%`;
+            DOM.labels.g1a.style.cssText = `left:10%; top:10%; transform: translateX(-50%);`;
+            DOM.labels.g2a.style.cssText = `left:10%; top:90%; transform: translate(-50%, -50%);`;
+            DOM.labels.la.style.cssText = `left:90%; top:90%; transform: translate(-50%, -50%);`;
+
+            DOM.labels.p13b.style.cssText = `left:30%; top:37.5%`; DOM.labels.p24b.style.cssText = `left:50%; top:75%`;
+            DOM.labels.p34b.style.cssText = `left:70%; top:62.5%`;
+            DOM.labels.g1b.style.cssText = `left:10%; top:10%; transform: translateX(-50%);`;
+            DOM.labels.g2b.style.cssText = `left:10%; top:90%; transform: translate(-50%, -50%);`;
+            DOM.labels.lb.style.cssText = `left:90%; top:90%; transform: translate(-50%, -50%);`;
+        }
+        
+        function onResize() {
+            Object.keys(state.canvases).forEach(setupCanvas);
+            drawAllNodesAndLabels();
+            drawAllStaticBackgrounds();
+        }
+
+        function init() {
+            const sliders = [
+                DOM.carSlider, DOM.loadSlider, 
+                DOM.gen1CostSlider, DOM.gen2CostSlider, DOM.lineLimitSlider,
+                DOM.pmaxG1Slider, DOM.pmaxG2Slider
+            ];
+            sliders.forEach(slider => slider.addEventListener('input', handleInterfaceChange));
+
+            Object.keys(DOM.labels).forEach(id => {
+                const el = document.getElementById(id);
+                if (el) setupCanvas(id.replace('label', 'canvas')); // A bit of a hack, assumes naming convention
+            });
+             ['traffic-canvas-1-bg', 'traffic-canvas-1-fg', 'traffic-canvas-2-bg', 'traffic-canvas-2-fg',
+             'power-canvas-a-bg', 'power-canvas-a-fg', 'power-canvas-b-bg', 'power-canvas-b-fg']
+            .forEach(id => setupCanvas(id));
+
+            
+            drawAllNodesAndLabels();
+            drawAllStaticBackgrounds();
+            
+            let resizeTimeout;
+            window.addEventListener('resize', () => {
+                clearTimeout(resizeTimeout);
+                resizeTimeout = setTimeout(onResize, 250);
+            });
+
+            handleInterfaceChange();
+            animate();
+        }
+
+        window.addEventListener('load', init);
+
+    })();
+    </script>
+</body>
+</html>
