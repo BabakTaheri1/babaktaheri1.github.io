@@ -5,6 +5,7 @@ title: publications
 description: You can also browse my <a href="https://scholar.google.com/citations?user=7_H8IkUAAAAJ&hl=en" target="_blank">Google Scholar</a> profile.
 nav: true
 nav_order: 2
+bib_file: 'papers.bib' 
 ---
 
 <!-- _pages/publications.md -->
@@ -15,6 +16,5 @@ nav_order: 2
 
 <div class="publications">
 
-{% bibliography %}
-
+{% bibliography --group_by type --group_order preprints,articles,inproceedings,incollection,phdthesis,mastersthesis %}
 </div>
