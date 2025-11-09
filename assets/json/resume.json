@@ -124,15 +124,6 @@
       "highlights": []
     }
   ],
-  "volunteer": [
-    {
-      "organization": "IEEE, IET, EPSR, RESS, IJEPES Journals and Conferences",
-      "position": "Reviewer",
-      "startDate": "2019-01",
-      "endDate": "present",
-      "summary": "Reviewer for journals and conferences including IEEE (TPWRS, TSG, TPWRD, Power Engineering Letters, CDC), IET (GTD, RPG), EPSR, RESS, IJEPES"
-    }
-  ],
 
   "awards": [
     {
@@ -170,6 +161,15 @@
       "date": "2013-08",
       "awarder": "National University Entrance Exam",
       "summary": "Ranked within the Top 0.5% in B.Sc. Mathematics and Physics Nationwide University Entrance Exam"
+    }
+  ],
+  "volunteer": [
+    {
+      "organization": "IEEE, IET, EPSR, RESS, IJEPES Journals and Conferences",
+      "position": "Reviewer",
+      "startDate": "2019-01",
+      "endDate": "present",
+      "summary": "Reviewer for journals and conferences including IEEE (TPWRS, TSG, TPWRD, Power Engineering Letters, CDC), IET (GTD, RPG), EPSR, RESS, IJEPES"
     }
   ]
 }
