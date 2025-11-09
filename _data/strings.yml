@@ -1,0 +1,8 @@
+en:
+  bibliography_types:
+    preprints: "Preprints"
+    articles: "Journal Publications"
+    inproceedings: "Conference Publications"
+    incollection: "Book Chapters"
+    phdthesis: "PhD Thesis"
+    mastersthesis: "Master's Thesis"
