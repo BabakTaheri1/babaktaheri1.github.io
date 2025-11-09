@@ -5,4 +5,4 @@ inline: true
 related_posts: false
 ---
 
-Two papers accepted for the 23rd Power Systems Computational Conference (PSCC), to appear in Electric Power Systems Research. We are looking to present our papers in Paris this summer.
+Two papers accepted to the **23rd Power Systems Computational Conference (PSCC)**, to appear in **Electric Power Systems Research**.
