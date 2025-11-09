@@ -5,7 +5,6 @@ title: publications
 description: You can also browse my Google Scholar profile.
 nav: true
 nav_order: 2
-bib_file: 'papers.bib' 
 ---
 
 {% include bib_search.liquid %}
