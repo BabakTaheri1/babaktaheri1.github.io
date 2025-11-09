@@ -2,7 +2,7 @@
 layout: about
 title: about
 permalink: /
-subtitle: I am a Research Scientist at<a href=https://www.hitachienergy.com/us/en> Hitachi Energy Research</a>.
+subtitle: Research Scientist at<a href=https://www.hitachienergy.com/us/en> Hitachi Energy Research</a>.
 
 profile:
   align: right
