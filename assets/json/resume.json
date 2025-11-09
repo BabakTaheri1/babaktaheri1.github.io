@@ -76,7 +76,7 @@
       "startDate": "2025-01",
       "endDate": "present",
       "summary": "",
-      "highlights": [""]
+      "highlights": []
     },
     {
       "name": "Dominion Energy",
@@ -111,15 +111,6 @@
       "location": "Atlanta, GA",
       "startDate": "2021-08",
       "endDate": "2024-12",
-      "summary": "",
-      "highlights": []
-    },
-    {
-      "name": "Sharif University of Technology",
-      "position": "Graduate Research and Teaching Assistant",
-      "location": "Tehran",
-      "startDate": "2017-09",
-      "endDate": "2021-05",
       "summary": "",
       "highlights": []
     }
