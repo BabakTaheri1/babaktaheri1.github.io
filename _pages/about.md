@@ -34,6 +34,8 @@ My research goal is to use mathematical optimization and machine learning techni
 
 Outside of my work in research, I enjoy traveling, hiking, watching movies, and playing soccer and volleyball.
 
-<a href="http://mapmyvisitors.com/map.aspx?d=XP-MrktceiijarYMkZY6RXtWwaZeYl_0fRJw1BbIApM">
-  <img src="//mapmyvisitors.com/map.png?d=XP-MrktceiijarYMkZY6RXtWwaZeYl_0fRJw1BbIApM&cl=ffffff" alt="Map of Visitors" border="0" />
-</a>
+[//]: # (<a href="http://mapmyvisitors.com/map.aspx?d=XP-MrktceiijarYMkZY6RXtWwaZeYl_0fRJw1BbIApM">)
+
+[//]: # (  <img src="//mapmyvisitors.com/map.png?d=XP-MrktceiijarYMkZY6RXtWwaZeYl_0fRJw1BbIApM&cl=ffffff" alt="Map of Visitors" border="0" />)
+
+[//]: # (</a>)
