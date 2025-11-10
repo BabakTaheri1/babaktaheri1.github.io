@@ -162,5 +162,27 @@
       "endDate": "present",
       "summary": "Reviewer for journals and conferences including IEEE (TPWRS, TSG, TPWRD, Power Engineering Letters, CDC), IET (GTD, RPG), EPSR, RESS, IJEPES"
     }
+  ],
+    "languages": [
+      {
+      "language": "Turkish",
+      "fluency": "Native speaker",
+      "icon": ""
+    },
+    {
+      "language": "Persian",
+      "fluency": "Native speaker",
+      "icon": ""
+    },
+      {
+      "language": "Azerbaijani",
+      "fluency": "Native speaker",
+      "icon": ""
+    },
+    {
+      "language": "English",
+      "fluency": "Fluent",
+      "icon": ""
+    }
   ]
 }
