@@ -33,9 +33,3 @@ I received my Ph.D. from the <a href="https://ece.gatech.edu/" target="_blank">S
 My research goal is to use mathematical optimization and machine learning techniques to help build a more reliable, resilient, affordable, and sustainable energy future. My doctoral research, for instance, focused on using ML-inspired optimization methods to improve the accuracy of foundational power system approximations.
 
 Outside of my work in research, I enjoy traveling, hiking, watching movies, and playing soccer and volleyball.
-
-[//]: # (<a href="http://mapmyvisitors.com/map.aspx?d=XP-MrktceiijarYMkZY6RXtWwaZeYl_0fRJw1BbIApM">)
-
-[//]: # (  <img src="//mapmyvisitors.com/map.png?d=XP-MrktceiijarYMkZY6RXtWwaZeYl_0fRJw1BbIApM&cl=ffffff" alt="Map of Visitors" border="0" />)
-
-[//]: # (</a>)
