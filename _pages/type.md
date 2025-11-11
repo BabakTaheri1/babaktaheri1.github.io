@@ -9,6 +9,8 @@ nav: false
 post-header: true
 social: true
 bibtypes:
+  - bibquery: "@preprint"
+    text: "preprint"
   - bibquery: "@article"
     text: "Journal Articles"
   - bibquery: "@inproceedings"
