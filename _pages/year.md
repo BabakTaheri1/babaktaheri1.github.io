@@ -4,7 +4,7 @@ permalink: /publications/year
 title: publications
 description:
 pubtype: type
-post-header: true
+post-header: false
 sorting: year
 firstyear: 2014
 nav: false

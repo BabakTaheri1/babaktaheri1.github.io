@@ -6,7 +6,7 @@ description:
 sorting: type
 pubtype: year
 nav: false
-post-header: true
+post-header: false
 social: true
 bibtypes:
   - bibquery: "@preprint"
