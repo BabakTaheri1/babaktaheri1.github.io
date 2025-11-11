@@ -7,5 +7,5 @@ nav_order: 2
 social: true
 
 # This path MUST be correct
-bibliography: papers.bib 
+bibliography: /_bibliography/papers.bib 
 ---
