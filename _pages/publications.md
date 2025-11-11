@@ -2,16 +2,14 @@
 layout: page
 permalink: /publications/
 title: publications
-description: publications by categories in reversed chronological order. 
-years: [2022, 2021, 1905]
+#description: You can also browse my <a>href="https://scholar.google.com/citations?user=7_H8IkUAAAAJ&hl=en" target="_blank"> Google Scholar</a> profile.
 nav: true
+social: true # includes social icons at the bottom of the page
+nav_order: 2
 ---
-<!-- _pages/publications.md -->
+
+{% include bib_search.liquid %}
+
 <div class="publications">
-
-{%- for y in page.years %}
-  <h2 class="year">{{y}}</h2>
-  {% bibliography -f papers -q @*[year={{y}}]* %}
-{% endfor %}
-
+{% bibliography --group_by type --group_order preprints,articles,inproceedings,incollection,phdthesis,mastersthesis %}
 </div>
