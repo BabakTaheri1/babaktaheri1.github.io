@@ -9,7 +9,7 @@ last_name: Taheri
 #contact_note: >
 # You can even add a little note about which of these is the best way to reach you.
 description: > # the ">" symbol means to ignore newlines until "footer_text:"
-  I am a research scientist at Hitachi Energy Research. I received my PhD from the School of Electrical and Computer Engineering at the Georgia Institute of Technology, and I was fortunate to be advised by Prof. Daniel Molzahn.
+  I am a research scientist at Hitachi Energy Research. I received my PhD in the School of Electrical and Computer Engineering at the Georgia Institute of Technology, and I was fortunate to be advised by Prof. Daniel Molzahn. My passion lies in harnessing the power of mathematical optimization and machine learning techniques to foster a more reliable, resilient, affordable, and sustainable energy future.
 footer_text: >
   Powered by <a href="https://jekyllrb.com/" target="_blank">Jekyll</a> with <a href="https://github.com/alshedivat/al-folio">al-folio</a> theme.
   Hosted by <a href="https://pages.github.com/" target="_blank">GitHub Pages</a>.
