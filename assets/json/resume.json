@@ -31,7 +31,7 @@
   },
   "education": [
     {
-      "institution": "Georgia Institute of Technology",
+      "institution": "\uD83C\uDFDB\uFE0F Georgia Institute of Technology",
       "location": "Atlanta, GA",
       "area": "Electrical and Computer Engineering",
       "studyType": "Ph.D.",
@@ -42,7 +42,7 @@
       ]
     },
     {
-      "institution": "Georgia Institute of Technology",
+      "institution": "\uD83C\uDFDB\uFE0F Georgia Institute of Technology",
       "location": "Atlanta, GA",
       "area": "Electrical and Computer Engineering",
       "studyType": "M.Sc.",
@@ -50,7 +50,7 @@
       "endDate": "2024-05"
     },
     {
-      "institution": "Sharif University of Technology",
+      "institution": "\uD83C\uDFDB\uFE0F Sharif University of Technology",
       "location": "Tehran",
       "area": "Electrical Engineering - Power Systems",
       "studyType": "M.Sc.",
@@ -59,7 +59,7 @@
       "score": "4.00/4.00"
     },
     {
-      "institution": "University of Tabriz",
+      "institution": "\uD83C\uDFDB\uFE0F University of Tabriz",
       "location": "Tabriz",
       "area": "Electrical Engineering - Power",
       "studyType": "B.Sc.",
