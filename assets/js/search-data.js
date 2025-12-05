@@ -57,7 +57,7 @@ ninja.data = [{
           title: 'Awarded the Dominion Energy Inclusion, Equity, and Diversity Scholarship for the second time....',
           description: "",
           section: "News",},{id: "news-defended-my-ph-d-dissertation-improving-power-system-approximations-through-machine-learning-inspired-optimization-methods",
-          title: 'Defended my Ph.D. dissertation: Improving Power System Approximations Through Machine Learning-Inspired Optimization Methods...',
+          title: 'Defended my Ph.D. dissertation: Improving Power System Approximations Through Machine Learning-Inspired Optimization Methods....',
           description: "",
           section: "News",},{id: "news-paper-accepted-to-the-ieee-transactions-on-power-systems",
           title: 'Paper accepted to the IEEE Transactions on Power Systems.',
