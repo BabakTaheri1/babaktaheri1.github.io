@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Polya's Urn Simulation - Professional Edition</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #111827; /* bg-gray-900 */
+        }
+        .stat-card, .chart-container, .controls-container {
+            background-color: rgba(31, 41, 55, 0.8); /* bg-gray-800 with opacity */
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(55, 65, 81, 0.5); /* border-gray-700 with opacity */
+        }
+        .btn {
+            transition: all 0.2s ease-in-out;
+        }
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: scale(1);
+        }
+        /* For number input spinners */
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { 
+          -webkit-appearance: none; 
+          margin: 0; 
+        }
+        input[type=number] {
+          -moz-appearance: textfield;
+        }
+    </style>
+</head>
+<body class="text-gray-200 flex flex-col items-center justify-center min-h-screen p-4 antialiased">
+
+    <div class="w-full max-w-7xl mx-auto">
+        <header class="text-center mb-6">
+            <h1 class="text-3xl md:text-4xl font-bold text-white">Polya's Urn Simulation & Analysis</h1>
+            <p class="text-gray-400 mt-2">A ball is drawn, its color noted, and it's returned to the box with a variable number of same color additional balls.</p>
+            <p class="text-sm text-gray-500 mt-4">Created by Babak Taheri</p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Left Column: Simulation -->
+            <div class="flex flex-col">
+                <!-- Stats Display -->
+                <div class="grid grid-cols-3 gap-4 mb-4 text-center">
+                    <div class="stat-card p-4 rounded-lg shadow-lg">
+                        <p class="text-sm text-red-400 font-semibold">Red Balls</p>
+                        <p id="red-count" class="text-2xl md:text-3xl font-bold">1</p>
+                    </div>
+                    <div class="stat-card p-4 rounded-lg shadow-lg">
+                        <p class="text-sm text-gray-400 font-semibold">Total Balls</p>
+                        <p id="total-count" class="text-2xl md:text-3xl font-bold">2</p>
+                    </div>
+                    <div class="stat-card p-4 rounded-lg shadow-lg">
+                        <p class="text-sm text-blue-400 font-semibold">Blue Balls</p>
+                        <p id="blue-count" class="text-2xl md:text-3xl font-bold">1</p>
+                    </div>
+                </div>
+
+                <!-- Canvas for Visualization -->
+                <div class="relative w-full aspect-video bg-gray-900 rounded-lg shadow-inner border border-gray-700 overflow-hidden">
+                    <canvas id="simulation-canvas"></canvas>
+                    <div id="final-message" class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-60 text-2xl md:text-4xl font-bold text-white hidden">
+                        Simulation Complete!
+                    </div>
+                </div>
+                 <!-- Controls -->
+                <div class="controls-container p-4 mt-4 rounded-lg">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-start">
+                        <div>
+                            <h3 class="font-bold text-lg text-center mb-2">Parameters</h3>
+                            <div class="flex justify-center items-center gap-4">
+                                <div>
+                                    <label for="max-balls-input" class="block text-sm font-medium text-center text-gray-300">Total Balls</label>
+                                    <input type="number" id="max-balls-input" value="1000" class="w-28 mt-1 bg-gray-700 text-white border border-gray-600 rounded-md px-2 py-1 text-center">
+                                </div>
+                                <div>
+                                    <label for="num-simulations" class="block text-sm font-medium text-center text-gray-300">Multi-Runs</label>
+                                    <input type="number" id="num-simulations" value="1000" class="w-28 mt-1 bg-gray-700 text-white border border-gray-600 rounded-md px-2 py-1 text-center">
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-lg text-center mb-2">Rules</h3>
+                             <div class="flex justify-center items-center gap-4">
+                                <div>
+                                    <label for="same-color-add" class="block text-sm font-medium text-center text-gray-300">Add Same</label>
+                                    <input type="number" id="same-color-add" value="1" class="w-20 mt-1 bg-gray-700 text-white border border-gray-600 rounded-md px-2 py-1 text-center">
+                                </div>
+                                <div>
+                                    <label for="other-color-add" class="block text-sm font-medium text-center text-gray-300">Add Other</label>
+                                    <input type="number" id="other-color-add" value="0" class="w-20 mt-1 bg-gray-700 text-white border border-gray-600 rounded-md px-2 py-1 text-center">
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-lg text-center mb-2">Actions</h3>
+                            <div class="flex flex-wrap justify-center items-center gap-4">
+                                <button id="start-button" class="btn px-5 py-2 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg shadow-md transform hover:scale-105">Start Single Run</button>
+                                <button id="run-multi-button" class="btn px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg shadow-md transform hover:scale-105">Run Multiple</button>
+                                <button id="reset-button" class="btn px-5 py-2 bg-yellow-600 hover:bg-yellow-700 text-white font-semibold rounded-lg shadow-md transform hover:scale-105">Reset All</button>
+                                <div id="multi-run-spinner" class="w-5 h-5 border-t-2 border-white border-solid rounded-full animate-spin hidden"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Analysis -->
+            <div class="flex flex-col gap-6">
+                <div class="chart-container p-4 rounded-lg shadow-lg flex-grow">
+                    <h2 class="text-lg font-bold text-center text-gray-200 mb-2">Proportion of Balls (Single Run)</h2>
+                    <canvas id="proportion-chart"></canvas>
+                </div>
+                <div class="chart-container p-4 rounded-lg shadow-lg flex-grow">
+                    <h2 class="text-lg font-bold text-center text-gray-200 mb-2">Distribution of Final Proportions</h2>
+                    <canvas id="histogram-chart"></canvas>
+                </div>
+                <div class="chart-container p-4 rounded-lg shadow-lg flex-grow">
+                    <h2 class="text-lg font-bold text-center text-gray-200 mb-2">Average Proportion (Multiple Runs)</h2>
+                    <canvas id="multi-run-proportion-chart"></canvas>
+                </div>
+                <div class="chart-container p-4 rounded-lg shadow-lg flex-grow">
+                    <h2 class="text-lg font-bold text-center text-gray-200 mb-2">Individual Run Proportions (Sample)</h2>
+                    <canvas id="individual-runs-chart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- DOM Element Selection ---
+        const canvas = document.getElementById('simulation-canvas');
+        const ctx = canvas.getContext('2d');
+        const redCountEl = document.getElementById('red-count');
+        const blueCountEl = document.getElementById('blue-count');
+        const totalCountEl = document.getElementById('total-count');
+        const startButton = document.getElementById('start-button');
+        const resetButton = document.getElementById('reset-button');
+        const finalMessage = document.getElementById('final-message');
+        const runMultiButton = document.getElementById('run-multi-button');
+        const numSimulationsInput = document.getElementById('num-simulations');
+        const maxBallsInput = document.getElementById('max-balls-input');
+        const sameColorAddInput = document.getElementById('same-color-add');
+        const otherColorAddInput = document.getElementById('other-color-add');
+        const multiRunSpinner = document.getElementById('multi-run-spinner');
+        const proportionCtx = document.getElementById('proportion-chart').getContext('2d');
+        const histogramCtx = document.getElementById('histogram-chart').getContext('2d');
+        const multiRunProportionCtx = document.getElementById('multi-run-proportion-chart').getContext('2d');
+        const individualRunsCtx = document.getElementById('individual-runs-chart').getContext('2d');
+
+        // --- Simulation & Physics Constants ---
+        const RED_COLOR = '#ef4444';
+        const BLUE_COLOR = '#3b82f6';
+        const GRAVITY = 0.1;
+        const FRICTION = 0.99;
+        const BALL_RADIUS = 5;
+
+        // --- State Variables ---
+        let logicalBalls = [];
+        let physicsBalls = [];
+        let stepInterval = null;
+        let isRunning = false;
+        let proportionChart, histogramChart, multiRunProportionChart, individualRunsChart;
+
+        // --- Ball Class for Physics Simulation ---
+        class Ball {
+            constructor(x, y, color) {
+                this.x = x; this.y = y;
+                this.vx = (Math.random() - 0.5) * 2; this.vy = 0;
+                this.radius = BALL_RADIUS; this.color = color;
+            }
+            draw(ctx) {
+                ctx.beginPath();
+                const gradient = ctx.createRadialGradient(this.x - this.radius * 0.3, this.y - this.radius * 0.3, this.radius * 0.1, this.x, this.y, this.radius);
+                if (this.color === 'red') { gradient.addColorStop(0, '#fca5a5'); gradient.addColorStop(1, RED_COLOR); } 
+                else { gradient.addColorStop(0, '#93c5fd'); gradient.addColorStop(1, BLUE_COLOR); }
+                ctx.fillStyle = gradient;
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fill(); ctx.closePath();
+            }
+            update(canvas) {
+                this.vy += GRAVITY; this.x += this.vx; this.y += this.vy;
+                if (this.x + this.radius > canvas.width) { this.x = canvas.width - this.radius; this.vx *= -0.8; } 
+                else if (this.x - this.radius < 0) { this.x = this.radius; this.vx *= -0.8; }
+                if (this.y + this.radius > canvas.height) { this.y = canvas.height - this.radius; this.vy *= -0.8; this.vx *= FRICTION; }
+            }
+        }
+
+        // --- Main Animation Loop ---
+        function animationLoop() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            physicsBalls.forEach(ball => { ball.update(canvas); ball.draw(ctx); });
+            requestAnimationFrame(animationLoop);
+        }
+
+        // --- Chart Initialization & Updates ---
+        function initializeCharts() {
+            Chart.defaults.color = '#d1d5db';
+            Chart.defaults.borderColor = 'rgba(255, 255, 255, 0.1)';
+            
+            const chartOptions = (yTitle, xTitle) => ({
+                animation: false,
+                scales: {
+                    y: { min: 0, max: 1, title: { display: true, text: yTitle } },
+                    x: { title: { display: true, text: xTitle } }
+                }
+            });
+
+            if (proportionChart) proportionChart.destroy();
+            proportionChart = new Chart(proportionCtx, { type: 'line', data: { labels: [], datasets: [ { label: 'Red Proportion', data: [], borderColor: RED_COLOR, borderWidth: 2, pointRadius: 0 }, { label: 'Blue Proportion', data: [], borderColor: BLUE_COLOR, borderWidth: 2, pointRadius: 0 } ]}, options: chartOptions('Proportion', 'Draw Number') });
+
+            if (histogramChart) histogramChart.destroy();
+            histogramChart = new Chart(histogramCtx, { type: 'bar', data: { labels: ['0-0.1', '0.1-0.2', '0.2-0.3', '0.3-0.4', '0.4-0.5', '0.5-0.6', '0.6-0.7', '0.7-0.8', '0.8-0.9', '0.9-1.0'], datasets: [ { label: 'Red Final Freq.', data: Array(10).fill(0), backgroundColor: RED_COLOR }, { label: 'Blue Final Freq.', data: Array(10).fill(0), backgroundColor: BLUE_COLOR } ]}, options: { scales: { y: { beginAtZero: true, title: { display: true, text: 'Number of Simulations' } }, x: { title: { display: true, text: 'Final Proportion' } } } } });
+
+            if (multiRunProportionChart) multiRunProportionChart.destroy();
+            multiRunProportionChart = new Chart(multiRunProportionCtx, { type: 'line', data: { labels: [], datasets: [ { label: 'Avg Red Prop.', data: [], borderColor: RED_COLOR, borderWidth: 2, pointRadius: 0 }, { label: 'Avg Blue Prop.', data: [], borderColor: BLUE_COLOR, borderWidth: 2, pointRadius: 0 } ]}, options: chartOptions('Average Proportion', 'Draw Number') });
+            
+            if (individualRunsChart) individualRunsChart.destroy();
+            individualRunsChart = new Chart(individualRunsCtx, { type: 'line', data: { labels: [], datasets: [] }, options: chartOptions('Proportion', 'Draw Number') });
+        }
+
+        function updateStatsAndCharts() {
+            const redCount = logicalBalls.filter(b => b === 'red').length;
+            const totalCount = logicalBalls.length;
+            const blueCount = totalCount - redCount;
+            redCountEl.textContent = redCount;
+            blueCountEl.textContent = blueCount;
+            totalCountEl.textContent = totalCount;
+            const redProportion = redCount / totalCount;
+            const blueProportion = blueCount / totalCount;
+            proportionChart.data.labels.push(totalCount);
+            proportionChart.data.datasets[0].data.push(redProportion);
+            proportionChart.data.datasets[1].data.push(blueProportion);
+            proportionChart.update();
+        }
+
+        // --- Simulation Logic ---
+        function simulationStep() {
+            const MAX_BALLS = parseInt(maxBallsInput.value) || 1000;
+            if (logicalBalls.length >= MAX_BALLS) {
+                stopSimulation();
+                finalMessage.classList.remove('hidden');
+                return;
+            }
+            const sameToAdd = parseInt(sameColorAddInput.value);
+            const otherToAdd = parseInt(otherColorAddInput.value);
+
+            const randomIndex = Math.floor(Math.random() * logicalBalls.length);
+            const chosenColor = logicalBalls[randomIndex];
+            
+            // Add balls based on the rules
+            for (let i = 0; i < sameToAdd; i++) {
+                logicalBalls.push(chosenColor);
+                const newBallX = canvas.width / 2 + (Math.random() - 0.5) * 50;
+                physicsBalls.push(new Ball(newBallX, -10, chosenColor));
+            }
+            for (let i = 0; i < otherToAdd; i++) {
+                const otherColor = chosenColor === 'red' ? 'blue' : 'red';
+                logicalBalls.push(otherColor);
+                const newBallX = canvas.width / 2 + (Math.random() - 0.5) * 50;
+                physicsBalls.push(new Ball(newBallX, -10, otherColor));
+            }
+
+            updateStatsAndCharts();
+        }
+
+        function startSimulation() {
+            if (isRunning) return;
+            const maxBalls = parseInt(maxBallsInput.value) || 1000;
+            if (logicalBalls.length >= maxBalls) { resetSimulation(); }
+            isRunning = true;
+            setButtonsDisabled(true);
+            finalMessage.classList.add('hidden');
+            proportionChart.data.labels = [];
+            proportionChart.data.datasets[0].data = [];
+            proportionChart.data.datasets[1].data = [];
+            stepInterval = setInterval(simulationStep, 10);
+        }
+
+        function stopSimulation() {
+            clearInterval(stepInterval);
+            isRunning = false;
+            setButtonsDisabled(false);
+        }
+
+        function resetSimulation() {
+            stopSimulation();
+            logicalBalls = ['red', 'blue'];
+            physicsBalls = [ new Ball(canvas.width / 2 - 20, 50, 'red'), new Ball(canvas.width / 2 + 20, 50, 'blue') ];
+            finalMessage.classList.add('hidden');
+            redCountEl.textContent = 1;
+            blueCountEl.textContent = 1;
+            totalCountEl.textContent = 2;
+            ['proportionChart', 'histogramChart', 'multiRunProportionChart', 'individualRunsChart'].forEach(chartName => {
+                if(window[chartName]) {
+                    if (chartName === 'individualRunsChart') {
+                        window[chartName].data.datasets = [];
+                    } else {
+                         window[chartName].data.datasets.forEach(d => d.data = []);
+                    }
+                    window[chartName].update();
+                }
+            });
+        }
+
+        // --- Multi-Run Simulation ---
+        function runFastSimulation() {
+            const MAX_BALLS = parseInt(maxBallsInput.value) || 1000;
+            const sameToAdd = parseInt(sameColorAddInput.value);
+            const otherToAdd = parseInt(otherColorAddInput.value);
+
+            let localBalls = ['red', 'blue'];
+            let redCount = 1;
+            const proportionHistory = [0.5];
+
+            while(localBalls.length < MAX_BALLS) {
+                const randomIndex = Math.floor(Math.random() * localBalls.length);
+                const chosenColor = localBalls[randomIndex];
+                
+                for (let i = 0; i < sameToAdd; i++) {
+                    localBalls.push(chosenColor);
+                    if(chosenColor === 'red') redCount++;
+                }
+                for (let i = 0; i < otherToAdd; i++) {
+                    const otherColor = chosenColor === 'red' ? 'blue' : 'red';
+                    localBalls.push(otherColor);
+                    if(otherColor === 'red') redCount++;
+                }
+
+                if (localBalls.length > MAX_BALLS) break; // Ensure we don't overshoot
+                proportionHistory.push(redCount / localBalls.length);
+            }
+            return proportionHistory;
+        }
+
+        function runMultipleSimulations() {
+            setButtonsDisabled(true);
+            multiRunSpinner.classList.remove('hidden');
+            setTimeout(() => {
+                const numSimulations = parseInt(numSimulationsInput.value) || 1000;
+                const MAX_BALLS = parseInt(maxBallsInput.value) || 1000;
+                const allRunsHistory = Array.from({ length: numSimulations }, runFastSimulation);
+                updateAggregateCharts(allRunsHistory, MAX_BALLS);
+                setButtonsDisabled(false);
+                multiRunSpinner.classList.add('hidden');
+            }, 10);
+        }
+
+        function updateAggregateCharts(allRunsHistory, maxBalls) {
+            // --- Update Histogram ---
+            const finalProportions = allRunsHistory.map(history => history[history.length - 1] || 0);
+            const redBins = Array(10).fill(0);
+            const blueBins = Array(10).fill(0);
+            finalProportions.forEach(redResult => {
+                const blueResult = 1.0 - redResult;
+                redBins[Math.min(9, Math.floor(redResult * 10))]++;
+                blueBins[Math.min(9, Math.floor(blueResult * 10))]++;
+            });
+            histogramChart.data.datasets[0].data = redBins;
+            histogramChart.data.datasets[1].data = blueBins;
+            histogramChart.update();
+
+            // --- Update Average Proportion Chart ---
+            const numRuns = allRunsHistory.length;
+            const longestRun = Math.max(...allRunsHistory.map(h => h.length));
+            const avgRedProportions = Array(longestRun).fill(0);
+            for (const history of allRunsHistory) {
+                for (let i = 0; i < history.length; i++) { avgRedProportions[i] += history[i]; }
+            }
+            for (let i = 0; i < avgRedProportions.length; i++) { avgRedProportions[i] /= numRuns; }
+            const avgBlueProportions = avgRedProportions.map(p => 1 - p);
+            multiRunProportionChart.data.labels = Array.from({ length: longestRun }, (_, i) => i + 2);
+            multiRunProportionChart.data.datasets[0].data = avgRedProportions;
+            multiRunProportionChart.data.datasets[1].data = avgBlueProportions;
+            multiRunProportionChart.update();
+
+            // --- Update Individual Runs Chart (Sample) ---
+            const runsToShow = allRunsHistory.slice(0, 100);
+            individualRunsChart.data.datasets = [];
+            runsToShow.forEach(redHistory => {
+                if (!redHistory.length) return;
+                const blueHistory = redHistory.map(p => 1 - p);
+                individualRunsChart.data.datasets.push({ label: '', data: redHistory, borderColor: 'rgba(239, 68, 68, 0.2)', borderWidth: 1, pointRadius: 0 });
+                individualRunsChart.data.datasets.push({ label: '', data: blueHistory, borderColor: 'rgba(59, 130, 246, 0.2)', borderWidth: 1, pointRadius: 0 });
+            });
+            individualRunsChart.options.plugins = { legend: { display: false } };
+            individualRunsChart.data.labels = Array.from({ length: longestRun }, (_, i) => i + 2);
+            individualRunsChart.update();
+        }
+        
+        function setButtonsDisabled(disabled) {
+            startButton.disabled = disabled;
+            runMultiButton.disabled = disabled;
+            numSimulationsInput.disabled = disabled;
+            maxBallsInput.disabled = disabled;
+            sameColorAddInput.disabled = disabled;
+            otherColorAddInput.disabled = disabled;
+        }
+
+        // --- Initial Setup & Event Listeners ---
+        function resizeCanvas() {
+            const container = canvas.parentElement;
+            canvas.width = container.clientWidth;
+            canvas.height = container.clientHeight;
+        }
+
+        window.onload = function() {
+            resizeCanvas();
+            initializeCharts();
+            resetSimulation();
+            requestAnimationFrame(animationLoop);
+        };
+
+        window.addEventListener('resize', resizeCanvas);
+        startButton.addEventListener('click', startSimulation);
+        resetButton.addEventListener('click', resetSimulation);
+        runMultiButton.addEventListener('click', runMultipleSimulations);
+
+    </script>
+</body>
+</html>
