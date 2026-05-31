@@ -542,74 +542,120 @@
             return { w, h };
         }
 
+        function chartGrid(ctx, x0, y0, x1, y1, cols, rows, zoom) {
+            ctx.save();
+            ctx.strokeStyle = 'rgba(148,163,184,0.12)';
+            ctx.lineWidth = 1 / zoom;
+            for (let c = 0; c <= cols; c++) {
+                const x = x0 + (x1 - x0) * c / cols;
+                ctx.beginPath(); ctx.moveTo(x, y0); ctx.lineTo(x, y1); ctx.stroke();
+            }
+            for (let r = 0; r <= rows; r++) {
+                const y = y0 + (y1 - y0) * r / rows;
+                ctx.beginPath(); ctx.moveTo(x0, y); ctx.lineTo(x1, y); ctx.stroke();
+            }
+            ctx.restore();
+        }
+
+        function legendChip(ctx, x, y, color, label, zoom) {
+            ctx.fillStyle = color;
+            ctx.fillRect(x, y, 8 / zoom, 8 / zoom);
+            ctx.fillStyle = '#e2e8f0';
+            ctx.font = `${10 / zoom}px Inter`;
+            ctx.textAlign = 'left';
+            ctx.textBaseline = 'top';
+            ctx.fillText(label, x + 11 / zoom, y - 1 / zoom);
+        }
+
         function drawTriangle() {
             const ctx = triangleCtx;
             const { w, h } = beginChartTransform(dom.triangleCanvas, ctx, chartOffsets.triangle, triangleZoom);
+            const z = triangleZoom;
 
-            const margin = { top: 20, right: 20, bottom: 40, left: 50 };
-            const plotWidth = w - margin.left - margin.right;
-            const plotHeight = h - margin.top - margin.bottom;
+            const mL = 52, mR = 20, mT = 18, mB = 26;
+            const plotW = w - mL - mR;
+            const halfH = (h - mT - mB) / 2;
+            const maxVal = S_CONSTANT * 1.1;
+            const scale = Math.min(plotW, halfH) / maxVal;
 
-            const max_val = S_CONSTANT * 1.1;
-            const p_scale = plotWidth / max_val;
-            const q_scale = plotHeight / max_val;
+            const ox = mL;
+            const oy = mT + halfH;
+            const axisLen = maxVal * scale;
 
-            const originX = margin.left;
-            const originY = h - margin.bottom;
+            const px = ox + state.P * scale;
+            const qy = oy - state.Q * scale;
 
-            const p_len = state.P * p_scale;
-            const q_len = state.Q * q_scale;
+            chartGrid(ctx, ox, oy - axisLen, ox + axisLen, oy + axisLen, 5, 8, z);
 
-            const axisColor = '#64748b';
-            const labelColor = '#9ca3af';
-            ctx.strokeStyle = axisColor;
-            ctx.fillStyle = labelColor;
-            ctx.lineWidth = 1 / triangleZoom;
-            ctx.font = `${12 / triangleZoom}px Inter`;
-
-            // Y-Axis (Q)
+            ctx.strokeStyle = '#475569';
+            ctx.lineWidth = 1.5 / z;
             ctx.beginPath();
-            ctx.moveTo(originX, margin.top);
-            ctx.lineTo(originX, originY + 4 / triangleZoom);
+            ctx.moveTo(ox, oy - axisLen); ctx.lineTo(ox, oy + axisLen);
+            ctx.moveTo(ox, oy); ctx.lineTo(ox + axisLen, oy);
             ctx.stroke();
-            ctx.save();
-            ctx.translate(margin.left - 35 / triangleZoom, h / 2);
-            ctx.rotate(-Math.PI / 2);
-            ctx.textAlign = "center";
-            ctx.fillText("Reactive Power (Q) [VAR]", 0, 0);
-            ctx.restore();
 
-            // X-Axis (P)
             ctx.beginPath();
-            ctx.moveTo(originX - 4 / triangleZoom, originY);
-            ctx.lineTo(w - margin.right, originY);
-            ctx.stroke();
-            ctx.textAlign = "center";
-            ctx.fillText("Active Power (P) [W]", w / 2, h - 15 / triangleZoom);
+            ctx.moveTo(ox, oy); ctx.lineTo(px, oy); ctx.lineTo(px, qy); ctx.closePath();
+            ctx.fillStyle = 'rgba(148,163,184,0.10)';
+            ctx.fill();
 
-            ctx.textAlign = "right";
-            ctx.textBaseline = "middle";
-            ctx.fillText("0", originX - 8 / triangleZoom, originY);
+            if (Math.abs(state.P) > 1 && Math.abs(state.Q) > 1) {
+                const m = 9 / z;
+                const dir = state.Q >= 0 ? -1 : 1;
+                ctx.strokeStyle = '#94a3b8';
+                ctx.lineWidth = 1 / z;
+                ctx.beginPath();
+                ctx.moveTo(px - m, oy); ctx.lineTo(px - m, oy + dir * m); ctx.lineTo(px, oy + dir * m);
+                ctx.stroke();
+            }
 
-            // Triangle
-            ctx.lineWidth = 4 / triangleZoom;
+            ctx.lineWidth = 4 / z;
             ctx.strokeStyle = COLORS.ACTIVE_POWER_UI;
-            ctx.beginPath();
-            ctx.moveTo(originX, originY);
-            ctx.lineTo(originX + p_len, originY);
-            ctx.stroke();
-
+            ctx.beginPath(); ctx.moveTo(ox, oy); ctx.lineTo(px, oy); ctx.stroke();
             ctx.strokeStyle = state.qColor;
-            ctx.beginPath();
-            ctx.moveTo(originX + p_len, originY);
-            ctx.lineTo(originX + p_len, originY - q_len);
-            ctx.stroke();
-
+            ctx.beginPath(); ctx.moveTo(px, oy); ctx.lineTo(px, qy); ctx.stroke();
             ctx.strokeStyle = COLORS.APPARENT_POWER_UI;
-            ctx.beginPath();
-            ctx.moveTo(originX, originY);
-            ctx.lineTo(originX + p_len, originY - q_len);
-            ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(ox, oy); ctx.lineTo(px, qy); ctx.stroke();
+
+            if (Math.abs(state.Q) > 0.5) {
+                const ang = Math.atan2(qy - oy, px - ox);
+                const r = 24 / z;
+                ctx.strokeStyle = '#cbd5e1';
+                ctx.lineWidth = 1.25 / z;
+                ctx.beginPath();
+                ctx.arc(ox, oy, r, 0, ang, ang < 0);
+                ctx.stroke();
+                const mid = ang / 2;
+                ctx.fillStyle = '#e2e8f0';
+                ctx.font = `${11 / z}px Inter`;
+                ctx.textAlign = 'left';
+                ctx.textBaseline = 'middle';
+                const deg = (Math.acos(state.PF) * 180 / Math.PI).toFixed(0);
+                ctx.fillText(`\u03c6=${deg}\u00b0`, ox + Math.cos(mid) * (r + 8 / z), oy + Math.sin(mid) * (r + 8 / z));
+            }
+
+            ctx.font = `bold ${12 / z}px Inter`;
+            ctx.textBaseline = 'middle';
+            ctx.fillStyle = COLORS.ACTIVE_POWER_UI;
+            ctx.textAlign = 'center';
+            ctx.fillText('P', (ox + px) / 2, oy + (state.Q >= 0 ? 12 : -12) / z);
+            ctx.fillStyle = state.qColor;
+            ctx.textAlign = 'left';
+            ctx.fillText('Q', px + 8 / z, (oy + qy) / 2);
+            ctx.fillStyle = COLORS.APPARENT_POWER_UI;
+            ctx.textAlign = 'center';
+            ctx.fillText('S', (ox + px) / 2 - 14 / z, (oy + qy) / 2 - 8 / z);
+
+            ctx.fillStyle = '#9ca3af';
+            ctx.font = `${10 / z}px Inter`;
+            ctx.textBaseline = 'alphabetic';
+            ctx.textAlign = 'center';
+            ctx.fillText('Active Power P (W)', ox + axisLen / 2, h - 7 / z);
+            ctx.save();
+            ctx.translate(13 / z, oy);
+            ctx.rotate(-Math.PI / 2);
+            ctx.fillText('Reactive Power Q (VAR)', 0, 0);
+            ctx.restore();
 
             ctx.restore();
         }
@@ -617,54 +663,59 @@
         function drawVIWaveforms() {
             const ctx = waveformCtx;
             const { w, h } = beginChartTransform(dom.waveformCanvas, ctx, chartOffsets.waveform, waveformZoom);
+            const z = waveformZoom;
 
-            const axisMargin = 40;
-            const plotWidth = w - axisMargin;
-            const y_center = h / 2;
-            const v_amp = h * 0.4;
+            const mL = 40, mR = 12, mT = 16, mB = 14;
+            const x0 = mL, x1 = w - mR;
+            const plotW = x1 - x0;
+            const yc = (mT + (h - mB)) / 2;
+            const amp = ((h - mT - mB) / 2) * 0.9;
 
-            const axisColor = '#64748b';
-            const labelColor = '#9ca3af';
-            ctx.strokeStyle = axisColor;
-            ctx.fillStyle = labelColor;
-            ctx.lineWidth = 1 / waveformZoom;
-            ctx.font = `${10 / waveformZoom}px Inter`;
+            chartGrid(ctx, x0, mT, x1, h - mB, 8, 4, z);
 
-            ctx.beginPath();
-            ctx.moveTo(axisMargin, 0); ctx.lineTo(axisMargin, h); ctx.stroke();
+            ctx.strokeStyle = '#475569';
+            ctx.lineWidth = 1.5 / z;
+            ctx.beginPath(); ctx.moveTo(x0, mT); ctx.lineTo(x0, h - mB); ctx.stroke();
+            ctx.strokeStyle = '#334155';
+            ctx.lineWidth = 1 / z;
+            ctx.beginPath(); ctx.moveTo(x0, yc); ctx.lineTo(x1, yc); ctx.stroke();
 
-            ctx.beginPath();
-            ctx.moveTo(axisMargin, y_center); ctx.lineTo(w, y_center); ctx.stroke();
+            ctx.fillStyle = '#9ca3af';
+            ctx.font = `${9 / z}px Inter`;
+            ctx.textAlign = 'right';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('0', x0 - 5 / z, yc);
+            ctx.fillText('max', x0 - 5 / z, yc - amp);
+            ctx.fillText('-max', x0 - 5 / z, yc + amp);
 
-            ctx.textAlign = "right";
-            ctx.textBaseline = "middle";
-            ctx.fillText("0", axisMargin - 5, y_center);
-            ctx.fillText("+Vmax", axisMargin - 5, y_center - v_amp);
-            ctx.fillText("-Vmax", axisMargin - 5, y_center + v_amp);
-
-            const v_path = new Path2D(), i_path = new Path2D();
-            for (let i = 0; i <= plotWidth; i++) {
-                const x = i + axisMargin;
-                const angle = i / plotWidth * Math.PI * 4;
-                const v_y = y_center - Math.sin(angle) * v_amp;
-                const i_y = y_center - Math.sin(angle - state.netAngleRad) * v_amp;
-                if (i === 0) {
-                    v_path.moveTo(x, v_y);
-                    i_path.moveTo(x, i_y);
-                } else {
-                    v_path.lineTo(x, v_y);
-                    i_path.lineTo(x, i_y);
-                }
+            const vPeak = x0 + plotW / 8;
+            const iPeak = x0 + plotW * ((Math.PI / 2 + state.netAngleRad) / (Math.PI * 4));
+            if (Math.abs(state.netAngleRad) > 0.05) {
+                ctx.fillStyle = 'rgba(148,163,184,0.14)';
+                ctx.fillRect(Math.min(vPeak, iPeak), mT, Math.abs(iPeak - vPeak), (h - mB) - mT);
+                ctx.fillStyle = '#e2e8f0';
+                ctx.font = `${11 / z}px Inter`;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'top';
+                ctx.fillText('\u03c6', (vPeak + iPeak) / 2, mT + 1 / z);
             }
-            ctx.lineWidth = 2 / waveformZoom;
-            ctx.strokeStyle = COLORS.VOLTAGE_UI; ctx.stroke(v_path);
-            ctx.strokeStyle = COLORS.CURRENT_UI; ctx.stroke(i_path);
 
-            ctx.font = `${12 / waveformZoom}px Inter`;
-            ctx.textAlign = "left";
-            ctx.textBaseline = "alphabetic";
-            ctx.fillStyle = COLORS.VOLTAGE_UI; ctx.fillText("V", axisMargin + 5, 15);
-            ctx.fillStyle = COLORS.CURRENT_UI; ctx.fillText("I", axisMargin + 20, 15);
+            const vPath = new Path2D(), iPath = new Path2D();
+            for (let i = 0; i <= plotW; i++) {
+                const x = x0 + i;
+                const angle = i / plotW * Math.PI * 4;
+                const vy = yc - Math.sin(angle) * amp;
+                const iy = yc - Math.sin(angle - state.netAngleRad) * amp;
+                if (i === 0) { vPath.moveTo(x, vy); iPath.moveTo(x, iy); }
+                else { vPath.lineTo(x, vy); iPath.lineTo(x, iy); }
+            }
+            ctx.lineJoin = 'round';
+            ctx.lineWidth = 2.25 / z;
+            ctx.strokeStyle = COLORS.VOLTAGE_UI; ctx.stroke(vPath);
+            ctx.strokeStyle = COLORS.CURRENT_UI; ctx.stroke(iPath);
+
+            legendChip(ctx, x1 - 58 / z, mT + 2 / z, COLORS.VOLTAGE_UI, 'V', z);
+            legendChip(ctx, x1 - 28 / z, mT + 2 / z, COLORS.CURRENT_UI, 'I', z);
 
             ctx.restore();
         }
@@ -672,76 +723,90 @@
         function drawPowerWaveforms() {
             const ctx = waveformCtx;
             const { w, h } = beginChartTransform(dom.waveformCanvas, ctx, chartOffsets.waveform, waveformZoom);
+            const z = waveformZoom;
 
-            const axisMargin = 40;
-            const plotWidth = w - axisMargin;
-            const y_center = h / 2;
-            const y_scale = (h * 0.4) / S_CONSTANT;
+            const mL = 40, mR = 12, mT = 16, mB = 14;
+            const x0 = mL, x1 = w - mR;
+            const plotW = x1 - x0;
+            const yc = (mT + (h - mB)) / 2;
+            const yScale = (((h - mT - mB) / 2) * 0.9) / S_CONSTANT;
 
-            const axisColor = '#64748b';
-            const labelColor = '#9ca3af';
-            ctx.strokeStyle = axisColor;
-            ctx.fillStyle = labelColor;
-            ctx.lineWidth = 1 / waveformZoom;
-            ctx.font = `${10 / waveformZoom}px Inter`;
+            chartGrid(ctx, x0, mT, x1, h - mB, 8, 4, z);
 
-            ctx.beginPath();
-            ctx.moveTo(axisMargin, 0); ctx.lineTo(axisMargin, h); ctx.stroke();
-
-            ctx.textAlign = "right";
-            ctx.textBaseline = "middle";
-            ctx.fillText("0", axisMargin - 5, y_center);
-            const p_avg_y = y_center - state.P * y_scale;
-            ctx.fillStyle = COLORS.ACTIVE_POWER_UI;
-            ctx.fillText(state.P.toFixed(0), axisMargin - 5, p_avg_y);
-            ctx.fillStyle = labelColor;
-            ctx.fillText(S_CONSTANT.toFixed(0), axisMargin - 5, y_center - S_CONSTANT * y_scale);
-
-            ctx.setLineDash([2 / waveformZoom, 3 / waveformZoom]);
-            ctx.beginPath(); ctx.moveTo(axisMargin, y_center); ctx.lineTo(w, y_center); ctx.stroke();
+            ctx.strokeStyle = '#475569';
+            ctx.lineWidth = 1.5 / z;
+            ctx.beginPath(); ctx.moveTo(x0, mT); ctx.lineTo(x0, h - mB); ctx.stroke();
+            ctx.strokeStyle = '#334155';
+            ctx.lineWidth = 1 / z;
+            ctx.setLineDash([3 / z, 3 / z]);
+            ctx.beginPath(); ctx.moveTo(x0, yc); ctx.lineTo(x1, yc); ctx.stroke();
             ctx.setLineDash([]);
 
-            // p(t) = P(1 - cos2wt) - Q sin2wt
-            const p_path = new Path2D(), q_path = new Path2D();
-            for (let i = 0; i <= plotWidth; i++) {
-                const x = i + axisMargin;
-                const angle = i / plotWidth * Math.PI * 2;
-                const p_y = y_center - (state.P * (1 - Math.cos(2 * angle))) * y_scale;
-                const q_y = y_center - (-state.Q * Math.sin(2 * angle)) * y_scale;
-                if (i === 0) {
-                    p_path.moveTo(x, p_y);
-                    q_path.moveTo(x, q_y);
-                } else {
-                    p_path.lineTo(x, p_y);
-                    q_path.lineTo(x, q_y);
-                }
+            ctx.fillStyle = '#9ca3af';
+            ctx.font = `${9 / z}px Inter`;
+            ctx.textAlign = 'right';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('0', x0 - 5 / z, yc);
+            const pAvgY = yc - state.P * yScale;
+            ctx.fillStyle = COLORS.ACTIVE_POWER_UI;
+            ctx.fillText(state.P.toFixed(0), x0 - 5 / z, pAvgY);
+
+            // p(t)=P(1-cos2wt), q(t)=-Q sin2wt
+            const pPath = new Path2D(), qPath = new Path2D();
+            for (let i = 0; i <= plotW; i++) {
+                const x = x0 + i;
+                const angle = i / plotW * Math.PI * 2;
+                const py = yc - (state.P * (1 - Math.cos(2 * angle))) * yScale;
+                const qy = yc - (-state.Q * Math.sin(2 * angle)) * yScale;
+                if (i === 0) { pPath.moveTo(x, py); qPath.moveTo(x, qy); }
+                else { pPath.lineTo(x, py); qPath.lineTo(x, qy); }
             }
 
-            ctx.fillStyle = "rgba(56, 189, 248, .2)";
-            const p_fill = new Path2D(p_path); p_fill.lineTo(plotWidth + axisMargin, y_center); p_fill.lineTo(axisMargin, y_center); ctx.fill(p_fill);
+            const pGrad = ctx.createLinearGradient(0, yc - 2 * state.S * yScale, 0, yc);
+            pGrad.addColorStop(0, 'rgba(56,189,248,0.35)');
+            pGrad.addColorStop(1, 'rgba(56,189,248,0.02)');
+            const pFill = new Path2D(pPath); pFill.lineTo(x1, yc); pFill.lineTo(x0, yc); pFill.closePath();
+            ctx.fillStyle = pGrad; ctx.fill(pFill);
 
-            ctx.fillStyle = state.qColor + "33";
-            const q_fill = new Path2D(q_path); q_fill.lineTo(plotWidth + axisMargin, y_center); q_fill.lineTo(axisMargin, y_center); ctx.fill(q_fill);
+            ctx.fillStyle = state.qColor + '22';
+            const qFill = new Path2D(qPath); qFill.lineTo(x1, yc); qFill.lineTo(x0, yc); qFill.closePath();
+            ctx.fill(qFill);
 
-            ctx.lineWidth = 2 / waveformZoom;
-            ctx.strokeStyle = state.qColor; ctx.stroke(q_path);
-            ctx.strokeStyle = COLORS.ACTIVE_POWER_UI; ctx.stroke(p_path);
+            ctx.lineJoin = 'round';
+            ctx.lineWidth = 2 / z;
+            ctx.strokeStyle = state.qColor; ctx.stroke(qPath);
+            ctx.strokeStyle = COLORS.ACTIVE_POWER_UI; ctx.stroke(pPath);
 
             ctx.strokeStyle = COLORS.ACTIVE_POWER_AVG_UI;
-            ctx.lineWidth = 3 / waveformZoom;
-            ctx.beginPath(); ctx.moveTo(axisMargin, p_avg_y); ctx.lineTo(w, p_avg_y); ctx.stroke();
+            ctx.lineWidth = 2.5 / z;
+            ctx.setLineDash([5 / z, 4 / z]);
+            ctx.beginPath(); ctx.moveTo(x0, pAvgY); ctx.lineTo(x1, pAvgY); ctx.stroke();
+            ctx.setLineDash([]);
 
-            ctx.font = `${10 / waveformZoom}px Inter`;
-            ctx.textAlign = "left";
-            ctx.textBaseline = "alphabetic";
-            ctx.fillStyle = COLORS.ACTIVE_POWER_AVG_UI; ctx.fillText("p(avg)", axisMargin + 5, 12);
-            ctx.fillStyle = COLORS.ACTIVE_POWER_UI; ctx.fillText("p(inst)", axisMargin + 55, 12);
-            ctx.fillStyle = state.qColor; ctx.fillText("q(inst)", axisMargin + 110, 12);
+            legendChip(ctx, x1 - 150 / z, mT + 2 / z, COLORS.ACTIVE_POWER_UI, 'p(t)', z);
+            legendChip(ctx, x1 - 106 / z, mT + 2 / z, state.qColor, 'q(t)', z);
+            legendChip(ctx, x1 - 62 / z, mT + 2 / z, COLORS.ACTIVE_POWER_AVG_UI, 'avg', z);
 
             ctx.restore();
         }
 
+        function makeBackgroundTexture() {
+            const c = document.createElement('canvas');
+            c.width = 512; c.height = 512;
+            const g = c.getContext('2d');
+            const grad = g.createRadialGradient(256, 230, 40, 256, 256, 380);
+            grad.addColorStop(0, '#0e1b3d');
+            grad.addColorStop(0.55, '#060d20');
+            grad.addColorStop(1, '#02040b');
+            g.fillStyle = grad;
+            g.fillRect(0, 0, 512, 512);
+            const tex = new THREE.CanvasTexture(c);
+            tex.colorSpace = THREE.SRGBColorSpace;
+            return tex;
+        }
+
         function createSceneObjects() {
+            scene.background = makeBackgroundTexture();
             const starVertices = [];
             for (let i = 0; i < STAR_COUNT; i++) {
                 const v = new THREE.Vector3(THREE.MathUtils.randFloatSpread(2500), THREE.MathUtils.randFloatSpread(2500), THREE.MathUtils.randFloatSpread(2500));
@@ -749,7 +814,7 @@
             }
             const starGeometry = new THREE.BufferGeometry();
             starGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starVertices, 3));
-            scene.add(new THREE.Points(starGeometry, new THREE.PointsMaterial({ color: 0x666666, size: 0.8 })));
+            scene.add(new THREE.Points(starGeometry, new THREE.PointsMaterial({ color: 0x8aa0c8, size: 0.9 })));
 
             cylinderGroup = new THREE.Group();
             scene.add(cylinderGroup);
@@ -760,6 +825,15 @@
             conduit.rotation.x = Math.PI / 2;
             conduit.position.y = 2.5;
             cylinderGroup.add(conduit);
+
+            // source / load rings
+            const ringGeo = new THREE.TorusGeometry(CONDUIT_RADIUS * 1.05, 0.07, 12, 80);
+            const sourceRing = new THREE.Mesh(ringGeo, new THREE.MeshBasicMaterial({ color: 0x7dd3fc }));
+            sourceRing.position.set(0, 2.5, CONDUIT_LENGTH / 2);
+            cylinderGroup.add(sourceRing);
+            const loadRing = new THREE.Mesh(ringGeo, new THREE.MeshBasicMaterial({ color: 0xcbd5e1 }));
+            loadRing.position.set(0, 2.5, -CONDUIT_LENGTH / 2);
+            cylinderGroup.add(loadRing);
 
             const auraMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, side: THREE.BackSide });
             reactiveAura = new THREE.Mesh(new THREE.CylinderGeometry(CONDUIT_RADIUS, CONDUIT_RADIUS, 30, 32, 1, true), auraMaterial);
