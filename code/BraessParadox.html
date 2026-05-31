@@ -1,692 +1,978 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Braess Paradox: A Technical Analysis</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg-color-main: #f8fafc;
-            --text-color-main: #1f2937;
-            --text-color-subtle: #4b5563;
-            --node-size: 50px;
-            --canvas-width: 400px;
-            --canvas-height: 250px;
-            --congested-color: #ef4444;
-            --congested-color-light: rgba(239, 68, 68, 0.5);
-        }
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg-color-main);
-            color: var(--text-color-main);
-        }
-        section + section {
-            border-top: 1px solid #e5e7eb;
-            padding-top: 4rem;
-        }
-        .node {
-            width: var(--node-size); 
-            height: var(--node-size); 
-            border-radius: 50%;
-            display: flex; 
-            align-items: center; 
-            justify-content: center;
-            font-weight: bold; 
-            font-size: 1.25rem;
-            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-            position: absolute; 
-            z-index: 10;
-            transform: translate(-50%, -50%);
-        }
-        .canvas-container {
-            position: relative;
-            width: 100%;
-            max-width: var(--canvas-width);
-            height: var(--canvas-height);
-            margin: 1rem auto;
-        }
-        canvas {
-            position: absolute; 
-            top: 0; 
-            left: 0;
-            width: 100%; 
-            height: 100%;
-        }
-        .line-label {
-            background-color: rgba(248, 250, 252, 0.9);
-            padding: 2px 6px; 
-            border-radius: 4px; 
-            font-size: 0.85rem;
-            color: var(--text-color-main); 
-            font-weight: 500; 
-            text-align: center;
-            position: absolute; 
-            transform: translate(-50%, -50%);
-            z-index: 20;
-            white-space: nowrap;
-        }
-        .line-label-details {
-            font-size: 0.75rem; 
-            color: var(--text-color-subtle); 
-            display: block;
-        }
-        .line-label-details.congested {
-            color: var(--congested-color);
-            font-weight: bold;
-        }
-        .generator-label {
-            position: absolute; 
-            font-size: 0.8rem; 
-            font-weight: 500;
-            color: #374151; 
-            text-align: center; 
-            z-index: 20;
-            padding: 2px 4px; 
-            background-color: rgba(248, 250, 252, 0.9);
-            border-radius: 4px;
-        }
-        .param-slider-label {
-             display: block; font-weight: 500; font-size: 0.9rem; color: #374151;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Braess Paradox Network Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+    --bg:#050816;
+    --bg2:#0b1020;
+    --card:rgba(15,23,42,.76);
+    --card2:rgba(15,23,42,.52);
+    --line:rgba(148,163,184,.22);
+    --text:#e5e7eb;
+    --muted:#94a3b8;
+    --blue:#60a5fa;
+    --sky:#38bdf8;
+    --green:#34d399;
+    --amber:#f59e0b;
+    --orange:#fb923c;
+    --red:#fb7185;
+    --purple:#a78bfa;
+    --white:#f8fafc;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+    margin:0;
+    min-height:100vh;
+    font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    color:var(--text);
+    background:
+        radial-gradient(circle at 9% 0%,rgba(56,189,248,.25),transparent 34rem),
+        radial-gradient(circle at 91% 6%,rgba(167,139,250,.22),transparent 34rem),
+        radial-gradient(circle at 50% 105%,rgba(52,211,153,.14),transparent 36rem),
+        linear-gradient(135deg,var(--bg),var(--bg2));
+    overflow-x:hidden;
+}
+button,input{font:inherit}
+.shell{
+    width:min(1840px,100%);
+    margin:0 auto;
+    padding:clamp(14px,2vw,30px);
+}
+.glass{
+    background:linear-gradient(180deg,var(--card),var(--card2));
+    border:1px solid var(--line);
+    box-shadow:0 28px 90px rgba(0,0,0,.34),inset 0 1px 0 rgba(255,255,255,.04);
+    backdrop-filter:blur(18px);
+}
+.hero{
+    border-radius:34px;
+    padding:clamp(22px,4vw,44px);
+    display:grid;
+    grid-template-columns:minmax(0,1fr) auto;
+    align-items:center;
+    gap:24px;
+    margin-bottom:18px;
+}
+.eyebrow{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    color:#bae6fd;
+    text-transform:uppercase;
+    letter-spacing:.24em;
+    font-size:12px;
+    font-weight:900;
+    margin-bottom:10px;
+}
+.dot{
+    width:10px;
+    height:10px;
+    border-radius:999px;
+    background:var(--green);
+    box-shadow:0 0 28px rgba(52,211,153,.9);
+}
+h1{
+    margin:0;
+    color:white;
+    font-size:clamp(34px,5.2vw,82px);
+    line-height:.92;
+    letter-spacing:-.065em;
+    font-weight:950;
+}
+.subtitle{
+    margin:16px 0 0;
+    max-width:930px;
+    color:#cbd5e1;
+    font-size:clamp(15px,1.4vw,18px);
+    line-height:1.58;
+}
+.heroStats{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(150px,1fr));
+    gap:12px;
+    min-width:min(460px,100%);
+}
+.stat{
+    border:1px solid rgba(148,163,184,.18);
+    background:rgba(2,6,23,.34);
+    border-radius:26px;
+    padding:18px;
+    overflow:hidden;
+    position:relative;
+}
+.stat:before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:linear-gradient(135deg,rgba(255,255,255,.08),transparent 45%);
+    pointer-events:none;
+}
+.statLabel{
+    margin:0;
+    color:#94a3b8;
+    text-transform:uppercase;
+    letter-spacing:.13em;
+    font-size:11px;
+    font-weight:900;
+}
+.statValue{
+    display:flex;
+    align-items:flex-end;
+    gap:7px;
+    margin-top:9px;
+}
+.statValue strong{
+    font-size:clamp(28px,3vw,44px);
+    line-height:.92;
+    color:white;
+    letter-spacing:-.055em;
+}
+.statValue span{
+    color:#94a3b8;
+    font-weight:900;
+    font-size:13px;
+    margin-bottom:2px;
+}
+.tabs{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    margin:0 0 18px;
+}
+.tab{
+    border:1px solid rgba(148,163,184,.24);
+    background:rgba(15,23,42,.66);
+    color:#e2e8f0;
+    border-radius:999px;
+    padding:12px 16px;
+    font-size:13px;
+    font-weight:900;
+    cursor:pointer;
+    transition:transform .18s ease,background .18s ease,border-color .18s ease;
+}
+.tab:hover{transform:translateY(-1px);border-color:rgba(125,211,252,.65)}
+.tab.active{background:linear-gradient(135deg,#0ea5e9,#6366f1);border-color:rgba(125,211,252,.75)}
+.section{
+    display:none;
+    grid-template-columns:minmax(0,1.35fr) minmax(400px,.7fr);
+    gap:18px;
+    align-items:stretch;
+}
+.section.active{display:grid}
+.board{
+    border-radius:34px;
+    padding:18px;
+    min-width:0;
+}
+.panel{
+    border-radius:34px;
+    padding:18px;
+    min-width:0;
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+}
+.gridTwo{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:16px;
+}
+.canvasCard{
+    border:1px solid rgba(148,163,184,.17);
+    background:rgba(2,6,23,.34);
+    border-radius:28px;
+    padding:16px;
+    min-width:0;
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+}
+.cardTop{
+    display:flex;
+    justify-content:space-between;
+    gap:12px;
+    align-items:flex-start;
+}
+.cardTitle{
+    margin:0;
+    color:white;
+    font-size:20px;
+    letter-spacing:-.025em;
+    font-weight:900;
+}
+.cardSub{
+    margin:4px 0 0;
+    color:#94a3b8;
+    font-size:13px;
+    line-height:1.45;
+}
+.badge{
+    display:inline-flex;
+    align-items:center;
+    gap:7px;
+    border:1px solid rgba(148,163,184,.22);
+    border-radius:999px;
+    padding:8px 10px;
+    background:rgba(15,23,42,.66);
+    color:#cbd5e1;
+    font-size:12px;
+    font-weight:900;
+    white-space:nowrap;
+}
+.canvasBox{
+    height:430px;
+    border-radius:24px;
+    overflow:hidden;
+    background:radial-gradient(circle at 50% 30%,rgba(30,41,59,.8),rgba(2,6,23,.86));
+    border:1px solid rgba(148,163,184,.16);
+}
+.canvasBox.small{height:380px}
+canvas{
+    width:100%;
+    height:100%;
+    display:block;
+}
+.miniMetrics{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:10px;
+}
+.mini{
+    border:1px solid rgba(148,163,184,.14);
+    background:rgba(15,23,42,.56);
+    border-radius:18px;
+    padding:12px;
+}
+.mini p{margin:0;color:#94a3b8;font-size:11px;text-transform:uppercase;letter-spacing:.12em;font-weight:900}
+.mini strong{display:block;color:white;font-size:20px;letter-spacing:-.04em;margin-top:6px}
+.box{
+    border:1px solid rgba(148,163,184,.18);
+    background:rgba(2,6,23,.34);
+    border-radius:26px;
+    padding:18px;
+}
+.boxTitle{
+    margin:0 0 14px;
+    color:white;
+    font-size:19px;
+    font-weight:900;
+    letter-spacing:-.025em;
+}
+.control{
+    margin-bottom:18px;
+}
+.control:last-child{margin-bottom:0}
+.controlHead{
+    display:flex;
+    justify-content:space-between;
+    gap:14px;
+    align-items:center;
+    margin-bottom:9px;
+}
+.controlHead label{
+    color:#e2e8f0;
+    font-weight:850;
+    font-size:14px;
+}
+.readout{
+    color:#bae6fd;
+    font-weight:950;
+    font-size:13px;
+    white-space:nowrap;
+}
+.slider{
+    width:100%;
+    appearance:none;
+    height:10px;
+    border-radius:999px;
+    outline:none;
+    background:#334155;
+}
+.slider::-webkit-slider-thumb{
+    appearance:none;
+    width:24px;
+    height:24px;
+    border-radius:50%;
+    background:white;
+    border:4px solid var(--sky);
+    box-shadow:0 0 0 8px rgba(56,189,248,.14);
+    cursor:pointer;
+}
+.slider::-moz-range-thumb{
+    width:24px;
+    height:24px;
+    border-radius:50%;
+    background:white;
+    border:4px solid var(--sky);
+    box-shadow:0 0 0 8px rgba(56,189,248,.14);
+    cursor:pointer;
+}
+.scale{
+    display:flex;
+    justify-content:space-between;
+    color:#64748b;
+    text-transform:uppercase;
+    letter-spacing:.1em;
+    font-size:10px;
+    font-weight:900;
+    margin-top:8px;
+}
+.noteList{
+    display:grid;
+    gap:10px;
+    color:#cbd5e1;
+    line-height:1.5;
+    font-size:14px;
+}
+.note{
+    display:grid;
+    grid-template-columns:9px 1fr;
+    gap:10px;
+}
+.note:before{
+    content:"";
+    width:8px;
+    height:8px;
+    border-radius:999px;
+    background:var(--sky);
+    box-shadow:0 0 18px rgba(56,189,248,.8);
+    margin-top:7px;
+}
+.formula{
+    display:grid;
+    gap:9px;
+    color:#e2e8f0;
+    font-size:13px;
+    line-height:1.45;
+}
+.formula div{
+    border:1px solid rgba(148,163,184,.14);
+    background:rgba(15,23,42,.58);
+    border-radius:16px;
+    padding:11px 13px;
+    overflow:auto;
+    white-space:nowrap;
+}
+.buttons{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+}
+.btn{
+    border:1px solid rgba(148,163,184,.24);
+    background:rgba(30,41,59,.7);
+    color:#e2e8f0;
+    border-radius:999px;
+    padding:10px 13px;
+    font-size:12px;
+    font-weight:900;
+    cursor:pointer;
+}
+.btn:hover{border-color:rgba(125,211,252,.65)}
+.btn.primary{background:linear-gradient(135deg,#0ea5e9,#6366f1);border-color:rgba(125,211,252,.75)}
+.statusBar{
+    border-radius:28px;
+    padding:18px;
+    display:grid;
+    gap:8px;
+    background:linear-gradient(135deg,rgba(14,165,233,.17),rgba(99,102,241,.14));
+    border:1px solid rgba(125,211,252,.22);
+}
+.statusBar strong{
+    color:white;
+    font-size:18px;
+    letter-spacing:-.02em;
+}
+.statusBar span{
+    color:#cbd5e1;
+    line-height:1.48;
+    font-size:14px;
+}
+@media(max-width:1280px){
+    .hero{grid-template-columns:1fr}
+    .section{grid-template-columns:1fr}
+}
+@media(max-width:900px){
+    .gridTwo{grid-template-columns:1fr}
+    .heroStats{grid-template-columns:1fr 1fr;min-width:0}
+    .canvasBox{height:390px}
+}
+@media(max-width:560px){
+    .heroStats,.miniMetrics{grid-template-columns:1fr}
+    .tabs{position:sticky;top:8px;z-index:10}
+    .canvasBox,.canvasBox.small{height:360px}
+}
+</style>
 </head>
-<body class="antialiased">
+<body>
+<div class="shell">
+    <header class="glass hero">
+        <div>
+            <div class="eyebrow"><span class="dot"></span><span>Network equilibrium laboratory</span></div>
+            <h1>Braess Paradox</h1>
+            <p class="subtitle">A faster-looking connection can make the whole network worse. Explore the paradox in road traffic and in a small electric grid where a connected tie line can force costly redispatch.</p>
+        </div>
+        <div class="heroStats">
+            <div class="stat"><p class="statLabel">Traffic penalty</p><div class="statValue"><strong id="trafficPenaltyHero">+15</strong><span>min</span></div></div>
+            <div class="stat"><p class="statLabel">Grid savings from removal</p><div class="statValue"><strong id="gridSavingsHero">$9.1k</strong><span>/hr</span></div></div>
+            <div class="stat"><p class="statLabel">Equilibrium type</p><div class="statValue"><strong id="equilibriumHero">Worse</strong><span>after shortcut</span></div></div>
+            <div class="stat"><p class="statLabel">Grid status</p><div class="statValue"><strong id="gridStatusHero">Congested</strong><span>tie connected</span></div></div>
+        </div>
+    </header>
 
-    <div class="container mx-auto p-4 sm:p-6 md:p-8">
-        <header class="text-center mb-12">
-            <h1 class="text-4xl md:text-5xl font-bold text-gray-900">Braess's Paradox</h1>
-            <p class="mt-4 text-lg text-gray-600 max-w-3xl mx-auto">Why removing capacity from a network can sometimes increase its overall efficiency.</p>
-        </header>
+    <nav class="tabs" aria-label="Sections">
+        <button class="tab active" data-target="trafficSection">Traffic Network</button>
+        <button class="tab" data-target="powerSection">Power Grid</button>
+    </nav>
 
-        <main class="space-y-16">
-
-            <section class="bg-white p-8 rounded-xl shadow-lg">
-                <h2 class="text-3xl font-bold mb-4 text-gray-900">What is Braess's Paradox?</h2>
-                <p class="text-lg leading-relaxed">
-                    Braess's Paradox is the counter-intuitive observation that removing capacity from a network, can paradoxically increase the network's overall performance. Discovered by mathematician Dietrich Braess in 1968, this principle reveals a fundamental conflict between individual incentives and the collective good.
-                </p>
-                <p class="mt-4 text-lg leading-relaxed">
-                    It applies to any decentralized network where users make individual routing decisions—from road traffic and data packets to electrical grids. The paradox arises when a new, seemingly superior path diverts flow in a way that creates new system-wide bottlenecks, leading to a worse outcome for every single user.
-                </p>
-            </section>
-            
-            <section class="bg-white p-8 rounded-xl shadow-lg">
-                <h2 class="text-3xl font-bold mb-6 text-gray-900">Classic Example: Traffic Flow 🚗</h2>
-                <p class="text-lg mb-6">The canonical example involves traffic. Each driver, acting selfishly, chooses the route they believe is fastest. The system eventually settles into a Nash Equilibrium, a stable state where no single driver can improve their travel time by unilaterally changing their route. The paradox shows how adding a "shortcut" can lead to a new, but worse, Nash Equilibrium.</p>
-
-                <div class="mb-8 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                    <label id="carLabel" for="carSlider" class="block text-lg font-medium text-gray-700">Number of Cars (N): <span id="carCount" class="font-bold text-blue-600">4000</span></label>
-                    <input id="carSlider" type="range" min="100" max="6000" value="4000" step="100" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer" aria-labelledby="carLabel">
-                </div>
-
-                <div class="grid md:grid-cols-2 gap-8 items-start">
-                    <div class="border p-6 rounded-lg bg-gray-50">
-                        <h3 class="text-2xl font-bold mb-4 text-center">Scenario 1: Original Network</h3>
-                        <div id="canvas-container-1" class="canvas-container">
-                            <canvas id="traffic-canvas-1-bg"></canvas> 
-                            <canvas id="traffic-canvas-1-fg"></canvas> 
-                        </div>
-                       <div class="mt-4 text-xs text-gray-500 text-center space-y-1">
-                            <p><span class="font-semibold">Top Path (S-A-E):</span> Time = T(x) + 45</p>
-                            <p><span class="font-semibold">Bottom Path (S-B-E):</span> Time = 45 + T(x)</p>
-                            <p>where T(x) is a variable delay based on cars (x) on that road segment.</p>
-                        </div>
-                        <div class="mt-4 p-4 bg-green-100 rounded-lg">
-                            <p class="text-xl text-center font-semibold">Equilibrium Travel Time:</p>
-                            <p id="time_before" class="text-center text-3xl font-bold text-green-700">65 minutes</p>
-                        </div>
+    <section id="trafficSection" class="section active">
+        <div class="glass board">
+            <div class="gridTwo">
+                <article class="canvasCard">
+                    <div class="cardTop">
+                        <div><p class="cardTitle">Original network</p><p class="cardSub">Drivers split between two equal routes at equilibrium.</p></div>
+                        <span class="badge" id="trafficBeforeBadge">65 min</span>
                     </div>
-
-                    <div class="border p-6 rounded-lg bg-gray-50">
-                        <h3 class="text-2xl font-bold mb-4 text-center">Scenario 2: New "Shortcut" Added</h3>
-                        <div id="canvas-container-2" class="canvas-container">
-                             <canvas id="traffic-canvas-2-bg"></canvas>
-                             <canvas id="traffic-canvas-2-fg"></canvas>
-                        </div>
-                        <div class="mt-4 text-xs text-gray-500 text-center space-y-1">
-                            <p>A new, zero-delay road from A to B is added.</p>
-                            <p><span class="font-semibold">Dominant Path (S-A-B-E):</span> Time = T(N) + 0 + T(N)</p>
-                            <p>Every driver takes the new path, creating two new bottlenecks.</p>
-                        </div>
-                        <div class="mt-4 p-4 bg-red-100 rounded-lg">
-                            <p class="text-xl text-center font-semibold">New Equilibrium Travel Time:</p>
-                            <p id="time_after" class="text-center text-3xl font-bold text-red-700">80 minutes</p>
-                        </div>
+                    <div class="canvasBox"><canvas id="trafficBeforeCanvas"></canvas></div>
+                    <div class="miniMetrics">
+                        <div class="mini"><p>Top route</p><strong id="beforeTopFlow">2000</strong></div>
+                        <div class="mini"><p>Bottom route</p><strong id="beforeBottomFlow">2000</strong></div>
+                        <div class="mini"><p>Travel time</p><strong id="beforeTime">65</strong></div>
                     </div>
-                </div>
-            </section>
-            
-            <section class="bg-white p-8 rounded-xl shadow-lg">
-                <h2 class="text-3xl font-bold mb-4 text-gray-900">Modern Example: Power Grids ⚡️</h2>
-                 <p class="text-lg leading-relaxed">
-                     In power systems, electricity flow follows the laws of physics (specifically, the path of least impedance), not driver choice. An Optimal Power Flow (OPF) calculation finds the most economic dispatch of generators to meet load while respecting grid constraints. The paradox can occur when adding a new transmission line creates loop flows and congestion. This may force the system operator to perform a costly redispatch—turning down cheap generators and turning up expensive ones—to avoid overloading lines, paradoxically increasing the total cost of electricity.
-                 </p>
-
-                <div class="mt-6 mb-4 p-4 bg-gray-50 border border-gray-200 rounded-lg">
-                    <button onclick="document.getElementById('powerParams').classList.toggle('hidden')" 
-                            class="w-full flex justify-between items-center text-left text-lg font-semibold text-gray-700 hover:text-gray-900">
-                        <span>⚙️ Adjust System Parameters</span>
-                        <span class="text-sm text-gray-500">Click to expand</span>
-                    </button>
-                    <div id="powerParams" class="hidden mt-6 pt-4 border-t border-gray-200 space-y-6">
-                        <div>
-                            <h4 class="font-semibold text-gray-700 mb-3">Interactive Parameters:</h4>
-                            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-4">
-                                <div>
-                                    <label for="gen1CostSlider" class="param-slider-label">G1 Cost: <span id="gen1CostValue" class="font-bold text-blue-600">$10</span>/MWh</label>
-                                    <input id="gen1CostSlider" type="range" min="5" max="50" value="10" step="1" class="w-full h-2 bg-blue-100 rounded-lg appearance-none cursor-pointer">
-                                </div>
-                                 <div>
-                                    <label for="gen2CostSlider" class="param-slider-label">G2 Cost: <span id="gen2CostValue" class="font-bold text-red-600">$75</span>/MWh</label>
-                                    <input id="gen2CostSlider" type="range" min="55" max="150" value="75" step="1" class="w-full h-2 bg-red-100 rounded-lg appearance-none cursor-pointer">
-                                </div>
-                                <div>
-                                    <label for="lineLimitSlider" class="param-slider-label">Line 2-3 Limit: <span id="lineLimitValue" class="font-bold text-yellow-700">100</span> MW</label>
-                                    <input id="lineLimitSlider" type="range" min="10" max="300" value="100" step="5" class="w-full h-2 bg-yellow-100 rounded-lg appearance-none cursor-pointer">
-                                </div>
-                                <div>
-                                    <label for="pmaxG1Slider" class="param-slider-label">G1 Pmax: <span id="pmaxG1Value" class="font-bold text-blue-600">500</span> MW</label>
-                                    <input id="pmaxG1Slider" type="range" min="50" max="1000" value="500" step="10" class="w-full h-2 bg-blue-100 rounded-lg appearance-none cursor-pointer">
-                                </div>
-                                <div>
-                                    <label for="pmaxG2Slider" class="param-slider-label">G2 Pmax: <span id="pmaxG2Value" class="font-bold text-red-600">500</span> MW</label>
-                                    <input id="pmaxG2Slider" type="range" min="50" max="1000" value="500" step="10" class="w-full h-2 bg-red-100 rounded-lg appearance-none cursor-pointer">
-                                </div>
-                            </div>
-                        </div>
-
-                        <div>
-                            <h4 class="font-semibold text-gray-700 mb-2">Fixed Physical Parameters:</h4>
-                            <div class="p-4 bg-white rounded-lg shadow-sm font-mono text-sm space-y-2 text-gray-800">
-                                <p class="font-bold">Power Transfer Distribution Factors (PTDFs):</p>
-                                <div class="pl-4">
-                                    <span>For Line 2-3:</span>
-                                    <p class="pl-4">• From G1: -0.25 (25% of G1's power creates a counter-flow from Bus 3 to 2)</p>
-                                    <p class="pl-4">• From G2: +0.75 (75% of G2's power flows from Bus 2 to 3)</p>
-                                </div>
-                            </div>
-                        </div>
-
+                </article>
+                <article class="canvasCard">
+                    <div class="cardTop">
+                        <div><p class="cardTitle">Shortcut added</p><p class="cardSub">Individual choices shift the system into a worse equilibrium.</p></div>
+                        <span class="badge" id="trafficAfterBadge">80 min</span>
                     </div>
-                </div>
-
-                <div class="mb-8 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-                    <label id="loadLabel" for="loadSlider" class="block text-lg font-medium text-gray-700">System Load: <span id="loadValue" class="font-bold text-yellow-700">500</span> MW</label>
-                    <input id="loadSlider" type="range" min="50" max="2000" value="500" step="10" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer" aria-labelledby="loadLabel">
-                </div>
-
-                <div class="mt-8 grid md:grid-cols-2 gap-8 items-start">
-                    <div class="border p-6 rounded-lg bg-gray-50">
-                        <h3 class="text-2xl font-bold mb-4 text-center">Scenario A: Original Network</h3>
-                        <div id="canvas-container-a" class="canvas-container relative">
-                            <canvas id="power-canvas-a-bg"></canvas>
-                            <canvas id="power-canvas-a-fg"></canvas>
-                            <div id="power-label-13a" class="line-label"></div>
-                            <div id="power-label-24a" class="line-label"></div>
-                            <div id="power-label-34a" class="line-label"></div>
-                            <div id="power-label-23a" class="line-label"></div>
-                            <div id="gen-label-g1a" class="generator-label"></div>
-                            <div id="gen-label-g2a" class="generator-label"></div>
-                            <div id="load-label-a" class="generator-label"></div> <div id="congestion-badge-a" class="absolute top-2 right-2 hidden text-xs font-bold text-white bg-red-500 px-2 py-1 rounded-full">CONGESTED</div>
-                        </div>
-                        <div id="cost-box-a" class="mt-6 p-4 rounded-lg transition-colors duration-300">
-                            <p class="text-xl text-center font-semibold">Total Generation Cost:</p>
-                            <p id="cost_a" class="text-3xl text-center font-bold">$0/hr</p>
-                        </div>
+                    <div class="canvasBox"><canvas id="trafficAfterCanvas"></canvas></div>
+                    <div class="miniMetrics">
+                        <div class="mini"><p>Shortcut users</p><strong id="afterShortcutFlow">4000</strong></div>
+                        <div class="mini"><p>Old-route users</p><strong id="afterOldFlow">0</strong></div>
+                        <div class="mini"><p>Travel time</p><strong id="afterTime">80</strong></div>
                     </div>
+                </article>
+            </div>
+        </div>
 
-                    <div class="border p-6 rounded-lg bg-gray-50">
-                        <h3 class="text-2xl font-bold mb-4 text-center">Scenario B: Removed Line (Optimal)</h3>
-                        <div id="canvas-container-b" class="canvas-container">
-                            <canvas id="power-canvas-b-bg"></canvas>
-                            <canvas id="power-canvas-b-fg"></canvas>
-                            <div id="power-label-13b" class="line-label"></div>
-                            <div id="power-label-24b" class="line-label"></div>
-                            <div id="power-label-34b" class="line-label"></div>
-                            <div id="gen-label-g1b" class="generator-label"></div>
-                            <div id="gen-label-g2b" class="generator-label"></div>
-                            <div id="load-label-b" class="generator-label"></div> </div>
-                        <div class="mt-6 p-4 bg-green-100 rounded-lg">
-                            <p class="text-xl text-center font-semibold">Total Generation Cost:</p>
-                            <p id="cost_b" class="text-3xl text-center font-bold text-green-700">$0/hr</p>
-                        </div>
-                    </div>
+        <aside class="glass panel">
+            <div class="statusBar"><strong id="trafficStatusTitle">The shortcut makes everyone slower.</strong><span id="trafficStatusText">At this demand, drivers individually prefer the shortcut route, but the resulting equilibrium overloads both variable-delay segments.</span></div>
+            <div class="box">
+                <p class="boxTitle">Traffic controls</p>
+                <div class="control">
+                    <div class="controlHead"><label for="carSlider">Number of cars</label><span class="readout" id="carReadout">4000</span></div>
+                    <input id="carSlider" class="slider" type="range" min="500" max="8000" step="100" value="4000">
+                    <div class="scale"><span>light</span><span>classic case</span><span>heavy</span></div>
                 </div>
-            </section>
-            
-        </main>
+                <div class="buttons">
+                    <button class="btn" id="trafficLight">Light</button>
+                    <button class="btn primary" id="trafficClassic">Classic</button>
+                    <button class="btn" id="trafficHeavy">Heavy</button>
+                </div>
+            </div>
+            <div class="box">
+                <p class="boxTitle">Model</p>
+                <div class="formula">
+                    <div>Upper old route: T = flow(S-A) / 100 + 45</div>
+                    <div>Lower old route: T = 45 + flow(B-E) / 100</div>
+                    <div>Shortcut route: T = flow(S-A) / 100 + flow(B-E) / 100</div>
+                    <div>Wardrop equilibrium: all used routes have equal minimum travel time.</div>
+                </div>
+            </div>
+            <div class="box" style="flex:1">
+                <p class="boxTitle">What to notice</p>
+                <div class="noteList" id="trafficNotes"></div>
+            </div>
+        </aside>
+    </section>
 
-        <footer class="text-center mt-16 py-6 border-t border-gray-200">
-            <p class="text-gray-500">A technical demonstration of network equilibrium and systemic efficiency.</p>
-        </footer>
-    </div>
+    <section id="powerSection" class="section">
+        <div class="glass board">
+            <div class="gridTwo">
+                <article class="canvasCard">
+                    <div class="cardTop">
+                        <div><p class="cardTitle">Tie connected</p><p class="cardSub">The low-impedance tie creates loop flow and may bind its thermal limit.</p></div>
+                        <span class="badge" id="connectedBadge">Congested</span>
+                    </div>
+                    <div class="canvasBox small"><canvas id="gridConnectedCanvas"></canvas></div>
+                    <div class="miniMetrics">
+                        <div class="mini"><p>Total cost</p><strong id="connectedCost">$14.1k</strong></div>
+                        <div class="mini"><p>G1 dispatch</p><strong id="connectedG1">360</strong></div>
+                        <div class="mini"><p>G2 dispatch</p><strong id="connectedG2">140</strong></div>
+                    </div>
+                </article>
+                <article class="canvasCard">
+                    <div class="cardTop">
+                        <div><p class="cardTitle">Tie removed</p><p class="cardSub">Removing the troublesome connection can restore cheaper dispatch.</p></div>
+                        <span class="badge" id="removedBadge">Optimal</span>
+                    </div>
+                    <div class="canvasBox small"><canvas id="gridRemovedCanvas"></canvas></div>
+                    <div class="miniMetrics">
+                        <div class="mini"><p>Total cost</p><strong id="removedCost">$5.0k</strong></div>
+                        <div class="mini"><p>G1 dispatch</p><strong id="removedG1">500</strong></div>
+                        <div class="mini"><p>G2 dispatch</p><strong id="removedG2">0</strong></div>
+                    </div>
+                </article>
+            </div>
+        </div>
 
-    <script>
-    (() => {
-        'use strict';
+        <aside class="glass panel">
+            <div class="statusBar"><strong id="gridStatusTitle">Removing the line lowers operating cost.</strong><span id="gridStatusText">The connected network forces expensive generation to relieve the tie-line constraint.</span></div>
+            <div class="box">
+                <p class="boxTitle">Grid controls</p>
+                <div class="control">
+                    <div class="controlHead"><label for="loadSlider">System load</label><span class="readout" id="loadReadout">500 MW</span></div>
+                    <input id="loadSlider" class="slider" type="range" min="100" max="900" step="10" value="500">
+                </div>
+                <div class="control">
+                    <div class="controlHead"><label for="g1CostSlider">G1 cost</label><span class="readout" id="g1CostReadout">$10/MWh</span></div>
+                    <input id="g1CostSlider" class="slider" type="range" min="5" max="50" step="1" value="10">
+                </div>
+                <div class="control">
+                    <div class="controlHead"><label for="g2CostSlider">G2 cost</label><span class="readout" id="g2CostReadout">$75/MWh</span></div>
+                    <input id="g2CostSlider" class="slider" type="range" min="55" max="150" step="1" value="75">
+                </div>
+                <div class="control">
+                    <div class="controlHead"><label for="g1MaxSlider">G1 maximum output</label><span class="readout" id="g1MaxReadout">500 MW</span></div>
+                    <input id="g1MaxSlider" class="slider" type="range" min="100" max="900" step="10" value="500">
+                </div>
+                <div class="control">
+                    <div class="controlHead"><label for="tieLimitSlider">Tie-line limit</label><span class="readout" id="tieLimitReadout">100 MW</span></div>
+                    <input id="tieLimitSlider" class="slider" type="range" min="20" max="260" step="5" value="100">
+                </div>
+                <div class="buttons">
+                    <button class="btn primary" id="gridClassic">Classic grid case</button>
+                    <button class="btn" id="gridRelaxed">Relaxed tie</button>
+                    <button class="btn" id="gridReset">Reset</button>
+                </div>
+            </div>
+            <div class="box">
+                <p class="boxTitle">DC dispatch model</p>
+                <div class="formula">
+                    <div>Minimize: C = c₁P₁ + c₂P₂</div>
+                    <div>Balance: P₁ + P₂ = Load</div>
+                    <div>DC flow: Fᵢⱼ = (θᵢ − θⱼ) / Xᵢⱼ</div>
+                    <div>Feasibility: |Fᵢⱼ| ≤ line limit, with the connected and removed topologies solved separately.</div>
+                </div>
+            </div>
+            <div class="box" style="flex:1">
+                <p class="boxTitle">Dispatch result</p>
+                <div class="noteList" id="gridNotes"></div>
+            </div>
+        </aside>
+    </section>
+</div>
 
-        const TRAFFIC_CONFIG = {
-            VARIABLE_DELAY_FACTOR: 100,
-            FIXED_DELAY: 45,
-        };
-
-        const POWER_CONFIG = {
-            PTDF: {
-                LINE_23: { FROM_G1: -0.25, FROM_G2: 0.75 }
-            }
-        };
-
-        const ANIMATION_CONFIG = {
-            MAX_PARTICLES_PER_ROUTE: 150,
-            PARTICLE_SIZE_TRAFFIC: 2,
-            PARTICLE_SIZE_POWER: 2.5,
-            PARTICLE_FACTOR_TRAFFIC: 40, 
-            PARTICLE_FACTOR_POWER: 8,   
-        };
-
-        const state = {
-            traffic: {
-                totalCars: 4000,
-                timeBefore: 0,
-                timeAfter: 0,
-            },
-            power: {
-                systemLoad: 500,
-                gen1Cost: 10,
-                gen2Cost: 75,
-                line23Limit: 100,
-                pmax_g1: 500,
-                pmax_g2: 500,
-                isCongested: false,
-                costA: 0, costB: 0,
-                gen1_A: 0, gen2_A: 0,
-                gen1_B: 0, gen2_B: 0,
-                flowsA: {}, flowsB: {}
-            },
-            particles: {
-                traffic1_SAE: [], traffic1_SBE: [],
-                traffic2_SABE: [],
-                powerA_13: [], powerA_23: [], powerA_24: [], powerA_34: [],
-                powerB: [],
-            },
-            canvases: {}
-        };
-
-        const DOM = {
-            carSlider: document.getElementById('carSlider'),
-            carCount: document.getElementById('carCount'),
-            timeBefore: document.getElementById('time_before'),
-            timeAfter: document.getElementById('time_after'),
-            loadSlider: document.getElementById('loadSlider'),
-            loadValue: document.getElementById('loadValue'),
-            gen1CostSlider: document.getElementById('gen1CostSlider'),
-            gen1CostValue: document.getElementById('gen1CostValue'),
-            gen2CostSlider: document.getElementById('gen2CostSlider'),
-            gen2CostValue: document.getElementById('gen2CostValue'),
-            lineLimitSlider: document.getElementById('lineLimitSlider'),
-            lineLimitValue: document.getElementById('lineLimitValue'),
-            pmaxG1Slider: document.getElementById('pmaxG1Slider'),
-            pmaxG1Value: document.getElementById('pmaxG1Value'),
-            pmaxG2Slider: document.getElementById('pmaxG2Slider'),
-            pmaxG2Value: document.getElementById('pmaxG2Value'),
-            costA: document.getElementById('cost_a'),
-            costB: document.getElementById('cost_b'),
-            costBoxA: document.getElementById('cost-box-a'),
-            congestionBadge: document.getElementById('congestion-badge-a'),
-            labels: {
-                p13a: document.getElementById('power-label-13a'), p24a: document.getElementById('power-label-24a'),
-                p34a: document.getElementById('power-label-34a'), p23a: document.getElementById('power-label-23a'),
-                g1a: document.getElementById('gen-label-g1a'), g2a: document.getElementById('gen-label-g2a'),
-                la: document.getElementById('load-label-a'), // Added Load Label Ref
-                p13b: document.getElementById('power-label-13b'), p24b: document.getElementById('power-label-24b'),
-                p34b: document.getElementById('power-label-34b'), g1b: document.getElementById('gen-label-g1b'),
-                g2b: document.getElementById('gen-label-g2b'),
-                lb: document.getElementById('load-label-b'), // Added Load Label Ref
-            }
-        };
-        
-        function calculateTraffic() {
-            const totalCars = state.traffic.totalCars;
-            const carsPerRouteBefore = totalCars / 2;
-            state.traffic.timeBefore = (carsPerRouteBefore / TRAFFIC_CONFIG.VARIABLE_DELAY_FACTOR) + TRAFFIC_CONFIG.FIXED_DELAY;
-            state.traffic.timeAfter = (totalCars / TRAFFIC_CONFIG.VARIABLE_DELAY_FACTOR) * 2;
+<script>
+const App={
+    dom:{},
+    state:{
+        tab:'trafficSection',
+        t:0,
+        last:0,
+        traffic:null,
+        grid:null,
+        inputs:{cars:4000,load:500,g1Cost:10,g2Cost:75,g1Max:500,tieLimit:100}
+    },
+    colors:{blue:'#60a5fa',sky:'#38bdf8',green:'#34d399',amber:'#f59e0b',orange:'#fb923c',red:'#fb7185',purple:'#a78bfa',white:'#f8fafc',muted:'#94a3b8'},
+    trafficCoords:{S:[.11,.5],A:[.5,.22],B:[.5,.78],E:[.89,.5]},
+    gridCoords:{G1:[.13,.22],G2:[.13,.78],J:[.5,.5],L:[.88,.62]},
+    init(){
+        this.ids(['trafficPenaltyHero','gridSavingsHero','equilibriumHero','gridStatusHero','trafficBeforeCanvas','trafficAfterCanvas','gridConnectedCanvas','gridRemovedCanvas','carSlider','carReadout','trafficLight','trafficClassic','trafficHeavy','beforeTopFlow','beforeBottomFlow','beforeTime','afterShortcutFlow','afterOldFlow','afterTime','trafficBeforeBadge','trafficAfterBadge','trafficStatusTitle','trafficStatusText','trafficNotes','loadSlider','g1CostSlider','g2CostSlider','g1MaxSlider','tieLimitSlider','loadReadout','g1CostReadout','g2CostReadout','g1MaxReadout','tieLimitReadout','gridClassic','gridRelaxed','gridReset','connectedBadge','removedBadge','connectedCost','removedCost','connectedG1','connectedG2','removedG1','removedG2','gridStatusTitle','gridStatusText','gridNotes']);
+        document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>this.setTab(b.dataset.target)));
+        this.dom.carSlider.addEventListener('input',()=>{this.state.inputs.cars=+this.dom.carSlider.value;this.update()});
+        ['loadSlider','g1CostSlider','g2CostSlider','g1MaxSlider','tieLimitSlider'].forEach(id=>this.dom[id].addEventListener('input',()=>this.syncGridInputs()));
+        this.dom.trafficLight.addEventListener('click',()=>this.setTraffic(1800));
+        this.dom.trafficClassic.addEventListener('click',()=>this.setTraffic(4000));
+        this.dom.trafficHeavy.addEventListener('click',()=>this.setTraffic(6000));
+        this.dom.gridClassic.addEventListener('click',()=>this.setGrid(500,10,75,500,100));
+        this.dom.gridRelaxed.addEventListener('click',()=>this.setGrid(500,10,75,500,230));
+        this.dom.gridReset.addEventListener('click',()=>this.setGrid(500,10,75,500,100));
+        window.addEventListener('resize',()=>this.update());
+        this.update();
+        requestAnimationFrame(this.loop.bind(this));
+    },
+    ids(list){list.forEach(id=>this.dom[id]=document.getElementById(id))},
+    setTab(id){
+        this.state.tab=id;
+        document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.target===id));
+        document.querySelectorAll('.section').forEach(s=>s.classList.toggle('active',s.id===id));
+        setTimeout(()=>this.update(),40);
+    },
+    setTraffic(v){this.tweenInput(this.dom.carSlider,v,()=>{this.state.inputs.cars=+this.dom.carSlider.value;this.update()})},
+    setGrid(load,c1,c2,pmax,limit){
+        const items=[[this.dom.loadSlider,load],[this.dom.g1CostSlider,c1],[this.dom.g2CostSlider,c2],[this.dom.g1MaxSlider,pmax],[this.dom.tieLimitSlider,limit]];
+        items.forEach(([el,v])=>this.tweenInput(el,v,()=>this.syncGridInputs(false)));
+        setTimeout(()=>this.syncGridInputs(),580);
+    },
+    tweenInput(el,target,onStep){
+        const start=+el.value,dur=520,t0=performance.now(),step=now=>{const t=this.ease(Math.min(1,(now-t0)/dur));el.value=start+(target-start)*t;onStep();if(t<1)requestAnimationFrame(step)};requestAnimationFrame(step);
+    },
+    ease(t){return 1-Math.pow(1-t,3)},
+    syncGridInputs(update=true){
+        this.state.inputs.load=+this.dom.loadSlider.value;
+        this.state.inputs.g1Cost=+this.dom.g1CostSlider.value;
+        this.state.inputs.g2Cost=+this.dom.g2CostSlider.value;
+        this.state.inputs.g1Max=+this.dom.g1MaxSlider.value;
+        this.state.inputs.tieLimit=+this.dom.tieLimitSlider.value;
+        if(update)this.update();
+    },
+    update(){
+        this.state.traffic=this.calcTraffic(this.state.inputs.cars);
+        this.state.grid=this.calcGrid(this.state.inputs);
+        this.updateTrafficUI();
+        this.updateGridUI();
+        this.drawAll();
+    },
+    loop(now){
+        const dt=Math.min(.05,(now-this.state.last)/1000||0);this.state.last=now;this.state.t+=dt;this.drawAll();requestAnimationFrame(this.loop.bind(this));
+    },
+    calcTraffic(N){
+        const beforeTop=N/2,beforeBottom=N/2,beforeTime=N/200+45;
+        let top=0,bottom=0,shortcut=N;
+        if(N>4500&&N<9000){top=N-4500;bottom=N-4500;shortcut=9000-N}
+        if(N>=9000){top=N/2;bottom=N/2;shortcut=0}
+        const sa=top+shortcut,ae=top,sb=bottom,be=bottom+shortcut,ab=shortcut;
+        const topTime=sa/100+45,bottomTime=45+be/100,shortcutTime=sa/100+be/100;
+        const used=[];
+        if(top>1)used.push(topTime);
+        if(bottom>1)used.push(bottomTime);
+        if(shortcut>1)used.push(shortcutTime);
+        const afterTime=used.length?used.reduce((a,b)=>a+b,0)/used.length:Math.min(topTime,bottomTime,shortcutTime);
+        return{N,beforeTop,beforeBottom,beforeTime,top,bottom,shortcut,afterTime,edges:{sa,ae,sb,be,ab},times:{topTime,bottomTime,shortcutTime},penalty:afterTime-beforeTime};
+    },
+    calcGrid(input){
+        const connected=this.dispatch(input,true),removed=this.dispatch(input,false),savings=connected.cost-removed.cost;
+        return{connected,removed,savings};
+    },
+    dispatch(input,connected){
+        const load=input.load,g1Max=input.g1Max,g2Max=1200,lo=Math.max(0,load-g2Max),hi=Math.min(g1Max,load),steps=1400,lines=this.gridLines(input,connected);
+        let best=null,backup=null;
+        for(let i=0;i<=steps;i++){
+            const p1=lo+(hi-lo)*i/steps,p2=load-p1,flows=this.dcSolve(lines,[p1,p2,0,-load]),violation=this.maxViolation(lines,flows),cost=p1*input.g1Cost+p2*input.g2Cost,cand={p1,p2,flows,cost,violation,feasible:violation<=1e-5,lines,connected};
+            if(!backup||cost+violation*10000000<backup.cost+backup.violation*10000000)backup=cand;
+            if(cand.feasible&&(!best||cost<best.cost))best=cand;
         }
-
-        function calculatePower() {
-            const { systemLoad, gen1Cost, gen2Cost, line23Limit, pmax_g1, pmax_g2 } = state.power;
-            
-            state.power.gen1_B = Math.min(systemLoad, pmax_g1);
-            state.power.gen2_B = systemLoad - state.power.gen1_B;
-            if (state.power.gen2_B > pmax_g2) { /* Handle unserved energy */ }
-            state.power.costB = (state.power.gen1_B * gen1Cost) + (state.power.gen2_B * gen2Cost);
-
-            let gen1_A = state.power.gen1_B;
-            let gen2_A = state.power.gen2_B;
-
-            const initialFlow23 = (POWER_CONFIG.PTDF.LINE_23.FROM_G1 * gen1_A) + (POWER_CONFIG.PTDF.LINE_23.FROM_G2 * gen2_A);
-            const ptdf_g1 = POWER_CONFIG.PTDF.LINE_23.FROM_G1;
-            const ptdf_g2 = POWER_CONFIG.PTDF.LINE_23.FROM_G2;
-            const shift_factor = ptdf_g1 - ptdf_g2;
-
-            if (initialFlow23 > line23Limit) {
-                state.power.isCongested = true;
-                const overflow = initialFlow23 - line23Limit;
-                let requiredRedispatch = Math.abs(overflow / shift_factor);
-                let actualRedispatch = Math.min(requiredRedispatch, gen2_A);
-                
-                gen1_A += actualRedispatch;
-                gen2_A -= actualRedispatch;
-
-            } else if (initialFlow23 < -line23Limit) {
-                state.power.isCongested = true;
-                const overflow = -line23Limit - initialFlow23;
-                let requiredRedispatch = Math.abs(overflow / shift_factor);
-                let actualRedispatch = Math.min(requiredRedispatch, gen1_A);
-
-                gen1_A -= actualRedispatch;
-                gen2_A += actualRedispatch;
-            } else {
-                state.power.isCongested = false;
-            }
-            
-            state.power.gen1_A = Math.max(0, Math.min(gen1_A, pmax_g1));
-            state.power.gen2_A = Math.max(0, Math.min(systemLoad - state.power.gen1_A, pmax_g2));
-            state.power.gen1_A = systemLoad - state.power.gen2_A;
-
-            state.power.costA = (state.power.gen1_A * gen1Cost) + (state.power.gen2_A * gen2Cost);
-            
-            calculatePowerFlows();
+        return best||backup;
+    },
+    gridLines(input,connected){
+        const base=[
+            {id:'g1j',name:'G1-J',a:0,b:2,x:1,limit:1200,color:this.colors.blue},
+            {id:'jl',name:'J-L',a:2,b:3,x:1,limit:1200,color:this.colors.green},
+            {id:'g2l',name:'G2-L',a:1,b:3,x:1,limit:1200,color:this.colors.red}
+        ];
+        if(connected)base.push({id:'tie',name:'Tie',a:1,b:2,x:.2,limit:input.tieLimit,color:this.colors.amber});
+        return base;
+    },
+    dcSolve(lines,inj){
+        const n=4,slack=3,B=Array.from({length:n},()=>Array(n).fill(0));
+        lines.forEach(l=>{const b=1/l.x;B[l.a][l.a]+=b;B[l.b][l.b]+=b;B[l.a][l.b]-=b;B[l.b][l.a]-=b});
+        const idx=[0,1,2],A=idx.map(i=>idx.map(j=>B[i][j])),rhs=idx.map(i=>inj[i]),sol=this.solve(A,rhs),theta=[sol[0],sol[1],sol[2],0],flows={};
+        lines.forEach(l=>flows[l.id]=(theta[l.a]-theta[l.b])/l.x);
+        return flows;
+    },
+    solve(A,b){
+        const n=b.length,M=A.map((r,i)=>r.concat(b[i]));
+        for(let i=0;i<n;i++){
+            let max=i;
+            for(let r=i+1;r<n;r++)if(Math.abs(M[r][i])>Math.abs(M[max][i]))max=r;
+            [M[i],M[max]]=[M[max],M[i]];
+            const piv=M[i][i]||1e-12;
+            for(let c=i;c<=n;c++)M[i][c]/=piv;
+            for(let r=0;r<n;r++)if(r!==i){const f=M[r][i];for(let c=i;c<=n;c++)M[r][c]-=f*M[i][c]}
         }
-        
-        function calculatePowerFlows() {
-            const { gen1_A, gen2_A, gen1_B, gen2_B } = state.power;
-            const { FROM_G1, FROM_G2 } = POWER_CONFIG.PTDF.LINE_23;
-
-            const flow_23a = (FROM_G1 * gen1_A) + (FROM_G2 * gen2_A);
-            const flow_13a = gen1_A;
-            const flow_24a = gen2_A - flow_23a;
-            const flow_34a = flow_13a + flow_23a; 
-            
-            state.power.flowsA = { '13': flow_13a, '24': flow_24a, '34': flow_34a, '23': flow_23a };
-            state.power.flowsB = { '13': gen1_B, '24': gen2_B, '34': gen1_B };
+        return M.map(r=>r[n]);
+    },
+    maxViolation(lines,flows){return Math.max(0,...lines.map(l=>Math.abs(flows[l.id])-l.limit))},
+    updateTrafficUI(){
+        const d=this.state.traffic;
+        this.dom.carReadout.textContent=this.num(d.N);
+        this.dom.beforeTopFlow.textContent=this.num(d.beforeTop);
+        this.dom.beforeBottomFlow.textContent=this.num(d.beforeBottom);
+        this.dom.beforeTime.textContent=`${d.beforeTime.toFixed(0)} min`;
+        this.dom.afterShortcutFlow.textContent=this.num(d.shortcut);
+        this.dom.afterOldFlow.textContent=this.num(d.top+d.bottom);
+        this.dom.afterTime.textContent=`${d.afterTime.toFixed(0)} min`;
+        this.dom.trafficBeforeBadge.textContent=`${d.beforeTime.toFixed(0)} min`;
+        this.dom.trafficAfterBadge.textContent=`${d.afterTime.toFixed(0)} min`;
+        this.dom.trafficPenaltyHero.textContent=`${d.penalty>=0?'+':''}${d.penalty.toFixed(0)}`;
+        this.dom.equilibriumHero.textContent=d.penalty>0?'Worse':d.penalty<0?'Better':'Equal';
+        if(d.penalty>1){
+            this.dom.trafficStatusTitle.textContent='The shortcut makes the equilibrium slower.';
+            this.dom.trafficStatusText.textContent='Drivers chase the individually attractive route, but that loads both variable-delay roads and raises the common travel time.';
+        }else if(d.penalty<-1){
+            this.dom.trafficStatusTitle.textContent='The shortcut helps at this demand.';
+            this.dom.trafficStatusText.textContent='At low traffic, the shortcut can reduce travel time because the variable-delay roads are not yet overloaded.';
+        }else{
+            this.dom.trafficStatusTitle.textContent='The two networks are nearly tied.';
+            this.dom.trafficStatusText.textContent='This is close to the threshold where the shortcut stops helping and begins to hurt.';
         }
-
-        function updateUIText() {
-            const { traffic, power } = state;
-            DOM.carCount.textContent = traffic.totalCars;
-            DOM.timeBefore.textContent = `${traffic.timeBefore.toFixed(0)} minutes`;
-            DOM.timeAfter.textContent = `${traffic.timeAfter.toFixed(0)} minutes`;
-            
-            DOM.loadValue.textContent = power.systemLoad;
-            DOM.gen1CostValue.textContent = `$${power.gen1Cost}`;
-            DOM.gen2CostValue.textContent = `$${power.gen2Cost}`;
-            DOM.lineLimitValue.textContent = power.line23Limit;
-            DOM.pmaxG1Value.textContent = power.pmax_g1;
-            DOM.pmaxG2Value.textContent = power.pmax_g2;
-
-            DOM.costA.textContent = `$${power.costA.toLocaleString(undefined, {maximumFractionDigits:0})}/hr`;
-            DOM.costB.textContent = `$${power.costB.toLocaleString(undefined, {maximumFractionDigits:0})}/hr`;
-            DOM.congestionBadge.classList.toggle('hidden', !power.isCongested);
-            
-            if (power.isCongested && power.costA > power.costB) {
-                DOM.costBoxA.className = 'mt-6 p-4 rounded-lg transition-colors duration-300 bg-red-100';
-                DOM.costA.className = 'text-3xl text-center font-bold text-red-700';
-            } else {
-                DOM.costBoxA.className = 'mt-6 p-4 rounded-lg transition-colors duration-300 bg-green-100';
-                DOM.costA.className = 'text-3xl text-center font-bold text-green-700';
-            }
-            
-            DOM.labels.g1a.innerHTML = `G1 (Cheap)<br>${power.gen1_A.toFixed(0)} MW`;
-            DOM.labels.g2a.innerHTML = `G2 (Expensive)<br>${power.gen2_A.toFixed(0)} MW`;
-            DOM.labels.p13a.innerHTML = `${power.flowsA['13'].toFixed(0)} MW`;
-            DOM.labels.p24a.innerHTML = `${power.flowsA['24'].toFixed(0)} MW`;
-            DOM.labels.p34a.innerHTML = `${power.flowsA['34'].toFixed(0)} MW`;
-            DOM.labels.p23a.innerHTML = `${power.flowsA['23'].toFixed(0)} MW <span class="line-label-details ${power.isCongested ? 'congested' : ''}">Limit: ${power.line23Limit} MW</span>`;
-            
-            DOM.labels.g1b.innerHTML = `G1 (Cheap)<br>${power.gen1_B.toFixed(0)} MW`;
-            DOM.labels.g2b.innerHTML = `G2 (Expensive)<br>${power.gen2_B.toFixed(0)} MW`;
-            DOM.labels.p13b.innerHTML = `${power.flowsB['13'].toFixed(0)} MW`;
-            DOM.labels.p24b.innerHTML = `${power.flowsB['24'].toFixed(0)} MW`;
-            DOM.labels.p34b.innerHTML = `${power.flowsB['34'].toFixed(0)} MW`;
-            
-            // --- CODE REVISION ---
-            // Update the new load labels in the animation window
-            const loadText = `Load<br>${power.systemLoad.toFixed(0)} MW`;
-            DOM.labels.la.innerHTML = loadText;
-            DOM.labels.lb.innerHTML = loadText;
+        const notes=[
+            `Without the shortcut, the equilibrium split is ${this.num(d.beforeTop)} cars on the upper route and ${this.num(d.beforeBottom)} on the lower route.`,
+            `With the shortcut, ${this.num(d.shortcut)} cars use the shortcut route and ${this.num(d.top+d.bottom)} cars stay on the old routes.`,
+            `The system-level penalty from adding the shortcut is ${d.penalty>=0?'+':''}${d.penalty.toFixed(1)} minutes per driver.`,
+            `The paradox appears when individual route choice pushes flow onto segments whose delay grows with congestion.`
+        ];
+        this.dom.trafficNotes.innerHTML=notes.map(x=>`<div class="note"><div>${x}</div></div>`).join('');
+    },
+    updateGridUI(){
+        const g=this.state.grid,c=g.connected,r=g.removed,connectedCongested=c.lines.some(l=>Math.abs(c.flows[l.id])>=l.limit-.75),savings=g.savings;
+        this.dom.loadReadout.textContent=`${this.state.inputs.load} MW`;
+        this.dom.g1CostReadout.textContent=`$${this.state.inputs.g1Cost}/MWh`;
+        this.dom.g2CostReadout.textContent=`$${this.state.inputs.g2Cost}/MWh`;
+        this.dom.g1MaxReadout.textContent=`${this.state.inputs.g1Max} MW`;
+        this.dom.tieLimitReadout.textContent=`${this.state.inputs.tieLimit} MW`;
+        this.dom.connectedCost.textContent=this.moneyShort(c.cost);
+        this.dom.removedCost.textContent=this.moneyShort(r.cost);
+        this.dom.connectedG1.textContent=`${c.p1.toFixed(0)} MW`;
+        this.dom.connectedG2.textContent=`${c.p2.toFixed(0)} MW`;
+        this.dom.removedG1.textContent=`${r.p1.toFixed(0)} MW`;
+        this.dom.removedG2.textContent=`${r.p2.toFixed(0)} MW`;
+        this.dom.connectedBadge.textContent=connectedCongested?'Congested':'Feasible';
+        this.dom.connectedBadge.style.color=connectedCongested?this.colors.red:this.colors.green;
+        this.dom.removedBadge.textContent=r.feasible?'Feasible':'Limited';
+        this.dom.removedBadge.style.color=r.feasible?this.colors.green:this.colors.red;
+        this.dom.gridSavingsHero.textContent=`${savings>=0?'$':'-$'}${this.short(Math.abs(savings))}`;
+        this.dom.gridStatusHero.textContent=savings>1?'Removal wins':savings<-1?'Tie wins':'Similar';
+        if(savings>1){
+            this.dom.gridStatusTitle.textContent='Removing the tie lowers operating cost.';
+            this.dom.gridStatusText.textContent='The connected network creates a loop-flow constraint that reduces cheap G1 output and forces more expensive G2 output.';
+        }else if(savings<-1){
+            this.dom.gridStatusTitle.textContent='The tie is beneficial under these settings.';
+            this.dom.gridStatusText.textContent='The tie limit is loose enough, or the economics are close enough, that the connected network no longer produces a Braess penalty.';
+        }else{
+            this.dom.gridStatusTitle.textContent='Both topologies cost about the same.';
+            this.dom.gridStatusText.textContent='The constraint and dispatch economics are near the break-even point.';
         }
-        
-        function handleInterfaceChange() {
-            state.traffic.totalCars = parseInt(DOM.carSlider.value, 10);
-            state.power.systemLoad = parseInt(DOM.loadSlider.value, 10);
-            state.power.gen1Cost = parseInt(DOM.gen1CostSlider.value, 10);
-            state.power.gen2Cost = parseInt(DOM.gen2CostSlider.value, 10);
-            state.power.line23Limit = parseInt(DOM.lineLimitSlider.value, 10);
-            state.power.pmax_g1 = parseInt(DOM.pmaxG1Slider.value, 10);
-            state.power.pmax_g2 = parseInt(DOM.pmaxG2Slider.value, 10);
-            
-            calculateTraffic();
-            calculatePower();
-            updateUIText();
-            updateParticleSystems();
+        const tieFlow=c.flows.tie??0;
+        const notes=[
+            `With the tie connected, dispatch is G1 = ${c.p1.toFixed(1)} MW and G2 = ${c.p2.toFixed(1)} MW at ${this.money(c.cost)}/hr.`,
+            `With the tie removed, dispatch is G1 = ${r.p1.toFixed(1)} MW and G2 = ${r.p2.toFixed(1)} MW at ${this.money(r.cost)}/hr.`,
+            `Tie-line flow is ${tieFlow.toFixed(1)} MW against a ${this.state.inputs.tieLimit.toFixed(0)} MW limit.`,
+            savings>=0?`Removing the tie saves ${this.money(savings)}/hr for this operating point.`:`Keeping the tie saves ${this.money(Math.abs(savings))}/hr for this operating point.`
+        ];
+        this.dom.gridNotes.innerHTML=notes.map(x=>`<div class="note"><div>${x}</div></div>`).join('');
+    },
+    drawAll(){
+        if(this.state.tab==='trafficSection'){
+            this.drawTraffic(this.dom.trafficBeforeCanvas,false);
+            this.drawTraffic(this.dom.trafficAfterCanvas,true);
+        }else{
+            this.drawGrid(this.dom.gridConnectedCanvas,this.state.grid.connected,true);
+            this.drawGrid(this.dom.gridRemovedCanvas,this.state.grid.removed,false);
         }
+    },
+    setup(canvas){
+        const rect=canvas.getBoundingClientRect(),dpr=Math.max(1,Math.min(2.5,window.devicePixelRatio||1));
+        const w=Math.max(1,rect.width),h=Math.max(1,rect.height);
+        if(canvas.width!==Math.round(w*dpr)||canvas.height!==Math.round(h*dpr)){canvas.width=Math.round(w*dpr);canvas.height=Math.round(h*dpr)}
+        const ctx=canvas.getContext('2d');ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,w,h);return{ctx,w,h};
+    },
 
-        const W = 400, H = 250;
-        const paths = {
-            t_sae:  [{x: W*0.1, y: H*0.5}, {x: W*0.5, y: H*0.2}, {x: W*0.9, y: H*0.5}],
-            t_sbe:  [{x: W*0.1, y: H*0.5}, {x: W*0.5, y: H*0.8}, {x: W*0.9, y: H*0.5}],
-            t_sabe: [{x: W*0.1, y: H*0.5}, {x: W*0.5, y: H*0.2}, {x: W*0.5, y: H*0.8}, {x: W*0.9, y: H*0.5}],
-            p_13: [{x: W*0.1, y: H*0.25}, {x: W*0.5, y: H*0.5}],
-            p_24: [{x: W*0.1, y: H*0.75}, {x: W*0.9, y: H*0.75}],
-            p_34: [{x: W*0.5, y: H*0.5}, {x: W*0.9, y: H*0.75}],
-            p_23: [{x: W*0.1, y: H*0.75}, {x: W*0.5, y: H*0.5}],
-            p_134: [{x: W*0.1, y: H*0.25}, {x: W*0.5, y: H*0.5}, {x: W*0.9, y: H*0.75}],
-        };
-        const reversePath = (p) => [...p].reverse();
-
-        class Particle {
-            constructor(path, speed, size, color) { this.path = path; this.speed = Math.max(0.5, speed); this.size = size; this.color = color; this.life = Math.random(); }
-            update() {
-                this.life += this.speed / 200;
-                if (this.life > 1) this.life = 0;
-                const totalDist = (this.path.length - 1) * this.life;
-                const segment = Math.floor(totalDist);
-                const segmentProgress = totalDist - segment;
-                const start = this.path[segment];
-                const end = this.path[segment + 1] || start;
-                this.x = start.x + (end.x - start.x) * segmentProgress;
-                this.y = start.y + (end.y - start.y) * segmentProgress;
-            }
-            draw(ctx) { ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fillStyle = this.color; ctx.fill(); }
+    drawTraffic(canvas,shortcut){
+        const {ctx,w,h}=this.setup(canvas),d=this.state.traffic,p=this.trafficCoords,C=this.colors;
+        this.bg(ctx,w,h);
+        const pts={S:this.xy(p.S,w,h),A:this.xy(p.A,w,h),B:this.xy(p.B,w,h),E:this.xy(p.E,w,h)};
+        const heat=v=>Math.max(0,Math.min(1,(v/100-15)/55));
+        const routes=shortcut?[
+            {path:[pts.S,pts.A,pts.E],flow:d.top,color:C.blue},
+            {path:[pts.S,pts.B,pts.E],flow:d.bottom,color:C.purple},
+            {path:[pts.S,pts.A,pts.B,pts.E],flow:d.shortcut,color:C.orange}
+        ]:[
+            {path:[pts.S,pts.A,pts.E],flow:d.beforeTop,color:C.blue},
+            {path:[pts.S,pts.B,pts.E],flow:d.beforeBottom,color:C.purple}
+        ];
+        const edges=shortcut?[
+            {path:[pts.S,pts.A],flow:d.edges.sa,heat:heat(d.edges.sa),color:C.blue,label:`S-A ${this.num(d.edges.sa)} cars`,sub:`delay ${(d.edges.sa/100).toFixed(0)} min`,off:[0,-18]},
+            {path:[pts.A,pts.E],flow:d.edges.ae,heat:0,color:C.blue,label:`A-E ${this.num(d.edges.ae)} cars`,sub:'45 min',off:[8,-20]},
+            {path:[pts.S,pts.B],flow:d.edges.sb,heat:0,color:C.purple,label:`S-B ${this.num(d.edges.sb)} cars`,sub:'45 min',off:[8,20]},
+            {path:[pts.B,pts.E],flow:d.edges.be,heat:heat(d.edges.be),color:C.purple,label:`B-E ${this.num(d.edges.be)} cars`,sub:`delay ${(d.edges.be/100).toFixed(0)} min`,off:[0,18]},
+            {path:[pts.A,pts.B],flow:d.edges.ab,heat:0,color:C.orange,label:`A-B ${this.num(d.edges.ab)} cars`,sub:'shortcut 0 min',off:[36,0]}
+        ]:[
+            {path:[pts.S,pts.A],flow:d.beforeTop,heat:heat(d.beforeTop),color:C.blue,label:`S-A ${this.num(d.beforeTop)} cars`,sub:`delay ${(d.beforeTop/100).toFixed(0)} min`,off:[0,-18]},
+            {path:[pts.A,pts.E],flow:d.beforeTop,heat:0,color:C.blue,label:`A-E ${this.num(d.beforeTop)} cars`,sub:'45 min',off:[8,-20]},
+            {path:[pts.S,pts.B],flow:d.beforeBottom,heat:0,color:C.purple,label:`S-B ${this.num(d.beforeBottom)} cars`,sub:'45 min',off:[8,20]},
+            {path:[pts.B,pts.E],flow:d.beforeBottom,heat:heat(d.beforeBottom),color:C.purple,label:`B-E ${this.num(d.beforeBottom)} cars`,sub:`delay ${(d.beforeBottom/100).toFixed(0)} min`,off:[0,18]}
+        ];
+        edges.forEach(e=>this.road(ctx,e.path,e.flow,e.heat,e.color));
+        routes.forEach((r,i)=>this.cars(ctx,r.path,r.flow,r.color,.05+i*.006,26));
+        this.node(ctx,pts.S,'S',C.green,'origin');
+        this.node(ctx,pts.A,'A',C.blue,'');
+        this.node(ctx,pts.B,'B',C.purple,'');
+        this.node(ctx,pts.E,'E',C.muted,'destination');
+        edges.forEach(e=>this.edgeLabel(ctx,e.path,e.label,e.sub,e.off));
+    },
+    drawGrid(canvas,d,connected){
+        const {ctx,w,h}=this.setup(canvas),P=this.gridCoords,C=this.colors;
+        this.bg(ctx,w,h);
+        const pts={G1:this.xy(P.G1,w,h),G2:this.xy(P.G2,w,h),J:this.xy(P.J,w,h),L:this.xy(P.L,w,h)};
+        const map={g1j:[pts.G1,pts.J],jl:[pts.J,pts.L],g2l:[pts.G2,pts.L],tie:[pts.G2,pts.J]};
+        if(!connected)this.removedLine(ctx,map.tie);
+        d.lines.forEach(l=>{
+            const flow=d.flows[l.id]||0,congested=Math.abs(flow)>=l.limit-.75,color=congested?C.red:l.color,path=flow>=0?map[l.id]:[...map[l.id]].reverse();
+            this.powerLine(ctx,map[l.id],flow,color,congested,l.id==='tie');
+            this.dots(ctx,path,Math.abs(flow)*6,color,.11,70);
+            if(Math.abs(flow)>3)this.arrows(ctx,path,color,[.6]);
+        });
+        d.lines.forEach(l=>{
+            const flow=d.flows[l.id]||0,lim=l.id==='tie'?`limit ${l.limit.toFixed(0)} MW`:'thermal OK';
+            this.edgeLabel(ctx,map[l.id],`${l.name}: ${flow.toFixed(0)} MW`,lim,l.id==='tie'?[24,-10]:[0,-20]);
+        });
+        this.generator(ctx,pts.G1,C.blue);this.gridLabel(ctx,pts.G1,'G1',`$${this.state.inputs.g1Cost}/MWh`,`${d.p1.toFixed(0)} MW`,26);
+        this.generator(ctx,pts.G2,C.red);this.gridLabel(ctx,pts.G2,'G2',`$${this.state.inputs.g2Cost}/MWh`,`${d.p2.toFixed(0)} MW`,26);
+        this.junction(ctx,pts.J,C.amber);this.gridLabel(ctx,pts.J,'J','junction','',18);
+        this.load(ctx,pts.L,C.green);this.gridLabel(ctx,pts.L,'Load',`${this.state.inputs.load.toFixed(0)} MW`,'',26);
+    },
+    bg(ctx,w,h){
+        const g=ctx.createRadialGradient(w*.5,h*.32,40,w*.5,h*.5,Math.max(w,h)*.78);
+        g.addColorStop(0,'rgba(30,41,59,.5)');g.addColorStop(1,'rgba(2,6,23,.9)');
+        ctx.fillStyle=g;ctx.fillRect(0,0,w,h);
+        ctx.save();ctx.fillStyle='rgba(148,163,184,.14)';
+        for(let x=18;x<w;x+=30)for(let y=18;y<h;y+=30){ctx.beginPath();ctx.arc(x,y,1,0,Math.PI*2);ctx.fill()}
+        ctx.restore();
+    },
+    road(ctx,path,flow,heat,color){
+        ctx.save();ctx.lineCap='round';ctx.lineJoin='round';
+        ctx.strokeStyle='rgba(148,163,184,.22)';ctx.lineWidth=24;this.strokePath(ctx,path);
+        ctx.strokeStyle='#0b1220';ctx.lineWidth=18;this.strokePath(ctx,path);
+        if(heat>.02){ctx.save();ctx.strokeStyle=`rgba(251,113,133,${.5*heat})`;ctx.lineWidth=18;ctx.shadowColor='rgba(251,113,133,.7)';ctx.shadowBlur=15*heat;this.strokePath(ctx,path);ctx.restore()}
+        ctx.strokeStyle=color;ctx.globalAlpha=.5;ctx.lineWidth=Math.max(5,Math.min(16,5+flow/380));this.strokePath(ctx,path);ctx.globalAlpha=1;
+        ctx.strokeStyle='rgba(255,255,255,.5)';ctx.lineWidth=2;ctx.setLineDash([10,13]);ctx.lineDashOffset=-this.state.t*42;this.strokePath(ctx,path);ctx.setLineDash([]);
+        ctx.restore();
+    },
+    powerLine(ctx,path,flow,color,congested,isTie){
+        ctx.save();ctx.lineCap='round';ctx.lineJoin='round';
+        ctx.strokeStyle='rgba(148,163,184,.2)';ctx.lineWidth=20;this.strokePath(ctx,path);
+        ctx.strokeStyle='#0b1220';ctx.lineWidth=14;this.strokePath(ctx,path);
+        const wd=Math.max(4,Math.min(18,4+Math.abs(flow)/35));
+        if(congested){
+            ctx.save();ctx.shadowColor='rgba(251,113,133,.85)';ctx.shadowBlur=16;ctx.strokeStyle=color;ctx.lineWidth=wd;this.strokePath(ctx,path);ctx.restore();
+            ctx.strokeStyle='rgba(255,255,255,.85)';ctx.lineWidth=2;ctx.setLineDash([7,9]);ctx.lineDashOffset=-this.state.t*30;this.strokePath(ctx,path);ctx.setLineDash([]);
+        }else{
+            ctx.strokeStyle=color;ctx.globalAlpha=.7;ctx.lineWidth=wd;this.strokePath(ctx,path);ctx.globalAlpha=1;
+            if(isTie){ctx.strokeStyle='rgba(245,158,11,.55)';ctx.lineWidth=2;ctx.setLineDash([4,6]);this.strokePath(ctx,path);ctx.setLineDash([])}
         }
-        
-        function adjustParticleCount(particleArray, desiredCount, path, speed, size, color) {
-            while (particleArray.length < desiredCount) { particleArray.push(new Particle(path, speed, size, color)); }
-            while (particleArray.length > desiredCount) { particleArray.pop(); }
+        ctx.restore();
+    },
+    removedLine(ctx,path){
+        ctx.save();ctx.lineCap='round';
+        ctx.strokeStyle='rgba(100,116,139,.32)';ctx.lineWidth=8;ctx.setLineDash([10,12]);this.strokePath(ctx,path);ctx.setLineDash([]);
+        const m=this.pointAt(path,.5);
+        ctx.strokeStyle='rgba(251,113,133,.8)';ctx.lineWidth=2.6;
+        ctx.beginPath();ctx.moveTo(m.x-7,m.y-7);ctx.lineTo(m.x+7,m.y+7);ctx.moveTo(m.x+7,m.y-7);ctx.lineTo(m.x-7,m.y+7);ctx.stroke();
+        this.pill(ctx,m.x,m.y-20,'line removed','#cbd5e1');
+        ctx.restore();
+    },
+    strokePath(ctx,path){ctx.beginPath();ctx.moveTo(path[0].x,path[0].y);path.slice(1).forEach(p=>ctx.lineTo(p.x,p.y));ctx.stroke()},
+    cars(ctx,path,flow,color,speed,max){
+        const count=Math.min(max,Math.floor(flow/120));
+        if(count<=0)return;
+        ctx.save();
+        for(let i=0;i<count;i++){
+            const u=(this.state.t*speed+i/count)%1,p=this.pointAt(path,u),tan=this.tangentAt(path,u),ang=Math.atan2(tan.y,tan.x);
+            ctx.save();ctx.translate(p.x,p.y);ctx.rotate(ang);
+            ctx.fillStyle='rgba(2,6,23,.5)';this.round(ctx,-6.5,-4,13,8,3);ctx.fill();
+            ctx.fillStyle=color;this.round(ctx,-6,-3.4,12,6.8,2.6);ctx.fill();
+            ctx.fillStyle='rgba(255,255,255,.85)';this.round(ctx,.4,-2.4,3.6,4.8,1.4);ctx.fill();
+            ctx.restore();
         }
-        
-        function updateParticleSystems() {
-            const { MAX_PARTICLES_PER_ROUTE, PARTICLE_FACTOR_TRAFFIC, PARTICLE_FACTOR_POWER, PARTICLE_SIZE_TRAFFIC, PARTICLE_SIZE_POWER } = ANIMATION_CONFIG;
-            
-            const carsPerRoute1 = state.traffic.totalCars / 2;
-            adjustParticleCount(state.particles.traffic1_SAE, Math.min(MAX_PARTICLES_PER_ROUTE, carsPerRoute1 / PARTICLE_FACTOR_TRAFFIC), paths.t_sae, 1.5, PARTICLE_SIZE_TRAFFIC, '#3b82f6');
-            adjustParticleCount(state.particles.traffic1_SBE, Math.min(MAX_PARTICLES_PER_ROUTE, carsPerRoute1 / PARTICLE_FACTOR_TRAFFIC), paths.t_sbe, 1.5, PARTICLE_SIZE_TRAFFIC, '#a855f7');
-            adjustParticleCount(state.particles.traffic2_SABE, Math.min(MAX_PARTICLES_PER_ROUTE*2, state.traffic.totalCars / PARTICLE_FACTOR_TRAFFIC), paths.t_sabe, 1.5, PARTICLE_SIZE_TRAFFIC, '#f97316');
-
-            const { flowsA, isCongested } = state.power;
-            const powerFlowsToAnimate = [
-                { array: state.particles.powerA_13, flow: flowsA['13'], path: paths.p_13, color: '#60a5fa' },
-                { array: state.particles.powerA_24, flow: flowsA['24'], path: paths.p_24, color: '#f87171' },
-                { array: state.particles.powerA_34, flow: flowsA['34'], path: paths.p_34, color: '#a3e635' },
-                { array: state.particles.powerA_23, flow: flowsA['23'], path: paths.p_23, color: isCongested ? '#ef4444' : '#fbbf24' },
-            ];
-
-            powerFlowsToAnimate.forEach(({ array, flow, path, color }) => {
-                const numParticles = Math.min(MAX_PARTICLES_PER_ROUTE, Math.abs(flow) / PARTICLE_FACTOR_POWER);
-                const directionalPath = flow >= 0 ? path : reversePath(path);
-                adjustParticleCount(array, numParticles, directionalPath, 2, PARTICLE_SIZE_POWER, color);
-            });
-            
-            const totalLoadB = state.power.gen1_B + state.power.gen2_B;
-            const numParticlesB = Math.min(MAX_PARTICLES_PER_ROUTE*2, totalLoadB / PARTICLE_FACTOR_POWER);
-            adjustParticleCount(state.particles.powerB, numParticlesB, paths.p_134, 2, PARTICLE_SIZE_POWER, '#22c55e');
-        }
-        
-        function drawStaticNetwork(ctx, type, scenario) {
-            if (!ctx) return;
-            const { width, height } = ctx.canvas;
-            ctx.clearRect(0, 0, width, height);
-            ctx.lineWidth = type === 'traffic' ? 8 : 6;
-            ctx.lineCap = 'round';
-            ctx.strokeStyle = 'rgba(107, 114, 128, 0.4)';
-            ctx.shadowColor = 'rgba(107, 114, 128, 0.4)';
-            ctx.shadowBlur = 4;
-            const drawLine = (p) => { ctx.beginPath(); ctx.moveTo(p[0].x, p[0].y); p.slice(1).forEach(pt => ctx.lineTo(pt.x, pt.y)); ctx.stroke(); };
-            
-            if (type === 'traffic') {
-                drawLine(paths.t_sae); drawLine(paths.t_sbe);
-                if (scenario === 2) {
-                    ctx.save();
-                    ctx.strokeStyle = 'rgba(249, 115, 22, 0.6)';
-                    drawLine([paths.t_sabe[1], paths.t_sabe[2]]);
-                    ctx.restore();
-                }
-            } else {
-                drawLine(paths.p_13); drawLine(paths.p_24); drawLine(paths.p_34);
-                if (scenario === 'A') {
-                    ctx.save();
-                    ctx.strokeStyle = state.power.isCongested ? 'var(--congested-color-light)' : 'rgba(251, 191, 36, 0.5)';
-                    drawLine(paths.p_23);
-                    ctx.restore();
-                }
-            }
-            ctx.shadowBlur = 0;
-        }
-        
-        function drawAllStaticBackgrounds() {
-            drawStaticNetwork(state.canvases['traffic-canvas-1-bg']?.ctx, 'traffic', 1);
-            drawStaticNetwork(state.canvases['traffic-canvas-2-bg']?.ctx, 'traffic', 2);
-            drawStaticNetwork(state.canvases['power-canvas-a-bg']?.ctx, 'power', 'A');
-            drawStaticNetwork(state.canvases['power-canvas-b-bg']?.ctx, 'power', 'B');
-        }
-
-        function animate() {
-            const animationMap = {
-                'traffic-canvas-1-fg': [state.particles.traffic1_SAE, state.particles.traffic1_SBE],
-                'traffic-canvas-2-fg': [state.particles.traffic2_SABE],
-                'power-canvas-a-fg':  [state.particles.powerA_13, state.particles.powerA_23, state.particles.powerA_24, state.particles.powerA_34],
-                'power-canvas-b-fg':  [state.particles.powerB]
-            };
-            for (const [canvasId, particleGroups] of Object.entries(animationMap)) {
-                const canvasInfo = state.canvases[canvasId];
-                if (!canvasInfo) continue;
-                canvasInfo.ctx.clearRect(0, 0, canvasInfo.width, canvasInfo.height);
-                particleGroups.flat().forEach(p => { p.update(); p.draw(canvasInfo.ctx); });
-            }
-            requestAnimationFrame(animate);
-        }
-        
-        function setupCanvas(id) {
-            const canvas = document.getElementById(id);
-            if (!canvas) return;
-            const ctx = canvas.getContext('2d');
-            const dpr = window.devicePixelRatio || 1;
-            const rect = canvas.parentElement.getBoundingClientRect();
-            canvas.width = rect.width * dpr;
-            canvas.height = rect.height * dpr;
-            ctx.scale(dpr, dpr);
-            state.canvases[id] = { ctx, width: rect.width, height: rect.height, dpr };
-        }
-
-        function drawAllNodesAndLabels() { 
-            const createNodes = (containerId, nodeConfig) => {
-                const container = document.getElementById(containerId);
-                if (!container) return;
-                container.querySelectorAll('.node').forEach(n => n.remove());
-                nodeConfig.forEach(n => {
-                    const el = document.createElement('div');
-                    el.className = `node text-white ${n.color}`;
-                    if (n.color === 'bg-yellow-400') el.classList.add('text-gray-800');
-                    el.style.cssText = n.style;
-                    el.textContent = n.id;
-                    container.appendChild(el);
-                });
-            };
-            const trafficNodes = [
-                { id: 'S',  style: `left:${paths.t_sae[0].x / W * 100}%; top:${paths.t_sae[0].y / H * 100}%;`, color: 'bg-slate-500' },
-                { id: 'A',  style: `left:${paths.t_sae[1].x / W * 100}%; top:${paths.t_sae[1].y / H * 100}%;`, color: 'bg-blue-500' },
-                { id: 'B',  style: `left:${paths.t_sbe[1].x / W * 100}%; top:${paths.t_sbe[1].y / H * 100}%;`, color: 'bg-purple-500' },
-                { id: 'E',  style: `left:${paths.t_sae[2].x / W * 100}%; top:${paths.t_sae[2].y / H * 100}%;`, color: 'bg-slate-500' }
-            ];
-            const powerNodes = [
-                { id: 'G1', style: `left:${paths.p_13[0].x / W * 100}%; top:${paths.p_13[0].y / H * 100}%;`, color: 'bg-blue-500' },
-                { id: 'G2', style: `left:${paths.p_24[0].x / W * 100}%; top:${paths.p_24[0].y / H * 100}%;`, color: 'bg-red-500' },
-                { id: 'B3', style: `left:${paths.p_13[1].x / W * 100}%; top:${paths.p_13[1].y / H * 100}%;`, color: 'bg-yellow-400' },
-                { id: 'L',  style: `left:${paths.p_24[1].x / W * 100}%; top:${paths.p_24[1].y / H * 100}%;`, color: 'bg-green-500' }
-            ];
-            createNodes('canvas-container-1', trafficNodes);
-            createNodes('canvas-container-2', trafficNodes);
-            createNodes('canvas-container-a', powerNodes);
-            createNodes('canvas-container-b', powerNodes);
-            
-            // --- CODE REVISION ---
-            // Positioning the new load labels
-            DOM.labels.p13a.style.cssText = `left:30%; top:37.5%`; DOM.labels.p24a.style.cssText = `left:50%; top:75%`;
-            DOM.labels.p34a.style.cssText = `left:70%; top:62.5%`; DOM.labels.p23a.style.cssText = `left:30%; top:62.5%`;
-            DOM.labels.g1a.style.cssText = `left:10%; top:10%; transform: translateX(-50%);`;
-            DOM.labels.g2a.style.cssText = `left:10%; top:90%; transform: translate(-50%, -50%);`;
-            DOM.labels.la.style.cssText = `left:90%; top:90%; transform: translate(-50%, -50%);`;
-
-            DOM.labels.p13b.style.cssText = `left:30%; top:37.5%`; DOM.labels.p24b.style.cssText = `left:50%; top:75%`;
-            DOM.labels.p34b.style.cssText = `left:70%; top:62.5%`;
-            DOM.labels.g1b.style.cssText = `left:10%; top:10%; transform: translateX(-50%);`;
-            DOM.labels.g2b.style.cssText = `left:10%; top:90%; transform: translate(-50%, -50%);`;
-            DOM.labels.lb.style.cssText = `left:90%; top:90%; transform: translate(-50%, -50%);`;
-        }
-        
-        function onResize() {
-            Object.keys(state.canvases).forEach(setupCanvas);
-            drawAllNodesAndLabels();
-            drawAllStaticBackgrounds();
-        }
-
-        function init() {
-            const sliders = [
-                DOM.carSlider, DOM.loadSlider, 
-                DOM.gen1CostSlider, DOM.gen2CostSlider, DOM.lineLimitSlider,
-                DOM.pmaxG1Slider, DOM.pmaxG2Slider
-            ];
-            sliders.forEach(slider => slider.addEventListener('input', handleInterfaceChange));
-
-            Object.keys(DOM.labels).forEach(id => {
-                const el = document.getElementById(id);
-                if (el) setupCanvas(id.replace('label', 'canvas')); // A bit of a hack, assumes naming convention
-            });
-             ['traffic-canvas-1-bg', 'traffic-canvas-1-fg', 'traffic-canvas-2-bg', 'traffic-canvas-2-fg',
-             'power-canvas-a-bg', 'power-canvas-a-fg', 'power-canvas-b-bg', 'power-canvas-b-fg']
-            .forEach(id => setupCanvas(id));
-
-            
-            drawAllNodesAndLabels();
-            drawAllStaticBackgrounds();
-            
-            let resizeTimeout;
-            window.addEventListener('resize', () => {
-                clearTimeout(resizeTimeout);
-                resizeTimeout = setTimeout(onResize, 250);
-            });
-
-            handleInterfaceChange();
-            animate();
-        }
-
-        window.addEventListener('load', init);
-
-    })();
-    </script>
+        ctx.restore();
+    },
+    dots(ctx,path,flow,color,speed,max){
+        const count=Math.min(max,Math.floor(flow/70));
+        if(count<=0)return;
+        ctx.save();ctx.fillStyle=color;ctx.shadowColor=color;ctx.shadowBlur=9;
+        for(let i=0;i<count;i++){const u=(this.state.t*speed+i/count)%1,p=this.pointAt(path,u),pulse=.65+.35*Math.sin(this.state.t*5+i);ctx.globalAlpha=.35+.5*pulse;ctx.beginPath();ctx.arc(p.x,p.y,2.2+1.2*pulse,0,Math.PI*2);ctx.fill()}
+        ctx.restore();
+    },
+    pointAt(path,t){
+        const segs=[];let total=0;
+        for(let i=0;i<path.length-1;i++){const a=path[i],b=path[i+1],len=Math.hypot(b.x-a.x,b.y-a.y);segs.push({a,b,len});total+=len}
+        let d=t*total;
+        for(const s of segs){if(d<=s.len){const u=s.len?d/s.len:0;return{x:s.a.x+(s.b.x-s.a.x)*u,y:s.a.y+(s.b.y-s.a.y)*u}}d-=s.len}
+        const last=path[path.length-1];return{x:last.x,y:last.y};
+    },
+    tangentAt(path,t){
+        const segs=[];let total=0;
+        for(let i=0;i<path.length-1;i++){const a=path[i],b=path[i+1],len=Math.hypot(b.x-a.x,b.y-a.y);segs.push({a,b,len});total+=len}
+        let d=t*total;
+        for(const s of segs){if(d<=s.len){const L=s.len||1;return{x:(s.b.x-s.a.x)/L,y:(s.b.y-s.a.y)/L}}d-=s.len}
+        const s=segs[segs.length-1],L=s.len||1;return{x:(s.b.x-s.a.x)/L,y:(s.b.y-s.a.y)/L};
+    },
+    arrows(ctx,path,color,positions){
+        ctx.save();ctx.fillStyle=color;ctx.strokeStyle='rgba(2,6,23,.7)';ctx.lineWidth=1;
+        positions.forEach(t=>{const p=this.pointAt(path,t),tan=this.tangentAt(path,t),ang=Math.atan2(tan.y,tan.x);ctx.save();ctx.translate(p.x,p.y);ctx.rotate(ang);ctx.beginPath();ctx.moveTo(-4,-5);ctx.lineTo(6,0);ctx.lineTo(-4,5);ctx.closePath();ctx.fill();ctx.stroke();ctx.restore()});
+        ctx.restore();
+    },
+    node(ctx,p,label,color,caption){
+        ctx.save();
+        ctx.fillStyle='rgba(2,6,23,.5)';ctx.beginPath();ctx.arc(p.x,p.y+4,27,0,Math.PI*2);ctx.fill();
+        const g=ctx.createRadialGradient(p.x-9,p.y-11,3,p.x,p.y,27);g.addColorStop(0,'rgba(255,255,255,.5)');g.addColorStop(1,color);
+        ctx.fillStyle=g;ctx.beginPath();ctx.arc(p.x,p.y,26,0,Math.PI*2);ctx.fill();
+        ctx.strokeStyle='rgba(255,255,255,.82)';ctx.lineWidth=2.5;ctx.stroke();
+        ctx.fillStyle='white';ctx.font='900 18px Inter';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(label,p.x,p.y);
+        if(caption){ctx.fillStyle='#cbd5e1';ctx.font='800 10px Inter';ctx.fillText(caption,p.x,p.y+40)}
+        ctx.restore();
+    },
+    generator(ctx,p,color){
+        ctx.save();
+        ctx.fillStyle='rgba(2,6,23,.5)';ctx.beginPath();ctx.arc(p.x,p.y+4,24,0,Math.PI*2);ctx.fill();
+        const g=ctx.createRadialGradient(p.x-8,p.y-10,3,p.x,p.y,24);g.addColorStop(0,'rgba(255,255,255,.5)');g.addColorStop(1,color);
+        ctx.fillStyle=g;ctx.beginPath();ctx.arc(p.x,p.y,22,0,Math.PI*2);ctx.fill();
+        ctx.strokeStyle='rgba(255,255,255,.82)';ctx.lineWidth=2.4;ctx.stroke();
+        ctx.strokeStyle='white';ctx.lineWidth=2.4;ctx.lineCap='round';ctx.beginPath();
+        for(let a=-11;a<=11;a++){const y=p.y+Math.sin(a/11*Math.PI*2)*6;a===-11?ctx.moveTo(p.x+a,y):ctx.lineTo(p.x+a,y)}
+        ctx.stroke();ctx.restore();
+    },
+    junction(ctx,p,color){
+        ctx.save();ctx.lineCap='round';
+        ctx.strokeStyle='rgba(2,6,23,.5)';ctx.lineWidth=12;ctx.beginPath();ctx.moveTo(p.x-20,p.y+4);ctx.lineTo(p.x+20,p.y+4);ctx.stroke();
+        ctx.strokeStyle=color;ctx.lineWidth=8;ctx.beginPath();ctx.moveTo(p.x-20,p.y);ctx.lineTo(p.x+20,p.y);ctx.stroke();
+        ctx.fillStyle=color;[-20,0,20].forEach(dx=>{ctx.beginPath();ctx.arc(p.x+dx,p.y,3.4,0,Math.PI*2);ctx.fill()});
+        ctx.restore();
+    },
+    load(ctx,p,color){
+        ctx.save();
+        ctx.fillStyle='rgba(2,6,23,.5)';this.round(ctx,p.x-22,p.y-14,44,40,11);ctx.fill();
+        const g=ctx.createLinearGradient(p.x,p.y-20,p.x,p.y+20);g.addColorStop(0,'rgba(255,255,255,.42)');g.addColorStop(.22,color);g.addColorStop(1,color);
+        ctx.fillStyle=g;this.round(ctx,p.x-22,p.y-18,44,38,11);ctx.fill();
+        ctx.strokeStyle='rgba(255,255,255,.82)';ctx.lineWidth=2.2;ctx.stroke();
+        ctx.fillStyle='rgba(255,255,255,.92)';ctx.beginPath();ctx.moveTo(p.x,p.y+13);ctx.lineTo(p.x-8,p.y+2);ctx.lineTo(p.x+8,p.y+2);ctx.closePath();ctx.fill();
+        ctx.restore();
+    },
+    gridLabel(ctx,p,title,sub,value,dy){
+        const lines=[{t:title,c:'#f8fafc',f:'900 13px Inter'}];
+        if(sub)lines.push({t:sub,c:'#94a3b8',f:'800 10px Inter'});
+        if(value)lines.push({t:value,c:'#e2e8f0',f:'900 11px Inter'});
+        ctx.save();let maxW=0;lines.forEach(l=>{ctx.font=l.f;maxW=Math.max(maxW,ctx.measureText(l.t).width)});
+        const bw=maxW+22,bh=12+lines.length*14,bx=p.x-bw/2,by=p.y+dy;
+        ctx.fillStyle='rgba(2,6,23,.82)';ctx.strokeStyle='rgba(148,163,184,.22)';ctx.lineWidth=1;this.round(ctx,bx,by,bw,bh,12);ctx.fill();ctx.stroke();
+        ctx.textAlign='center';ctx.textBaseline='middle';
+        lines.forEach((l,i)=>{ctx.font=l.f;ctx.fillStyle=l.c;ctx.fillText(l.t,p.x,by+12+i*14)});
+        ctx.restore();
+    },
+    edgeLabel(ctx,path,label,sub,off){
+        const m=this.pointAt(path,.5),x=m.x+(off?.[0]||0),y=m.y+(off?.[1]||0),text=`${label}`;
+        ctx.save();ctx.font='800 12px Inter';const w=Math.max(ctx.measureText(text).width,ctx.measureText(sub).width)+20,h=39;ctx.fillStyle='rgba(2,6,23,.78)';ctx.strokeStyle='rgba(148,163,184,.22)';ctx.lineWidth=1;this.round(ctx,x-w/2,y-h/2,w,h,12);ctx.fill();ctx.stroke();ctx.fillStyle='#f8fafc';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(text,x,y-6);ctx.fillStyle='#94a3b8';ctx.font='800 10px Inter';ctx.fillText(sub,x,y+10);ctx.restore();
+    },
+    pill(ctx,x,y,text,color){
+        ctx.font='900 11px Inter';const w=ctx.measureText(text).width+18,h=26;ctx.fillStyle='rgba(2,6,23,.82)';this.round(ctx,x-w/2,y-h/2,w,h,999);ctx.fill();ctx.strokeStyle='rgba(148,163,184,.24)';ctx.stroke();ctx.fillStyle=color;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(text,x,y+1);
+    },
+    xy(a,w,h){return{x:a[0]*w,y:a[1]*h}},
+    round(ctx,x,y,w,h,r){const rr=Math.min(r,w/2,h/2);ctx.beginPath();ctx.moveTo(x+rr,y);ctx.arcTo(x+w,y,x+w,y+h,rr);ctx.arcTo(x+w,y+h,x,y+h,rr);ctx.arcTo(x,y+h,x,y,rr);ctx.arcTo(x,y,x+w,y,rr);ctx.closePath()},
+    num(n){return Math.round(n).toLocaleString()},
+    money(n){return `$${Math.round(n).toLocaleString()}`},
+    moneyShort(n){return `$${this.short(n)}`},
+    short(n){return n>=1000?`${(n/1000).toFixed(n>=10000?1:1)}k`:`${Math.round(n)}`}
+};
+App.init();
+</script>
 </body>
 </html>
