@@ -1,669 +1,762 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reactive Power: The Truck Analogy</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #0c4a6e;
-            color: #cbd5e1;
-            overflow: hidden;
-        }
-        .glass-panel {
-            background: rgba(15, 23, 42, 0.7);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        #dashboard-panel.minimized {
-            transform: translateX(calc(100% - 60px));
-        }
-        .control-button{
-            background-color:rgba(71,85,105,.6);
-            border:1px solid rgba(148,163,184,.4);
-            padding:6px 12px;
-            font-size:12px;
-            font-weight:500;
-            border-radius:.375rem;
-            transition:background-color .2s;
-        }
-        .control-button.active, .control-button:hover{
-            background-color:rgba(59,130,246,.7);
-            border-color: rgba(96,165,250,.8);
-        }
-        input[type="range"]{
-            -webkit-appearance:none;
-            appearance:none;
-            width:100%;
-            height:.5rem;
-            background:#334155;
-            border-radius:9999px;
-            outline:none;
-        }
-        input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance:none;
-            appearance:none;
-            width:20px;
-            height:20px;
-            background:#fff;
-            cursor:pointer;
-            border-radius:50%;
-            border:3px solid;
-        }
-        input[type="range"]::-moz-range-thumb {
-            width:20px;
-            height:20px;
-            background:#fff;
-            cursor:pointer;
-            border-radius:50%;
-            border:3px solid;
-        }
-        #loadSlider::-webkit-slider-thumb{ border-color:#f59e0b }
-        #loadSlider::-moz-range-thumb{ border-color:#f59e0b }
-        #pfcSlider::-webkit-slider-thumb{ border-color:#38bdf8 }
-        #pfcSlider::-moz-range-thumb{ border-color:#38bdf8 }
-        .canvas-interactive {
-            cursor: grab;
-        }
-        .canvas-interactive:active {
-            cursor: grabbing;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reactive Power & Power Factor Correction Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+    --bg0:#020617;
+    --bg1:#07111f;
+    --card:rgba(15,23,42,.74);
+    --card2:rgba(15,23,42,.52);
+    --line:rgba(148,163,184,.22);
+    --text:#e5e7eb;
+    --muted:#94a3b8;
+    --green:#34d399;
+    --sky:#38bdf8;
+    --blue:#60a5fa;
+    --amber:#f59e0b;
+    --purple:#a78bfa;
+    --red:#fb7185;
+    --white:#f8fafc;
+}
+*{box-sizing:border-box}
+html,body{min-height:100%}
+body{
+    margin:0;
+    font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    color:var(--text);
+    background:
+        radial-gradient(circle at 10% -10%,rgba(56,189,248,.28),transparent 34rem),
+        radial-gradient(circle at 88% 8%,rgba(167,139,250,.24),transparent 30rem),
+        radial-gradient(circle at 55% 105%,rgba(52,211,153,.14),transparent 34rem),
+        linear-gradient(135deg,var(--bg0),var(--bg1));
+    overflow-x:hidden;
+}
+button,input{font:inherit}
+.shell{
+    width:min(1800px,100%);
+    min-height:100vh;
+    margin:0 auto;
+    padding:clamp(14px,2vw,28px);
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+}
+.glass{
+    background:linear-gradient(180deg,var(--card),var(--card2));
+    border:1px solid var(--line);
+    box-shadow:0 26px 90px rgba(0,0,0,.34),inset 0 1px 0 rgba(255,255,255,.04);
+    backdrop-filter:blur(18px);
+}
+.header{
+    border-radius:32px;
+    padding:22px clamp(20px,3vw,34px);
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:22px;
+}
+.eyebrow{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    color:#bae6fd;
+    text-transform:uppercase;
+    letter-spacing:.26em;
+    font-size:12px;
+    font-weight:900;
+    margin-bottom:9px;
+}
+.dot{
+    width:10px;
+    height:10px;
+    border-radius:50%;
+    background:var(--green);
+    box-shadow:0 0 28px rgba(52,211,153,.9);
+}
+h1{
+    margin:0;
+    font-size:clamp(28px,4vw,58px);
+    line-height:.98;
+    letter-spacing:-.055em;
+    color:white;
+    font-weight:900;
+}
+.subtitle{
+    max-width:820px;
+    margin:12px 0 0;
+    color:#cbd5e1;
+    line-height:1.55;
+    font-size:clamp(14px,1.4vw,17px);
+}
+.actions{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    justify-content:flex-end;
+}
+.btn{
+    border:1px solid rgba(148,163,184,.28);
+    background:rgba(30,41,59,.7);
+    color:#e2e8f0;
+    border-radius:999px;
+    padding:11px 15px;
+    font-size:13px;
+    font-weight:800;
+    cursor:pointer;
+    transition:transform .18s ease,background .18s ease,border-color .18s ease,box-shadow .18s ease;
+}
+.btn:hover{
+    transform:translateY(-1px);
+    background:rgba(51,65,85,.9);
+    border-color:rgba(125,211,252,.55);
+}
+.btn.primary{
+    background:linear-gradient(135deg,#0ea5e9,#6366f1);
+    border-color:rgba(125,211,252,.75);
+    box-shadow:0 14px 34px rgba(14,165,233,.2);
+}
+.main{
+    display:grid;
+    grid-template-columns:minmax(0,1.45fr) minmax(430px,.88fr);
+    gap:16px;
+    min-height:0;
+    flex:1;
+}
+.left{
+    display:grid;
+    grid-template-rows:minmax(430px,1fr) minmax(260px,.55fr);
+    gap:16px;
+    min-width:0;
+}
+.sceneCard{
+    border-radius:32px;
+    overflow:hidden;
+    position:relative;
+    min-height:430px;
+}
+.canvasWrap{
+    position:relative;
+    height:100%;
+    min-height:0;
+    border-radius:26px;
+    overflow:hidden;
+    background:rgba(2,6,23,.32);
+    border:1px solid rgba(148,163,184,.18);
+}
+canvas{
+    display:block;
+    width:100%;
+    height:100%;
+}
+.badges{
+    position:absolute;
+    left:20px;
+    top:20px;
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    z-index:3;
+}
+.badge{
+    border:1px solid rgba(148,163,184,.24);
+    background:rgba(2,6,23,.44);
+    color:#cbd5e1;
+    border-radius:999px;
+    padding:8px 11px;
+    font-size:12px;
+    font-weight:900;
+    backdrop-filter:blur(12px);
+}
+.status{
+    position:absolute;
+    right:20px;
+    top:20px;
+    width:min(380px,calc(100% - 40px));
+    border-radius:24px;
+    padding:15px 17px;
+    z-index:3;
+}
+.statusTitle{
+    margin:0;
+    color:white;
+    font-weight:900;
+    letter-spacing:-.02em;
+}
+.statusText{
+    margin:7px 0 0;
+    color:#cbd5e1;
+    font-size:13px;
+    line-height:1.45;
+}
+.charts{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:16px;
+    min-height:0;
+}
+.chartCard{
+    border-radius:32px;
+    padding:18px;
+    min-height:260px;
+    display:flex;
+    flex-direction:column;
+    min-width:0;
+}
+.cardTop{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:12px;
+    margin-bottom:12px;
+}
+.cardTitle{
+    margin:0;
+    color:white;
+    font-size:18px;
+    font-weight:900;
+    letter-spacing:-.02em;
+}
+.cardHint{
+    margin:4px 0 0;
+    color:#94a3b8;
+    font-size:12px;
+}
+.miniBtn{
+    border-radius:999px;
+    border:1px solid rgba(148,163,184,.24);
+    background:rgba(30,41,59,.68);
+    color:#e2e8f0;
+    padding:8px 11px;
+    font-size:12px;
+    font-weight:900;
+    cursor:pointer;
+}
+.graphBox{
+    flex:1;
+    min-height:0;
+    border-radius:22px;
+    overflow:hidden;
+    background:rgba(2,6,23,.42);
+    border:1px solid rgba(148,163,184,.17);
+}
+.grab{cursor:grab}
+.grab:active{cursor:grabbing}
+.panel{
+    border-radius:32px;
+    padding:18px;
+    overflow:hidden;
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+    min-height:0;
+}
+.metrics{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+}
+.metric{
+    border-radius:26px;
+    padding:17px;
+    position:relative;
+    overflow:hidden;
+    background:linear-gradient(160deg,rgba(30,41,59,.72),rgba(15,23,42,.5));
+    border:1px solid rgba(148,163,184,.18);
+}
+.metric:before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:linear-gradient(135deg,rgba(255,255,255,.08),transparent 44%);
+    pointer-events:none;
+}
+.label{
+    margin:0;
+    text-transform:uppercase;
+    letter-spacing:.14em;
+    color:#94a3b8;
+    font-size:11px;
+    font-weight:900;
+}
+.valueRow{
+    margin-top:8px;
+    display:flex;
+    align-items:flex-end;
+    gap:7px;
+}
+.big{
+    font-size:clamp(30px,3.3vw,48px);
+    line-height:.9;
+    font-weight:900;
+    letter-spacing:-.06em;
+}
+.medium{
+    font-size:clamp(25px,2.2vw,35px);
+    line-height:.95;
+    font-weight:900;
+    letter-spacing:-.05em;
+}
+.unit{
+    color:#94a3b8;
+    font-size:13px;
+    font-weight:900;
+    margin-bottom:2px;
+}
+.box{
+    border-radius:26px;
+    padding:18px;
+    border:1px solid rgba(148,163,184,.18);
+    background:rgba(2,6,23,.34);
+}
+.controls{
+    display:flex;
+    flex-direction:column;
+    gap:21px;
+}
+.controlHead{
+    display:flex;
+    justify-content:space-between;
+    gap:12px;
+    align-items:center;
+    margin-bottom:9px;
+}
+.controlHead label{
+    color:#e2e8f0;
+    font-weight:850;
+    font-size:14px;
+}
+.readout{
+    font-size:13px;
+    font-weight:900;
+    white-space:nowrap;
+}
+.slider{
+    width:100%;
+    appearance:none;
+    height:10px;
+    border-radius:999px;
+    outline:none;
+    background:#334155;
+}
+.slider::-webkit-slider-thumb{
+    appearance:none;
+    width:24px;
+    height:24px;
+    border-radius:50%;
+    background:white;
+    border:4px solid var(--sky);
+    box-shadow:0 0 0 8px rgba(56,189,248,.14);
+    cursor:pointer;
+}
+.slider::-moz-range-thumb{
+    width:24px;
+    height:24px;
+    border-radius:50%;
+    background:white;
+    border:4px solid var(--sky);
+    box-shadow:0 0 0 8px rgba(56,189,248,.14);
+    cursor:pointer;
+}
+#powerSlider{background:linear-gradient(90deg,#059669,#34d399,#a3e635)}
+#loadSlider{background:linear-gradient(90deg,#a78bfa,#334155 50%,#f59e0b)}
+#correctionSlider{background:linear-gradient(90deg,#38bdf8,#334155 50%,#f97316)}
+.scale{
+    display:flex;
+    justify-content:space-between;
+    color:#64748b;
+    text-transform:uppercase;
+    letter-spacing:.1em;
+    font-size:10px;
+    font-weight:900;
+    margin-top:8px;
+}
+.eqGrid{
+    display:grid;
+    gap:9px;
+    color:#e2e8f0;
+    font-size:14px;
+    line-height:1.45;
+}
+.eq{
+    border-radius:16px;
+    border:1px solid rgba(148,163,184,.14);
+    background:rgba(15,23,42,.55);
+    padding:11px 13px;
+    overflow:auto;
+    white-space:nowrap;
+}
+.notes{
+    display:grid;
+    gap:10px;
+    color:#cbd5e1;
+    line-height:1.45;
+    font-size:14px;
+}
+.note{
+    display:grid;
+    grid-template-columns:10px 1fr;
+    gap:10px;
+}
+.note span{
+    width:8px;
+    height:8px;
+    border-radius:50%;
+    margin-top:6px;
+    background:var(--sky);
+    box-shadow:0 0 16px rgba(56,189,248,.8);
+}
+@media(max-width:1250px){
+    .main{grid-template-columns:1fr}
+    .panel{overflow:visible}
+}
+@media(max-width:780px){
+    .header{align-items:flex-start;flex-direction:column}
+    .actions{justify-content:flex-start}
+    .charts{grid-template-columns:1fr}
+    .metrics{grid-template-columns:1fr 1fr}
+    .status{position:absolute;left:20px;right:auto;top:auto;bottom:20px}
+}
+@media(max-width:520px){
+    .metrics{grid-template-columns:1fr}
+    .badges{display:none}
+    .sceneCard{min-height:520px}
+}
+</style>
 </head>
-<body class="w-screen h-screen p-4 lg:p-6 flex flex-col">
-    <main class="w-full max-w-screen-2xl mx-auto grid grid-cols-1 lg:grid-cols-5 gap-6 flex-grow min-h-0">
-        <div class="lg:col-span-3 flex flex-col gap-6 min-h-0">
-            <section class="glass-panel rounded-xl p-4 shadow-2xl flex-grow relative overflow-hidden">
-                <canvas id="animationCanvas" class="absolute top-0 left-0 w-full h-full"></canvas>
-            </section>
-            <section class="glass-panel rounded-xl p-4 lg:p-6 shadow-2xl">
-                <h2 class="text-xl font-semibold text-white mb-2">Waveforms</h2>
-                <canvas id="waveformCanvas" class="w-full h-48 md:h-56 rounded-lg bg-slate-900/50 canvas-interactive"></canvas>
-            </section>
+<body>
+<div class="shell">
+    <header class="glass header">
+        <div>
+            <div class="eyebrow"><span class="dot"></span><span>Interactive power systems lab</span></div>
+            <h1>Reactive Power & Power Factor Correction</h1>
+            <p class="subtitle">Real power stays fixed. The correction device changes net reactive power, so apparent power, line current, phase angle, and power factor update together.</p>
         </div>
+        <div class="actions">
+            <button class="btn" id="presetInductive">Inductive load</button>
+            <button class="btn primary" id="presetCorrected">Corrected</button>
+            <button class="btn" id="presetLeading">Leading load</button>
+            <button class="btn" id="resetAll">Reset</button>
+        </div>
+    </header>
 
-        <div class="lg:col-span-2 relative min-h-0">
-            <section id="dashboard-panel" class="glass-panel rounded-xl shadow-2xl flex flex-col p-4 md:p-6 h-full">
-                <div class="flex justify-between items-center flex-shrink-0">
-                    <h1 class="text-xl md:text-2xl font-bold text-white">Reactive Power Animation</h1>
-                    <button id="resetViewBtn" class="control-button">Reset</button>
+    <main class="main">
+        <section class="left">
+            <div class="glass sceneCard">
+                <canvas id="sceneCanvas"></canvas>
+                <div class="badges">
+                    <div class="badge"><span style="color:var(--green)">P</span> useful kW</div>
+                    <div class="badge"><span id="qBadge" style="color:var(--amber)">Q</span> reactive exchange</div>
+                    <div class="badge"><span style="color:var(--white)">S</span> total kVA</div>
                 </div>
-                <div class="mt-4 overflow-y-auto flex-grow">
-                    <p id="analogyText" class="text-slate-400 mb-4 text-sm h-24"></p>
-                    <div class="mb-4">
-                        <h3 class="font-semibold text-white mb-2">Power Triangle</h3>
-                        <canvas id="triangleCanvas" class="w-full h-48 rounded-lg bg-slate-900/50 canvas-interactive"></canvas>
+                <div class="glass status">
+                    <p class="statusTitle" id="statusTitle"></p>
+                    <p class="statusText" id="statusText"></p>
+                </div>
+            </div>
+
+            <div class="charts">
+                <div class="glass chartCard">
+                    <div class="cardTop">
+                        <div>
+                            <p class="cardTitle">Power Triangle</p>
+                            <p class="cardHint">Drag to pan, wheel to zoom</p>
+                        </div>
+                        <button class="miniBtn" id="resetTriangle">View</button>
                     </div>
-                    <div class="grid grid-cols-2 gap-x-4 gap-y-3 text-sm mb-6">
+                    <div class="graphBox"><canvas class="grab" id="triangleCanvas"></canvas></div>
+                </div>
+                <div class="glass chartCard">
+                    <div class="cardTop">
                         <div>
-                            <div class="text-slate-400">Net Power Factor</div>
-                            <div id="pfValue" class="text-2xl font-bold text-sky-400"></div>
+                            <p class="cardTitle">Voltage, Current & Power</p>
+                            <p class="cardHint">Current follows the corrected net angle</p>
                         </div>
-                        <div>
-                            <div class="text-slate-400">Apparent Power (S)</div>
-                            <div id="apparentPowerValue" class="text-lg font-semibold text-white"></div>
-                        </div>
-                        <div>
-                            <div class="text-slate-400">Active Power (P)</div>
-                            <div id="activePowerValue" class="text-lg font-semibold text-green-400"></div>
-                        </div>
-                        <div>
-                            <div class="text-slate-400">Net Reactive (Q)</div>
-                            <div id="reactivePowerValue" class="text-lg font-semibold"></div>
-                        </div>
+                        <button class="miniBtn" id="resetWave">View</button>
                     </div>
-                     <div class="text-sm space-y-2 mb-6">
-                        <div id="equationP"></div>
-                        <div id="equationQ"></div>
-                    </div>
-                    <div class="space-y-6">
-                        <div>
-                            <label for="loadSlider" class="block mb-2 font-medium text-white">Load Type (Inductive &harr; Capacitive)</label>
-                            <input id="loadSlider" type="range" min="-60" max="60" value="0">
-                        </div>
-                        <div>
-                            <label for="pfcSlider" class="block mb-2 font-medium text-white">Power Factor Correction</label>
-                            <input id="pfcSlider" type="range" min="0" max="150" value="0">
-                        </div>
+                    <div class="graphBox"><canvas class="grab" id="waveCanvas"></canvas></div>
+                </div>
+            </div>
+        </section>
+
+        <aside class="glass panel">
+            <div class="metrics">
+                <div class="metric">
+                    <p class="label">Power Factor</p>
+                    <div class="valueRow"><span class="big" id="pfValue"></span><span class="unit" id="pfType"></span></div>
+                </div>
+                <div class="metric">
+                    <p class="label">Line Current</p>
+                    <div class="valueRow"><span class="big" id="currentValue"></span><span class="unit">A</span></div>
+                </div>
+                <div class="metric">
+                    <p class="label">Apparent Power</p>
+                    <div class="valueRow"><span class="medium" id="sValue"></span><span class="unit">kVA</span></div>
+                </div>
+                <div class="metric">
+                    <p class="label">Net Reactive</p>
+                    <div class="valueRow"><span class="medium" id="qValue"></span><span class="unit">kVAr</span></div>
+                </div>
+            </div>
+
+            <div class="metrics">
+                <div class="box">
+                    <p class="label">Useful Load</p>
+                    <div class="valueRow"><span class="medium" style="color:var(--green)" id="pValue"></span><span class="unit">kW</span></div>
+                </div>
+                <div class="box">
+                    <p class="label">Current Change</p>
+                    <div class="valueRow"><span class="medium" style="color:var(--sky)" id="currentChange"></span><span class="unit">%</span></div>
+                </div>
+            </div>
+
+            <div class="box">
+                <div class="cardTop" style="margin-bottom:16px">
+                    <div>
+                        <p class="cardTitle">Controls</p>
+                        <p class="cardHint" id="angleBadge"></p>
                     </div>
                 </div>
-            </section>
-            <button id="panel-toggle-button" class="absolute top-6 right-6 z-50 control-button p-2">
-                <svg id="toggle-icon-minus" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M2 8a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11A.5.5 0 0 1 2 8Z"/></svg>
-                <svg id="toggle-icon-plus" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="hidden" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M5.828 10.172a.5.5 0 0 0-.707.707l4.096 4.096V11.5a.5.5 0 0 0 1 0v3.975a.5.5 0 0 0-.5.5H7.5a.5.5 0 0 0 0-1h2.768L5.828 10.172Zm4.344-4.344a.5.5 0 0 0 .707-.707L6.78 1.025V4.5a.5.5 0 0 0-1 0V.525a.5.5 0 0 0 .5-.5H9.5a.5.5 0 0 0 0 1H6.732l4.44 4.44Z"/></svg>
-            </button>
-        </div>
+                <div class="controls">
+                    <div>
+                        <div class="controlHead"><label for="powerSlider">Real power demand</label><span class="readout" id="powerReadout"></span></div>
+                        <input class="slider" id="powerSlider" type="range" min="20" max="120" step="1" value="80">
+                    </div>
+                    <div>
+                        <div class="controlHead"><label for="loadSlider">Load angle</label><span class="readout" id="loadReadout"></span></div>
+                        <input class="slider" id="loadSlider" type="range" min="-60" max="60" step="1" value="38">
+                        <div class="scale"><span>leading</span><span>unity</span><span>lagging</span></div>
+                    </div>
+                    <div>
+                        <div class="controlHead"><label for="correctionSlider">Correction device</label><span class="readout" id="correctionReadout"></span></div>
+                        <input class="slider" id="correctionSlider" type="range" min="-180" max="180" step="1" value="0">
+                        <div class="scale"><span>capacitive</span><span>off</span><span>inductive</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="box">
+                <p class="cardTitle" style="margin-bottom:12px">Electrical Model</p>
+                <div class="eqGrid">
+                    <div class="eq">Q<sub>load</sub> = P tan(φ<sub>load</sub>)</div>
+                    <div class="eq">Q<sub>net</sub> = Q<sub>load</sub> + Q<sub>correction</sub></div>
+                    <div class="eq">S<sub>net</sub> = √(P² + Q<sub>net</sub>²), &nbsp; PF = P / S<sub>net</sub></div>
+                    <div class="eq">I = S<sub>net</sub> × 1000 / (√3 × V<sub>LL</sub>)</div>
+                </div>
+            </div>
+
+            <div class="box" style="flex:1;min-height:170px">
+                <p class="cardTitle" style="margin-bottom:12px">What changed?</p>
+                <div class="notes" id="notes"></div>
+            </div>
+        </aside>
     </main>
-    <footer class="w-full text-center py-2 flex-shrink-0">
-        <p class="text-sm text-slate-500">Created by Babak Taheri (https://babaktaheri1.github.io/)</p>
-    </footer>
-
-    <script>
-        const App = {
-            config: {
-                apparentPower: 100,
-                truck: {
-                    startX: -150,
-                    deliverySpeedMultiplier: 2,
-                    returnSpeed: 150,
-                    unloadTime: 0.5,
-                    packageSize: 15,
-                    packagesPer10Power: 1,
-                    verticalOffset: 20 // Add this line to define the vertical offset
-                },
-                cloud: { count: 5, minSpeed: 10, speedVariation: 20 },
-                waveform: { periods: 2 },
-                zoom: { min: 0.5, max: 5, sensitivity: 0.001 }
-            },
-            dom: {},
-            state: {
-                truck: { x: -150, state: 'delivering', unloadTimer: 0 },
-                windTurbineAngle: 0,
-                clouds: [],
-                lastTime: 0,
-                currentPower: {},
-                sceneData: {},
-                viewports: {
-                    triangle: { x: 0, y: 0, zoom: 1, isDragging: false, lastX: 0, lastY: 0 },
-                    waveform: { x: 0, y: 0, zoom: 1, isDragging: false, lastX: 0, lastY: 0 }
-                }
-            },
-
-            init() {
-                this.queryDOMElements();
-                this.setupClouds();
-                this.addEventListeners();
-                this.resizeAndRedraw();
-                requestAnimationFrame(this.animate.bind(this));
-            },
-
-            queryDOMElements() {
-                const ids = ['loadSlider', 'pfcSlider', 'analogyText', 'pfValue', 'apparentPowerValue', 'activePowerValue', 'reactivePowerValue', 'equationP', 'equationQ', 'animationCanvas', 'triangleCanvas', 'waveformCanvas', 'dashboard-panel', 'panel-toggle-button', 'toggle-icon-minus', 'toggle-icon-plus', 'resetViewBtn'];
-                ids.forEach(id => {
-                    const camelCaseId = id.replace(/-([a-z])/g, g => g[1].toUpperCase());
-                    this.dom[camelCaseId] = document.getElementById(id);
-                });
-                this.dom.animCtx = this.dom.animationCanvas.getContext('2d');
-                this.dom.triangleCtx = this.dom.triangleCanvas.getContext('2d');
-                this.dom.waveCtx = this.dom.waveformCanvas.getContext('2d');
-            },
-
-            setupClouds() {
-                for (let i = 0; i < this.config.cloud.count; i++) {
-                    this.state.clouds.push({
-                        x: Math.random() * (window.innerWidth + 200),
-                        y: Math.random() * (window.innerHeight * 0.2) + 20,
-                        speed: Math.random() * this.config.cloud.speedVariation + this.config.cloud.minSpeed
-                    });
-                }
-            },
-
-            addEventListeners() {
-                this.dom.loadSlider.addEventListener('input', () => this.masterUpdate());
-                this.dom.pfcSlider.addEventListener('input', () => this.masterUpdate());
-                window.addEventListener('resize', () => this.resizeAndRedraw());
-
-                this.dom.resetViewBtn.addEventListener('click', () => {
-                    gsap.to(this.dom.loadSlider, { value: 0, duration: 0.7, ease: "power2.inOut", onUpdate: () => this.masterUpdate() });
-                    gsap.to(this.dom.pfcSlider, { value: 0, duration: 0.7, ease: "power2.inOut", onUpdate: () => this.masterUpdate() });
-                });
-
-                this.dom.panelToggleButton.addEventListener('click', () => {
-                    const isMinimized = this.dom.dashboardPanel.classList.toggle('minimized');
-                    this.dom.toggleIconMinus.classList.toggle('hidden', isMinimized);
-                    this.dom.toggleIconPlus.classList.toggle('hidden', !isMinimized);
-                });
-
-                this.setupCanvasInteractions('triangle');
-                this.setupCanvasInteractions('waveform');
-            },
-
-            setupCanvasInteractions(canvasName) {
-                const canvas = this.dom[canvasName + 'Canvas'];
-                const viewport = this.state.viewports[canvasName];
-
-                canvas.addEventListener('mousedown', (e) => {
-                    viewport.isDragging = true;
-                    viewport.lastX = e.clientX;
-                    viewport.lastY = e.clientY;
-                });
-                canvas.addEventListener('mousemove', (e) => {
-                    if (!viewport.isDragging) return;
-                    const dx = e.clientX - viewport.lastX;
-                    const dy = e.clientY - viewport.lastY;
-                    viewport.x += dx;
-                    viewport.y += dy;
-                    viewport.lastX = e.clientX;
-                    viewport.lastY = e.clientY;
-                    if (canvasName === 'triangle') this.drawTriangle();
-                    else this.drawWaveforms();
-                });
-                canvas.addEventListener('mouseup', () => viewport.isDragging = false);
-                canvas.addEventListener('mouseleave', () => viewport.isDragging = false);
-                canvas.addEventListener('wheel', (e) => {
-                    e.preventDefault();
-                    const zoomAmount = e.deltaY * -this.config.zoom.sensitivity;
-                    viewport.zoom = Math.max(this.config.zoom.min, Math.min(this.config.zoom.max, viewport.zoom + zoomAmount));
-                    if (canvasName === 'triangle') this.drawTriangle();
-                    else this.drawWaveforms();
-                });
-            },
-
-            resizeAndRedraw() {
-                Object.values(this.dom).filter(el => el.getContext).forEach(ctxEl => {
-                    const parent = ctxEl.parentElement;
-                    ctxEl.width = parent.clientWidth;
-                    ctxEl.height = parent.clientHeight;
-                });
-                this.masterUpdate();
-            },
-
-            masterUpdate() {
-                this.state.currentPower = this.calculatePowerValues();
-                this.updateUI();
-                this.drawTriangle();
-                this.drawWaveforms();
-                this.state.sceneData = this.drawSceneBackground();
-            },
-
-            animate(timestamp) {
-                const deltaTime = (timestamp - this.state.lastTime) / 1000 || 0;
-                this.state.lastTime = timestamp;
-
-                this.updateTruckAnimation(deltaTime);
-                this.state.windTurbineAngle += deltaTime;
-                this.state.clouds.forEach(cloud => {
-                    cloud.x -= cloud.speed * deltaTime;
-                    if (cloud.x < -100) cloud.x = this.dom.animationCanvas.width + 100;
-                });
-
-                this.dom.animCtx.clearRect(0, 0, this.dom.animationCanvas.width, this.dom.animationCanvas.height);
-                this.drawSceneBackground();
-                this.drawDynamicElements();
-
-                requestAnimationFrame(this.animate.bind(this));
-            },
-
-            calculatePowerValues() {
-                const loadAngleDeg = parseFloat(this.dom.loadSlider.value);
-                const pfcValue = parseFloat(this.dom.pfcSlider.value);
-                const loadAngleRad = loadAngleDeg * Math.PI / 180;
-                const S = this.config.apparentPower;
-
-                const loadReactivePower = S * Math.sin(loadAngleRad);
-                const netReactivePower = loadReactivePower - pfcValue;
-
-                const pSquared = S**2 - netReactivePower**2;
-                const netActivePower = (pSquared > 0) ? Math.sqrt(pSquared) : 0;
-
-                const netPowerFactor = netActivePower / S;
-                const netAngleRad = Math.asin(netReactivePower / S);
-
-                return { S_total: S, P_net: netActivePower, Q_net: netReactivePower, PF_net: netPowerFactor, netAngleRad };
-            },
-
-            updateUI() {
-                const power = this.state.currentPower;
-                this.dom.pfValue.textContent = power.PF_net.toFixed(2);
-                this.dom.apparentPowerValue.textContent = `${power.S_total.toFixed(0)} VA`;
-                this.dom.activePowerValue.textContent = `${power.P_net.toFixed(0)} W`;
-                this.dom.reactivePowerValue.textContent = `${power.Q_net.toFixed(0)} VAR`;
-                this.dom.reactivePowerValue.style.color = power.Q_net >= 0 ? '#f59e0b' : '#a855f7';
-
-                katex.render(`P = S \\times \\cos(\\theta)`, this.dom.equationP, { throwOnError: false, displayMode: true });
-                katex.render(`Q = S \\times \\sin(\\theta)`, this.dom.equationQ, { throwOnError: false, displayMode: true });
-
-                if (power.PF_net > 0.99) this.dom.analogyText.textContent = "Excellent Power Factor. The road is flat, so almost all of the system's capacity is used for delivering packages (real work).";
-                else if (power.PF_net < 0.3) this.dom.analogyText.textContent = "Poor Power Factor! Most capacity is wasted fighting the steep hill. The truck moves slowly and delivers few packages.";
-                else if (power.Q_net > 0) this.dom.analogyText.textContent = "Lagging PF (uphill). Capacity is used to climb the hill, reducing useful work. Add correction to flatten the road.";
-                else this.dom.analogyText.textContent = "Leading PF (downhill). The system is over-corrected. This can also be inefficient. Aim for a flat road (PF \u2248 1.0).";
-            },
-
-            drawSceneBackground() {
-                const { animCtx, animationCanvas } = this.dom;
-                const { netAngleRad } = this.state.currentPower;
-                const w = animationCanvas.width; const h = animationCanvas.height;
-
-                const bgGrad = animCtx.createLinearGradient(0, 0, 0, h);
-                bgGrad.addColorStop(0, '#38bdf8'); bgGrad.addColorStop(1, '#7dd3fc');
-                animCtx.fillStyle = bgGrad; animCtx.fillRect(0, 0, w, h);
-
-                const hillLength = w * 0.7;
-                const hillHeight = hillLength * Math.tan(netAngleRad);
-                const sceneOffsetY = Math.max(0, hillHeight * 1.2, -h * 0.3 + Math.abs(hillHeight));
-                const groundStartY = h * 0.5 + sceneOffsetY;
-                const hillStartX = w * 0.15;
-                const houseX = hillStartX + hillLength;
-
-                animCtx.fillStyle = '#22c55e';
-                animCtx.beginPath();
-                animCtx.moveTo(0, groundStartY); animCtx.lineTo(hillStartX, groundStartY);
-                animCtx.lineTo(houseX, groundStartY - hillHeight);
-                animCtx.lineTo(w, groundStartY - hillHeight);
-                animCtx.lineTo(w, h); animCtx.lineTo(0, h);
-                animCtx.closePath(); animCtx.fill();
-
-                const houseY = groundStartY - hillHeight;
-                animCtx.fillStyle = '#a16207'; animCtx.fillRect(houseX - 30, houseY - 50, 60, 50);
-                animCtx.fillStyle = '#ca8a04';
-                animCtx.beginPath(); animCtx.moveTo(houseX - 40, houseY - 50); animCtx.lineTo(houseX, houseY - 80);
-                animCtx.lineTo(houseX + 40, houseY - 50); animCtx.closePath(); animCtx.fill();
-                animCtx.font = "12px Inter"; animCtx.fillStyle = "#1e293b"; animCtx.textAlign = "center";
-                animCtx.fillText("The Load", houseX, houseY - 85);
-
-                return { groundStartY, hillHeight, hillStartX, houseX };
-            },
-
-            drawDynamicElements() {
-                const { animCtx } = this.dom;
-                const { groundStartY, hillHeight, hillStartX, houseX } = this.state.sceneData;
-                const { netAngleRad, P_net } = this.state.currentPower;
-
-                this.drawClouds(animCtx);
-                this.drawMainWindmill(animCtx, 60, groundStartY);
-
-                let truckY = groundStartY;
-                let truckAngle = 0;
-                if (this.state.truck.x > hillStartX && this.state.truck.x < houseX) {
-                    const hillProgress = (this.state.truck.x - hillStartX) / (houseX - hillStartX);
-                    truckY = groundStartY - hillProgress * hillHeight;
-                    truckAngle = -netAngleRad;
-                } else if (this.state.truck.x >= houseX) {
-                    truckY = groundStartY - hillHeight;
-                    truckAngle = -netAngleRad;
-                }
-
-                this.drawTruck(animCtx, this.state.truck.x, truckY - this.config.truck.verticalOffset, truckAngle);
-                if (this.state.truck.state === 'delivering' || this.state.truck.state === 'unloading') {
-                    const numPackages = Math.round(P_net / 10 * this.config.truck.packagesPer10Power);
-                    this.drawPackages(animCtx, this.state.truck.x, truckY - this.config.truck.verticalOffset, truckAngle, numPackages);
-                }
-            },
-
-            updateTruckAnimation(deltaTime) {
-                const { P_net } = this.state.currentPower;
-                const { houseX } = this.state.sceneData;
-                const { truck } = this.state;
-
-                switch(truck.state) {
-                    case 'delivering':
-                        truck.x += (this.config.truck.deliverySpeedMultiplier * P_net * deltaTime);
-                        if (truck.x >= houseX) {
-                            truck.x = houseX;
-                            truck.state = 'unloading';
-                            truck.unloadTimer = this.config.truck.unloadTime;
-                        }
-                        break;
-                    case 'unloading':
-                        truck.unloadTimer -= deltaTime;
-                        if (truck.unloadTimer <= 0) truck.state = 'returning';
-                        break;
-                    case 'returning':
-                        truck.x -= (this.config.truck.returnSpeed * deltaTime);
-                        if (truck.x < this.config.truck.startX) {
-                            truck.x = this.config.truck.startX;
-                            truck.state = 'delivering';
-                        }
-                        break;
-                }
-            },
-
-            drawClouds(ctx) {
-                ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
-                this.state.clouds.forEach(cloud => {
-                    ctx.beginPath();
-                    ctx.ellipse(cloud.x, cloud.y, 60, 20, 0, 0, Math.PI * 2);
-                    ctx.ellipse(cloud.x + 30, cloud.y - 10, 40, 15, 0, 0, Math.PI * 2);
-                    ctx.ellipse(cloud.x - 30, cloud.y + 5, 40, 15, 0, 0, Math.PI * 2);
-                    ctx.fill();
-                });
-            },
-
-            drawMainWindmill(ctx, x, y) {
-                ctx.save(); ctx.translate(x, y);
-                ctx.fillStyle = '#94a3b8';
-                ctx.beginPath(); ctx.moveTo(-10, 0); ctx.lineTo(10, 0); ctx.lineTo(4, -150); ctx.lineTo(-4, -150); ctx.closePath(); ctx.fill();
-                ctx.translate(0, -150); ctx.rotate(this.state.windTurbineAngle); ctx.fillStyle = '#e2e8f0';
-                for (let i = 0; i < 3; i++) { ctx.rotate(Math.PI * 2 / 3); ctx.fillRect(-4, -4, 80, 8); }
-                ctx.restore();
-            },
-
-            drawPackages(ctx, x, y, angle, numPackages) {
-                ctx.save(); ctx.translate(x, y); ctx.rotate(angle);
-                ctx.fillStyle = 'rgba(74, 222, 128, 0.9)'; ctx.strokeStyle = '#166534'; ctx.lineWidth = 1;
-                const bs = this.config.truck.packageSize;
-                for(let i = 0; i < numPackages; i++) {
-                    const row = Math.floor(i / 3); const col = i % 3;
-                    const boxX = -55 + col * (bs + 2); const boxY = -38 + row * (bs + 2);
-                    ctx.fillRect(boxX, boxY, bs, bs); ctx.strokeRect(boxX, boxY, bs, bs);
-                }
-                ctx.restore();
-            },
-
-            drawTruck(ctx, x, y, angle) {
-                ctx.save(); ctx.translate(x, y); ctx.rotate(angle);
-                ctx.fillStyle = '#f87171'; ctx.fillRect(-60, -40, 60, 40);
-                ctx.fillStyle = '#ef4444'; ctx.fillRect(0, -30, 30, 30);
-                ctx.fillStyle = '#4b5563';
-                ctx.beginPath(); ctx.arc(-45, 5, 10, 0, Math.PI * 2); ctx.arc(15, 5, 10, 0, Math.PI * 2); ctx.fill();
-                ctx.restore();
-            },
-
-            drawTriangle() {
-                const { triangleCtx, triangleCanvas } = this.dom;
-                const { P_net, Q_net } = this.state.currentPower;
-                const viewport = this.state.viewports.triangle;
-                const w = triangleCanvas.width; const h = triangleCanvas.height;
-                triangleCtx.clearRect(0, 0, w, h);
-                triangleCtx.save();
-                triangleCtx.translate(viewport.x, viewport.y);
-                triangleCtx.scale(viewport.zoom, viewport.zoom);
-
-                const margin = {top: 20, right: 20, bottom: 40, left: 50};
-                const plotWidth = w - margin.left - margin.right;
-                const plotHeight = h - margin.top - margin.bottom;
-
-                const max_val = this.config.apparentPower * 1.1;
-                const p_scale = plotWidth / max_val;
-                const q_scale = plotHeight / max_val;
-
-                const originX = margin.left;
-                const originY = h - margin.bottom;
-
-                const p_len = P_net * p_scale;
-                const q_len = Q_net * q_scale;
-
-                // Draw Axes
-                triangleCtx.strokeStyle = '#64748b';
-                triangleCtx.lineWidth = 1 / viewport.zoom;
-                triangleCtx.font = `${12 / viewport.zoom}px Inter`;
-                triangleCtx.fillStyle = '#9ca3af';
-
-                // Y-Axis
-                triangleCtx.beginPath();
-                triangleCtx.moveTo(originX, margin.top);
-                triangleCtx.lineTo(originX, originY + 4 / viewport.zoom);
-                triangleCtx.stroke();
-                triangleCtx.save();
-                triangleCtx.translate(margin.left - 35/viewport.zoom, h / 2);
-                triangleCtx.rotate(-Math.PI/2);
-                triangleCtx.textAlign = "center";
-                triangleCtx.fillText("Reactive Power (Q) [VAR]", 0, 0);
-                triangleCtx.restore();
-
-                // X-Axis
-                triangleCtx.beginPath();
-                triangleCtx.moveTo(originX - 4 / viewport.zoom, originY);
-                triangleCtx.lineTo(originX + plotWidth, originY);
-                triangleCtx.stroke();
-                triangleCtx.textAlign = "center";
-                triangleCtx.fillText("Active Power (P) [W]", w / 2, h - 15 / viewport.zoom);
-
-                // Draw Ticks
-                triangleCtx.textAlign = "right";
-                triangleCtx.textBaseline = "middle";
-                triangleCtx.fillText("0", originX - 8 / viewport.zoom, originY);
-
-                // Draw Triangle
-                triangleCtx.lineWidth = 4;
-                // P - Active Power
-                triangleCtx.strokeStyle = '#4ade80';
-                triangleCtx.beginPath(); triangleCtx.moveTo(originX, originY); triangleCtx.lineTo(originX + p_len, originY); triangleCtx.stroke();
-                // Q - Reactive Power
-                triangleCtx.strokeStyle = Q_net >= 0 ? '#f59e0b' : '#a855f7';
-                triangleCtx.beginPath(); triangleCtx.moveTo(originX + p_len, originY); triangleCtx.lineTo(originX + p_len, originY - q_len); triangleCtx.stroke();
-                // S - Apparent Power
-                triangleCtx.strokeStyle = '#d1d5db';
-                triangleCtx.beginPath(); triangleCtx.moveTo(originX, originY); triangleCtx.lineTo(originX + p_len, originY - q_len); triangleCtx.stroke();
-
-                // P, Q, S labels
-                triangleCtx.font = `${14 / viewport.zoom}px Inter`;
-                triangleCtx.textBaseline = 'top';
-                triangleCtx.fillStyle = '#4ade80';
-                if (p_len > 20) {
-                    triangleCtx.textAlign = 'center';
-                    triangleCtx.fillText('P', originX + p_len / 2, originY + 8 / viewport.zoom);
-                }
-
-                triangleCtx.textBaseline = 'middle';
-                triangleCtx.fillStyle = Q_net >= 0 ? '#f59e0b' : '#a855f7';
-                if (Math.abs(q_len) > 20) {
-                     triangleCtx.textAlign = 'left';
-                    triangleCtx.fillText('Q', originX + p_len + 8 / viewport.zoom, originY - q_len / 2);
-                }
-
-                triangleCtx.fillStyle = '#d1d5db';
-                triangleCtx.save();
-                triangleCtx.translate(originX + p_len/2, originY - q_len/2);
-                triangleCtx.rotate(Math.atan2(-q_len, p_len));
-                triangleCtx.textAlign = 'center';
-                if(p_len > 10) triangleCtx.fillText('S', 0, -8 / viewport.zoom);
-                triangleCtx.restore();
-
-                triangleCtx.restore();
-            },
-
-            drawWaveforms() {
-                const { waveCtx, waveformCanvas } = this.dom;
-                const { P_net, Q_net, netAngleRad } = this.state.currentPower;
-                const S = this.config.apparentPower;
-                const viewport = this.state.viewports.waveform;
-                const w = waveformCanvas.width; const h = waveformCanvas.height;
-                waveCtx.clearRect(0, 0, w, h);
-                waveCtx.save();
-                waveCtx.translate(viewport.x, viewport.y);
-                waveCtx.scale(viewport.zoom, viewport.zoom);
-
-                const axisMargin = 50;
-                const plotWidth = w - axisMargin;
-                const y_center = h / 2;
-                const p_scale = (h * 0.4) / S;
-                const v_amp = S * p_scale;
-
-                // Draw Y-Axis
-                waveCtx.strokeStyle = '#64748b'; // slate-500
-                waveCtx.lineWidth = 1 / viewport.zoom;
-                waveCtx.beginPath();
-                waveCtx.moveTo(axisMargin, 0);
-                waveCtx.lineTo(axisMargin, h);
-                waveCtx.stroke();
-
-                // Draw Y-Axis Ticks and Labels
-                waveCtx.fillStyle = '#9ca3af'; // slate-400
-                waveCtx.font = `${12 / viewport.zoom}px Inter`;
-                waveCtx.textAlign = "right";
-                waveCtx.textBaseline = "middle";
-
-                waveCtx.fillText("0", axisMargin - 8, y_center);
-
-                const maxAmpY = y_center - v_amp;
-                const minAmpY = y_center + v_amp;
-                waveCtx.fillText(S.toFixed(0), axisMargin - 8, maxAmpY);
-                waveCtx.fillText(`-${S.toFixed(0)}`, axisMargin - 8, minAmpY);
-                waveCtx.beginPath();
-                waveCtx.moveTo(axisMargin - 4, maxAmpY); waveCtx.lineTo(axisMargin, maxAmpY);
-                waveCtx.moveTo(axisMargin - 4, minAmpY); waveCtx.lineTo(axisMargin, minAmpY);
-                waveCtx.stroke();
-
-                if (Math.abs(P_net * p_scale) > 1) {
-                    const p_avg_y = y_center - P_net * p_scale;
-                    waveCtx.fillStyle = '#16a34a';
-                    waveCtx.fillText(P_net.toFixed(0), axisMargin - 8, p_avg_y);
-                    waveCtx.beginPath();
-                    waveCtx.moveTo(axisMargin - 4, p_avg_y);
-                    waveCtx.lineTo(axisMargin, p_avg_y);
-                    waveCtx.strokeStyle = '#16a34a';
-                    waveCtx.stroke();
-                }
-
-                // Reset text alignment for legend
-                waveCtx.textAlign = "left";
-                waveCtx.textBaseline = "alphabetic";
-
-                // Legend
-                const legendY1 = 20 / viewport.zoom;
-                const legendY2 = legendY1 + (15 / viewport.zoom);
-                const legendXStart = axisMargin + 10;
-                waveCtx.font = `${12 / viewport.zoom}px Inter`;
-                waveCtx.fillStyle = '#3b82f6'; waveCtx.fillText("V", legendXStart, legendY1);
-                waveCtx.fillStyle = '#ef4444'; waveCtx.fillText("I", legendXStart + 20, legendY1);
-                waveCtx.fillStyle = '#16a34a'; waveCtx.fillText("p (active)", legendXStart + 45, legendY1);
-                waveCtx.fillStyle = Q_net >= 0 ? '#f59e0b' : '#a855f7'; waveCtx.fillText("q (reactive)", legendXStart + 120, legendY1);
-
-                const v_path = new Path2D(), i_path = new Path2D(), p_path = new Path2D(), q_path = new Path2D();
-
-                for (let i = 0; i < plotWidth; i++) {
-                    const angle = (i / plotWidth) * Math.PI * 2 * this.config.waveform.periods;
-                    const v = Math.sin(angle);
-                    const current_val = Math.sin(angle - netAngleRad);
-                    const p_inst = P_net * (1 - Math.cos(2 * angle));
-                    const q_inst = -Q_net * Math.sin(2 * angle);
-
-                    const x = i + axisMargin;
-
-                    if (i === 0) {
-                        v_path.moveTo(x, y_center - v * v_amp);
-                        i_path.moveTo(x, y_center - current_val * v_amp);
-                        p_path.moveTo(x, y_center - p_inst * p_scale);
-                        q_path.moveTo(x, y_center - q_inst * p_scale);
-                    } else {
-                        v_path.lineTo(x, y_center - v * v_amp);
-                        i_path.lineTo(x, y_center - current_val * v_amp);
-                        p_path.lineTo(x, y_center - p_inst * p_scale);
-                        q_path.lineTo(x, y_center - q_inst * p_scale);
-                    }
-                }
-
-                waveCtx.lineWidth = 2 / viewport.zoom;
-                waveCtx.strokeStyle = '#3b82f6'; waveCtx.stroke(v_path);
-                waveCtx.strokeStyle = '#ef4444'; waveCtx.stroke(i_path);
-
-                waveCtx.lineWidth = 2.5 / viewport.zoom;
-                waveCtx.strokeStyle = '#16a34a'; waveCtx.stroke(p_path);
-                waveCtx.strokeStyle = Q_net >= 0 ? '#f59e0b' : '#a855f7'; waveCtx.stroke(q_path);
-
-                waveCtx.setLineDash([5 / viewport.zoom, 5 / viewport.zoom]);
-                waveCtx.lineWidth = 1.5 / viewport.zoom;
-                waveCtx.strokeStyle = '#16a34a';
-                waveCtx.beginPath(); waveCtx.moveTo(axisMargin, y_center - P_net * p_scale); waveCtx.lineTo(w, y_center - P_net * p_scale); waveCtx.stroke();
-
-                waveCtx.strokeStyle = '#64748b';
-                waveCtx.beginPath(); waveCtx.moveTo(axisMargin, y_center); waveCtx.lineTo(w, y_center); waveCtx.stroke();
-                waveCtx.setLineDash([]);
-                waveCtx.restore();
-            }
-        };
-
-        App.init();
-    </script>
+</div>
+
+<script>
+const App={
+    config:{
+        voltageLL:480,
+        colors:{
+            active:'#34d399',sky:'#38bdf8',blue:'#60a5fa',lag:'#f59e0b',lead:'#a78bfa',current:'#fb7185',white:'#e5e7eb',grid:'rgba(148,163,184,.14)',axis:'rgba(203,213,225,.55)'
+        },
+        zoom:{min:.55,max:4.5,sensitivity:.0012}
+    },
+    dom:{},
+    state:{
+        last:0,time:0,truckX:-100,truckMode:'deliver',unload:.5,
+        scene:{startX:0,finishX:0,startY:0,finishY:0},
+        clouds:[],particles:[],power:{},
+        view:{triangle:{x:0,y:0,z:1,drag:false,id:null,lx:0,ly:0},wave:{x:0,y:0,z:1,drag:false,id:null,lx:0,ly:0}}
+    },
+    init(){
+        this.ids(['sceneCanvas','triangleCanvas','waveCanvas','powerSlider','loadSlider','correctionSlider','pfValue','pfType','currentValue','sValue','qValue','pValue','currentChange','powerReadout','loadReadout','correctionReadout','angleBadge','statusTitle','statusText','qBadge','notes','presetInductive','presetCorrected','presetLeading','resetAll','resetTriangle','resetWave']);
+        this.dom.sceneCtx=this.dom.sceneCanvas.getContext('2d');
+        this.dom.triangleCtx=this.dom.triangleCanvas.getContext('2d');
+        this.dom.waveCtx=this.dom.waveCanvas.getContext('2d');
+        this.seed();
+        this.events();
+        this.resize();
+        requestAnimationFrame(this.loop.bind(this));
+    },
+    ids(list){list.forEach(id=>this.dom[id]=document.getElementById(id))},
+    seed(){
+        for(let i=0;i<7;i++)this.state.clouds.push({x:Math.random(),y:.06+Math.random()*.22,s:.7+Math.random()*.75,v:.012+Math.random()*.018});
+        for(let i=0;i<34;i++)this.state.particles.push({t:Math.random(),phase:Math.random()*Math.PI*2,v:.12+Math.random()*.23,l:Math.random()});
+    },
+    events(){
+        ['powerSlider','loadSlider','correctionSlider'].forEach(id=>this.dom[id].addEventListener('input',()=>this.update()));
+        window.addEventListener('resize',()=>this.resize());
+        this.dom.resetAll.addEventListener('click',()=>this.preset(80,38,0));
+        this.dom.presetInductive.addEventListener('click',()=>this.preset(80,42,0));
+        this.dom.presetLeading.addEventListener('click',()=>this.preset(80,-32,0));
+        this.dom.presetCorrected.addEventListener('click',()=>{const p=+this.dom.powerSlider.value,a=+this.dom.loadSlider.value,q=-p*Math.tan(this.deg(a));this.preset(p,a,q)});
+        this.dom.resetTriangle.addEventListener('click',()=>this.resetView('triangle'));
+        this.dom.resetWave.addEventListener('click',()=>this.resetView('wave'));
+        this.bindCanvas('triangle',this.dom.triangleCanvas,()=>this.drawTriangle());
+        this.bindCanvas('wave',this.dom.waveCanvas,()=>this.drawWave());
+    },
+    bindCanvas(name,canvas,draw){
+        const v=this.state.view[name];
+        canvas.addEventListener('pointerdown',e=>{v.drag=true;v.id=e.pointerId;v.lx=e.clientX;v.ly=e.clientY;canvas.setPointerCapture(e.pointerId)});
+        canvas.addEventListener('pointermove',e=>{if(!v.drag||v.id!==e.pointerId)return;v.x+=e.clientX-v.lx;v.y+=e.clientY-v.ly;v.lx=e.clientX;v.ly=e.clientY;draw()});
+        const end=e=>{if(v.id===e.pointerId){v.drag=false;v.id=null}};
+        canvas.addEventListener('pointerup',end);
+        canvas.addEventListener('pointercancel',end);
+        canvas.addEventListener('wheel',e=>{e.preventDefault();const old=v.z,next=this.clamp(old+e.deltaY*-this.config.zoom.sensitivity,this.config.zoom.min,this.config.zoom.max),r=canvas.getBoundingClientRect(),px=e.clientX-r.left,py=e.clientY-r.top,k=next/old;v.x=px-(px-v.x)*k;v.y=py-(py-v.y)*k;v.z=next;draw()},{passive:false});
+    },
+    preset(p,a,q){
+        this.animateInput(this.dom.powerSlider,p);
+        this.animateInput(this.dom.loadSlider,a);
+        this.animateInput(this.dom.correctionSlider,this.clamp(q,+this.dom.correctionSlider.min,+this.dom.correctionSlider.max));
+    },
+    animateInput(input,target){
+        const start=+input.value,dur=520,t0=performance.now(),step=now=>{const t=this.ease(this.clamp((now-t0)/dur,0,1));input.value=start+(target-start)*t;this.update();if(t<1)requestAnimationFrame(step)};requestAnimationFrame(step);
+    },
+    ease(t){return 1-Math.pow(1-t,3)},
+    resize(){
+        [this.dom.sceneCanvas,this.dom.triangleCanvas,this.dom.waveCanvas].forEach(c=>{const r=c.getBoundingClientRect(),d=Math.max(1,Math.min(2.5,window.devicePixelRatio||1));c.width=Math.max(1,Math.round(r.width*d));c.height=Math.max(1,Math.round(r.height*d));c.dataset.dpr=d});
+        this.update();
+    },
+    setup(canvas,ctx){
+        const d=+canvas.dataset.dpr||1,w=canvas.width/d,h=canvas.height/d;ctx.setTransform(d,0,0,d,0,0);ctx.clearRect(0,0,w,h);return{w,h};
+    },
+    calc(){
+        const P=+this.dom.powerSlider.value,ang=+this.dom.loadSlider.value,Qc=+this.dom.correctionSlider.value,Ql=P*Math.tan(this.deg(ang)),Q=Ql+Qc,Sl=Math.hypot(P,Ql),S=Math.hypot(P,Q),PF=P/S,phi=Math.atan2(Q,P),A=S*1000/(Math.sqrt(3)*this.config.voltageLL),Al=Sl*1000/(Math.sqrt(3)*this.config.voltageLL),change=Al?((A-Al)/Al)*100:0;
+        const kind=Q>.75?'lagging':Q<-.75?'leading':'unity',loadKind=ang>.75?'lagging':ang<-.75?'leading':'unity',corrKind=Qc>.75?'inductive':Qc<-.75?'capacitive':'off';
+        return{P,ang,Qc,Ql,Q,Sl,S,PF,phi,deg:this.rad(phi),A,Al,change,kind,loadKind,corrKind,ideal:-Ql};
+    },
+    update(){
+        this.state.power=this.calc();
+        this.ui();
+        this.drawTriangle();
+        this.drawWave();
+        this.drawScene();
+    },
+    ui(){
+        const p=this.state.power,c=this.config.colors,qc=p.Q>=0?c.lag:c.lead;
+        this.dom.pfValue.textContent=p.PF.toFixed(3);
+        this.dom.pfType.textContent=p.kind;
+        this.dom.pfType.style.color=p.kind==='lagging'?c.lag:p.kind==='leading'?c.lead:c.active;
+        this.dom.currentValue.textContent=p.A.toFixed(0);
+        this.dom.sValue.textContent=p.S.toFixed(1);
+        this.dom.qValue.textContent=this.signed(p.Q,1);
+        this.dom.qValue.style.color=qc;
+        this.dom.pValue.textContent=p.P.toFixed(0);
+        this.dom.currentChange.textContent=this.signed(p.change,1);
+        this.dom.powerReadout.textContent=`${p.P.toFixed(0)} kW`;
+        this.dom.loadReadout.textContent=`${this.signed(p.ang,0)}° ${p.loadKind}`;
+        this.dom.loadReadout.style.color=p.loadKind==='lagging'?c.lag:p.loadKind==='leading'?c.lead:c.active;
+        this.dom.correctionReadout.textContent=`${this.signed(p.Qc,0)} kVAr ${p.corrKind}`;
+        this.dom.correctionReadout.style.color=p.corrKind==='capacitive'?c.sky:p.corrKind==='inductive'?c.lag:c.active;
+        this.dom.angleBadge.textContent=`Net angle ${this.signed(p.deg,1)}°`;
+        this.dom.qBadge.style.color=qc;
+        if(Math.abs(p.Q)<1){
+            this.dom.statusTitle.textContent='Near-unity power factor';
+            this.dom.statusText.textContent='Reactive demand is closely compensated, so the same kW needs the lowest practical kVA and line current.';
+        }else if(p.Q>0){
+            this.dom.statusTitle.textContent='Net lagging operation';
+            this.dom.statusText.textContent=`Add about ${Math.abs(p.Q).toFixed(1)} kVAr of capacitive correction to approach unity power factor.`;
+        }else{
+            this.dom.statusTitle.textContent='Net leading operation';
+            this.dom.statusText.textContent=`Reduce capacitive support or add about ${Math.abs(p.Q).toFixed(1)} kVAr of inductive correction to approach unity power factor.`;
+        }
+        const lines=[
+            `Load reactive demand is ${this.signed(p.Ql,1)} kVAr and the correction device contributes ${this.signed(p.Qc,1)} kVAr.`,
+            `For the same ${p.P.toFixed(0)} kW, apparent power is ${p.S.toFixed(1)} kVA instead of the uncompensated ${p.Sl.toFixed(1)} kVA.`,
+            `At ${this.config.voltageLL} V three-phase, line current is ${p.A.toFixed(0)} A instead of ${p.Al.toFixed(0)} A.`,
+            `The ideal correction for this load is ${this.signed(p.ideal,1)} kVAr.`
+        ];
+        this.dom.notes.innerHTML=lines.map(x=>`<div class="note"><span></span><div>${x}</div></div>`).join('');
+    },
+    loop(t){
+        const dt=Math.min(.05,(t-this.state.last)/1000||0);this.state.last=t;this.state.time+=dt;this.motion(dt);this.drawScene();requestAnimationFrame(this.loop.bind(this));
+    },
+    motion(dt){
+        const s=this.state.scene,p=this.state.power;if(!s.finishX)return;
+        const speed=80+180*p.PF;
+        if(this.state.truckMode==='deliver'){this.state.truckX+=speed*dt;if(this.state.truckX>=s.finishX){this.state.truckX=s.finishX;this.state.truckMode='unload';this.state.unload=.55}}
+        else if(this.state.truckMode==='unload'){this.state.unload-=dt;if(this.state.unload<=0)this.state.truckMode='return'}
+        else{this.state.truckX-=260*dt;if(this.state.truckX<=s.startX){this.state.truckX=s.startX;this.state.truckMode='deliver'}}
+        this.state.clouds.forEach(o=>{o.x-=o.v*dt;if(o.x<-.2)o.x=1.2});
+        this.state.particles.forEach(o=>{const dir=p.Q>=0?1:-1;o.t=(o.t+o.v*dt*dir+1)%1});
+    },
+    drawScene(){
+        const ctx=this.dom.sceneCtx,{w,h}=this.setup(this.dom.sceneCanvas,ctx),p=this.state.power,c=this.config.colors;
+        const sky=ctx.createLinearGradient(0,0,0,h);sky.addColorStop(0,'#075985');sky.addColorStop(.56,'#0ea5e9');sky.addColorStop(1,'#0f172a');ctx.fillStyle=sky;ctx.fillRect(0,0,w,h);
+        this.stars(ctx,w,h);this.clouds(ctx,w,h);
+        const startX=w*.12,finishX=w*.78,baseY=h*.68,visual=this.clamp(p.phi,-.9,.9)*.38,rise=(finishX-startX)*Math.tan(visual),endY=baseY-rise;
+        const grd=ctx.createLinearGradient(0,baseY-120,0,h);grd.addColorStop(0,'#22c55e');grd.addColorStop(1,'#14532d');ctx.fillStyle=grd;ctx.beginPath();ctx.moveTo(0,baseY+24);ctx.lineTo(startX,baseY+24);ctx.lineTo(finishX,endY+24);ctx.lineTo(w,endY+24);ctx.lineTo(w,h);ctx.lineTo(0,h);ctx.closePath();ctx.fill();
+        ctx.strokeStyle='rgba(255,255,255,.78)';ctx.lineWidth=8;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(startX-90,baseY);ctx.lineTo(startX,baseY);ctx.lineTo(finishX,endY);ctx.lineTo(w+90,endY);ctx.stroke();
+        ctx.strokeStyle='rgba(15,23,42,.42)';ctx.lineWidth=2;ctx.setLineDash([18,18]);ctx.beginPath();ctx.moveTo(startX-80,baseY+3);ctx.lineTo(startX,baseY+3);ctx.lineTo(finishX,endY+3);ctx.lineTo(w+80,endY+3);ctx.stroke();ctx.setLineDash([]);
+        this.source(ctx,startX-75,baseY+8);this.load(ctx,finishX+55,endY+8);this.lines(ctx,startX-30,baseY-112,finishX+14,endY-112,p);this.particles(ctx,startX-30,baseY-112,finishX+14,endY-112,p);
+        const truck=this.truck(startX-55,baseY,finishX-10,endY);this.drawTruck(ctx,truck.x,truck.y-12,truck.a,p);this.halo(ctx,w,h,p);
+        this.state.scene={startX:startX-55,finishX:finishX-10,startY:baseY,finishY:endY};
+    },
+    stars(ctx,w,h){
+        ctx.save();ctx.globalAlpha=.35;
+        for(let i=0;i<42;i++){const x=(i*97)%Math.max(1,w),y=((i*53)%Math.max(1,h*.38))+8,a=.25+.75*Math.abs(Math.sin(this.state.time*.65+i));ctx.fillStyle=`rgba(255,255,255,${a})`;ctx.beginPath();ctx.arc(x,y,.8+(i%3)*.42,0,Math.PI*2);ctx.fill()}
+        ctx.restore();
+    },
+    clouds(ctx,w,h){
+        ctx.save();ctx.fillStyle='rgba(255,255,255,.84)';
+        this.state.clouds.forEach(o=>{const x=o.x*w,y=o.y*h,s=o.s;ctx.beginPath();ctx.ellipse(x,y,58*s,18*s,0,0,Math.PI*2);ctx.ellipse(x+34*s,y-8*s,34*s,14*s,0,0,Math.PI*2);ctx.ellipse(x-32*s,y+5*s,38*s,15*s,0,0,Math.PI*2);ctx.fill()});
+        ctx.restore();
+    },
+    source(ctx,x,y){
+        ctx.save();ctx.translate(x,y);const g=ctx.createLinearGradient(0,-180,0,0);g.addColorStop(0,'#e2e8f0');g.addColorStop(1,'#64748b');ctx.fillStyle=g;ctx.beginPath();ctx.moveTo(-16,0);ctx.lineTo(16,0);ctx.lineTo(7,-178);ctx.lineTo(-7,-178);ctx.closePath();ctx.fill();ctx.fillStyle='#f8fafc';ctx.beginPath();ctx.arc(0,-178,11,0,Math.PI*2);ctx.fill();ctx.save();ctx.translate(0,-178);ctx.rotate(this.state.time*1.7);for(let i=0;i<3;i++){ctx.rotate(Math.PI*2/3);ctx.fillStyle='#f8fafc';ctx.beginPath();ctx.moveTo(0,-5);ctx.lineTo(95,-2);ctx.lineTo(104,3);ctx.lineTo(0,6);ctx.closePath();ctx.fill()}ctx.restore();ctx.fillStyle='#e2e8f0';ctx.font='800 12px Inter';ctx.textAlign='center';ctx.fillText('Source',0,-38);ctx.restore();
+    },
+    load(ctx,x,y){
+        ctx.save();ctx.translate(x,y);ctx.fillStyle='#475569';this.round(ctx,-58,-70,116,70,8);ctx.fill();ctx.fillStyle='#64748b';ctx.beginPath();ctx.moveTo(-58,-70);ctx.lineTo(-25,-95);ctx.lineTo(0,-70);ctx.lineTo(30,-94);ctx.lineTo(58,-70);ctx.closePath();ctx.fill();ctx.fillStyle='#fde047';for(let i=0;i<4;i++)ctx.fillRect(-43+i*28,-48,14,18);ctx.fillStyle='#94a3b8';ctx.fillRect(44,-122,17,52);ctx.fillStyle='rgba(226,232,240,.62)';ctx.beginPath();ctx.ellipse(56,-136-Math.sin(this.state.time)*3,22,9,-.2,0,Math.PI*2);ctx.ellipse(76,-150-Math.cos(this.state.time*.7)*3,28,10,-.1,0,Math.PI*2);ctx.fill();ctx.fillStyle='#e2e8f0';ctx.font='800 12px Inter';ctx.textAlign='center';ctx.fillText('Load',0,-106);ctx.restore();
+    },
+    lines(ctx,x1,y1,x2,y2,p){
+        ctx.save();ctx.strokeStyle='rgba(226,232,240,.68)';ctx.lineWidth=2;for(let lane=-1;lane<=1;lane++){ctx.beginPath();ctx.moveTo(x1,y1+lane*13);ctx.lineTo(x2,y2+lane*13);ctx.stroke()}ctx.strokeStyle='rgba(56,189,248,.36)';ctx.lineWidth=2+Math.min(10,p.S/24);ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();ctx.restore();
+    },
+    particles(ctx,x1,y1,x2,y2,p){
+        ctx.save();const color=p.Q>=0?this.config.colors.lag:this.config.colors.lead,dx=x2-x1,dy=y2-y1,amt=this.clamp(Math.abs(p.Q)/Math.max(25,p.P),0,1.2);
+        this.state.particles.forEach(o=>{if(amt<.03&&o.l>.12)return;const t=p.Q>=0?o.t:1-o.t,wave=Math.sin(t*Math.PI*8+o.phase)*(8+16*amt),x=x1+dx*t,y=y1+dy*t+wave;ctx.globalAlpha=.16+.7*Math.min(1,amt);ctx.fillStyle=color;ctx.beginPath();ctx.arc(x,y,2.1+3.8*Math.min(1,amt),0,Math.PI*2);ctx.fill()});
+        ctx.restore();
+    },
+    truck(x1,y1,x2,y2){
+        if(this.state.truckX<x1)this.state.truckX=x1;const t=this.clamp((this.state.truckX-x1)/Math.max(1,x2-x1),0,1);return{x:this.state.truckX,y:y1+(y2-y1)*t,a:Math.atan2(y2-y1,x2-x1)};
+    },
+    drawTruck(ctx,x,y,a,p){
+        ctx.save();ctx.translate(x,y);ctx.rotate(a);const glow=ctx.createRadialGradient(-10,-18,4,-10,-18,82);glow.addColorStop(0,'rgba(52,211,153,.32)');glow.addColorStop(1,'rgba(52,211,153,0)');ctx.fillStyle=glow;ctx.beginPath();ctx.arc(-10,-18,82,0,Math.PI*2);ctx.fill();ctx.fillStyle='#ef4444';ctx.strokeStyle='rgba(127,29,29,.85)';ctx.lineWidth=2;this.round(ctx,-64,-44,78,42,8);ctx.fill();ctx.stroke();ctx.fillStyle='#dc2626';this.round(ctx,10,-35,38,33,7);ctx.fill();ctx.fillStyle='#bae6fd';this.round(ctx,20,-30,18,12,4);ctx.fill();ctx.fillStyle='#0f172a';ctx.beginPath();ctx.arc(-45,3,12,0,Math.PI*2);ctx.arc(23,3,12,0,Math.PI*2);ctx.fill();ctx.fillStyle='#cbd5e1';ctx.beginPath();ctx.arc(-45,3,5,0,Math.PI*2);ctx.arc(23,3,5,0,Math.PI*2);ctx.fill();const boxes=Math.max(1,Math.round(p.P/12));for(let i=0;i<Math.min(9,boxes);i++){const r=Math.floor(i/3),col=i%3;ctx.fillStyle='#86efac';ctx.strokeStyle='#166534';ctx.lineWidth=1;ctx.fillRect(-58+col*17,-39+r*15,14,12);ctx.strokeRect(-58+col*17,-39+r*15,14,12)}ctx.restore();
+    },
+    halo(ctx,w,h,p){
+        const cx=w-128,cy=h-98,r=48;ctx.save();ctx.lineCap='round';ctx.lineWidth=11;ctx.strokeStyle='rgba(226,232,240,.17)';ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);ctx.stroke();ctx.strokeStyle=this.config.colors.active;ctx.beginPath();ctx.arc(cx,cy,r,-Math.PI/2,-Math.PI/2+Math.PI*2*p.PF);ctx.stroke();ctx.fillStyle='#e2e8f0';ctx.font='900 18px Inter';ctx.textAlign='center';ctx.fillText(`${Math.round(p.PF*100)}%`,cx,cy+5);ctx.font='800 10px Inter';ctx.fillStyle='#94a3b8';ctx.fillText('PF quality',cx,cy+25);ctx.restore();
+    },
+    drawTriangle(){
+        const ctx=this.dom.triangleCtx,{w,h}=this.setup(this.dom.triangleCanvas,ctx),p=this.state.power,v=this.state.view.triangle,c=this.config.colors;ctx.save();ctx.translate(v.x,v.y);ctx.scale(v.z,v.z);
+        const L=58,R=25,T=28,B=50,PW=w-L-R,PH=h-T-B,ox=L,oy=T+PH/2,maxQ=Math.max(40,Math.abs(p.Ql),Math.abs(p.Q),Math.abs(p.Qc),p.P*.8)*1.35,maxP=Math.max(65,p.P,p.S)*1.12,sx=PW/maxP,sy=(PH/2)/maxQ;
+        this.grid(ctx,L,T,PW,PH,v.z);ctx.strokeStyle=c.axis;ctx.lineWidth=1.2/v.z;ctx.beginPath();ctx.moveTo(ox,T);ctx.lineTo(ox,T+PH);ctx.moveTo(ox-5/v.z,oy);ctx.lineTo(ox+PW,oy);ctx.stroke();ctx.fillStyle='#94a3b8';ctx.font=`${12/v.z}px Inter`;ctx.textAlign='center';ctx.fillText('P (kW)',ox+PW/2,h-18/v.z);ctx.save();ctx.translate(18/v.z,oy);ctx.rotate(-Math.PI/2);ctx.fillText('Q (kVAr)',0,0);ctx.restore();
+        const px=ox+p.P*sx,qy=oy-p.Q*sy,qly=oy-p.Ql*sy;ctx.lineCap='round';ctx.lineWidth=5/v.z;ctx.strokeStyle=c.active;ctx.beginPath();ctx.moveTo(ox,oy);ctx.lineTo(px,oy);ctx.stroke();ctx.strokeStyle=p.Q>=0?c.lag:c.lead;ctx.beginPath();ctx.moveTo(px,oy);ctx.lineTo(px,qy);ctx.stroke();ctx.strokeStyle=c.white;ctx.beginPath();ctx.moveTo(ox,oy);ctx.lineTo(px,qy);ctx.stroke();ctx.setLineDash([6/v.z,6/v.z]);ctx.lineWidth=2/v.z;ctx.strokeStyle='rgba(251,191,36,.48)';ctx.beginPath();ctx.moveTo(px+13/v.z,oy);ctx.lineTo(px+13/v.z,qly);ctx.stroke();ctx.setLineDash([]);
+        ctx.font=`${13/v.z}px Inter`;ctx.fillStyle=c.active;ctx.textAlign='center';ctx.fillText('P',ox+(px-ox)/2,oy+20/v.z);ctx.fillStyle=p.Q>=0?c.lag:c.lead;ctx.textAlign='left';ctx.fillText('Q net',px+10/v.z,qy+(oy-qy)/2);ctx.fillStyle=c.white;ctx.save();ctx.translate(ox+(px-ox)/2,oy+(qy-oy)/2);ctx.rotate(Math.atan2(qy-oy,px-ox));ctx.textAlign='center';ctx.fillText('S net',0,-10/v.z);ctx.restore();ctx.restore();
+    },
+    drawWave(){
+        const ctx=this.dom.waveCtx,{w,h}=this.setup(this.dom.waveCanvas,ctx),p=this.state.power,v=this.state.view.wave,c=this.config.colors;ctx.save();ctx.translate(v.x,v.y);ctx.scale(v.z,v.z);
+        const L=48,T=18,B=38,PW=w-L-16,PH=h-T-B,mid=T+PH/2;this.grid(ctx,L,T,PW,PH,v.z);ctx.strokeStyle=c.axis;ctx.lineWidth=1.1/v.z;ctx.beginPath();ctx.moveTo(L,T);ctx.lineTo(L,T+PH);ctx.moveTo(L,mid);ctx.lineTo(L+PW,mid);ctx.stroke();
+        const amp=PH*.25,iam=amp*this.clamp(p.S/Math.max(1,p.Sl),.35,1.7),scale=PH*.32/Math.max(1,p.Sl*1.25),vp=new Path2D(),ip=new Path2D(),pp=new Path2D(),qp=new Path2D(),steps=Math.max(220,Math.round(PW));
+        for(let i=0;i<=steps;i++){const x=L+PW*i/steps,a=i/steps*Math.PI*4,vol=Math.sin(a),cur=Math.sin(a-p.phi),inst=p.S*(Math.cos(p.phi)-Math.cos(2*a-p.phi)),react=-p.Q*Math.sin(2*a);const yv=mid-vol*amp,yi=mid-cur*iam,yp=mid-inst*scale,yq=mid-react*scale;if(i===0){vp.moveTo(x,yv);ip.moveTo(x,yi);pp.moveTo(x,yp);qp.moveTo(x,yq)}else{vp.lineTo(x,yv);ip.lineTo(x,yi);pp.lineTo(x,yp);qp.lineTo(x,yq)}}
+        ctx.lineCap='round';ctx.lineJoin='round';ctx.lineWidth=2.2/v.z;ctx.strokeStyle=c.sky;ctx.stroke(vp);ctx.strokeStyle=c.current;ctx.stroke(ip);ctx.lineWidth=2.6/v.z;ctx.strokeStyle=c.active;ctx.stroke(pp);ctx.strokeStyle=p.Q>=0?c.lag:c.lead;ctx.stroke(qp);ctx.setLineDash([6/v.z,6/v.z]);ctx.strokeStyle='rgba(52,211,153,.72)';ctx.lineWidth=1.5/v.z;ctx.beginPath();ctx.moveTo(L,mid-p.P*scale);ctx.lineTo(L+PW,mid-p.P*scale);ctx.stroke();ctx.setLineDash([]);
+        ctx.font=`${12/v.z}px Inter`;ctx.textAlign='left';ctx.fillStyle=c.sky;ctx.fillText('V',L+10,T+18/v.z);ctx.fillStyle=c.current;ctx.fillText('I',L+32,T+18/v.z);ctx.fillStyle=c.active;ctx.fillText('p(t)',L+54,T+18/v.z);ctx.fillStyle=p.Q>=0?c.lag:c.lead;ctx.fillText('q(t)',L+100,T+18/v.z);ctx.restore();
+    },
+    grid(ctx,x,y,w,h,z){
+        ctx.save();ctx.strokeStyle=this.config.colors.grid;ctx.lineWidth=1/z;ctx.beginPath();for(let i=0;i<=6;i++){const xx=x+w*i/6;ctx.moveTo(xx,y);ctx.lineTo(xx,y+h)}for(let i=0;i<=4;i++){const yy=y+h*i/4;ctx.moveTo(x,yy);ctx.lineTo(x+w,yy)}ctx.stroke();ctx.restore();
+    },
+    resetView(name){this.state.view[name]={x:0,y:0,z:1,drag:false,id:null,lx:0,ly:0};name==='triangle'?this.drawTriangle():this.drawWave()},
+    round(ctx,x,y,w,h,r){const rr=Math.min(r,w/2,h/2);ctx.beginPath();ctx.moveTo(x+rr,y);ctx.arcTo(x+w,y,x+w,y+h,rr);ctx.arcTo(x+w,y+h,x,y+h,rr);ctx.arcTo(x,y+h,x,y,rr);ctx.arcTo(x,y,x+w,y,rr);ctx.closePath()},
+    clamp(n,a,b){return Math.max(a,Math.min(b,n))},
+    deg(n){return n*Math.PI/180},
+    rad(n){return n*180/Math.PI},
+    signed(n,d){const v=Number(n).toFixed(d);return n>0?`+${v}`:v}
+};
+App.init();
+</script>
 </body>
 </html>
