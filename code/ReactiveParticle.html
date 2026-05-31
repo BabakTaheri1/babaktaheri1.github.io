@@ -7,7 +7,6 @@
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/Draggable.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -62,6 +61,7 @@
             width: 100%;
             height: 100vh;
             z-index: 0;
+            cursor: grab;
         }
         input[type="range"]{
             -webkit-appearance: none;
@@ -131,6 +131,11 @@
             line-height: 14px;
             text-align: center;
             margin-left: 6px;
+            cursor: help;
+        }
+        .tooltip-icon:focus-visible {
+            outline: 2px solid #60a5fa;
+            outline-offset: 2px;
         }
         .tooltip-container .tooltip-text {
             visibility: hidden;
@@ -205,11 +210,35 @@
             left: 4px;
             z-index: 10;
         }
-        #webgl-container {
-            cursor: grab; /* Indicate draggable interaction */
+        #hint-toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 60;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 16px;
+            border-radius: 9999px;
+            font-size: 13px;
+            color: #e2e8f0;
+            pointer-events: auto;
+            opacity: 0;
+            transition: opacity 0.6s ease;
+            max-width: calc(100vw - 32px);
         }
-        #webgl-container.dragging {
-            cursor: grabbing;
+        #hint-toast.visible { opacity: 1; }
+        #hint-toast button {
+            background: rgba(59,130,246,.7);
+            border: 1px solid rgba(96,165,250,.8);
+            color: #fff;
+            border-radius: 9999px;
+            padding: 3px 12px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            flex-shrink: 0;
         }
     </style>
 </head>
@@ -232,7 +261,7 @@
                     <div class="space-y-6 text-slate-300 text-sm">
                         <div>
                             <h4 class="font-semibold text-white mb-2">Core Metaphor: The Particle Flow</h4>
-                            <p>The 3D animation uses particles to represent power flow. Not all power does useful work.</p>
+                            <p>The 3D animation uses particles to represent power flow. Not all power does useful work. The proportion of turbulent particles tracks the magnitude of reactive power.</p>
                             <ul class="list-none space-y-2 mt-2">
                                 <li class="flex items-start"><span class="inline-block w-3 h-3 rounded-sm bg-sky-400 mr-2 mt-1 flex-shrink-0"></span><span><strong class="text-slate-100">Active Power (<span class="equation">P</span>):</strong> These blue particles move directly from source to load, representing the "true" power that performs useful work.</span></li>
                                 <li class="flex items-start"><span class="inline-block w-3 h-3 rounded-sm bg-amber-500 mr-2 mt-1 flex-shrink-0"></span><span><strong class="text-slate-100">Inductive Reactive Power (<span class="equation">Q</span>):</strong> This orange, turbulent flow represents energy used to create magnetic fields (e.g., in motors). It "sloshes" back and forth, doing no net work.</span></li>
@@ -251,11 +280,11 @@
                         </div>
                         <div>
                             <h4 class="font-semibold text-white mb-2">Instantaneous Power</h4>
-                            <p>The power at any instant, <span class="equation">p(t)</span>, has two components:</p>
+                            <p>Using a voltage reference of <span class="equation">v(t) = V<sub>max</sub> sin(&omega;t)</span>, the instantaneous power <span class="equation">p(t)</span> has two components:</p>
                             <div class="mt-2">
-                                <p><span class="equation">p(t) = P(1+ cos(2&omega;t)) + Q sin(2&omega;t)</span></p>
+                                <p><span class="equation">p(t) = P(1 &minus; cos(2&omega;t)) &minus; Q sin(2&omega;t)</span></p>
                             </div>
-                            <p class="mt-2">The Active component is always positive (delivering power), while the Reactive component averages to zero over a full cycle.</p>
+                            <p class="mt-2">The Active component <span class="equation">P(1 &minus; cos 2&omega;t)</span> is always &ge; 0 (it only ever delivers power), while the Reactive component <span class="equation">&minus;Q sin 2&omega;t</span> averages to zero over a full cycle. This is exactly what the "Instantaneous Power" chart plots.</p>
                         </div>
                     </div>
                 </section>
@@ -269,7 +298,7 @@
                         <h1 class="text-xl md:text-2xl font-bold text-white">Reactive Power: The Particle Flow</h1>
                         <div class="flex items-center space-x-2">
                             <button id="toggle-concepts-btn" class="control-button">Concepts</button>
-                            <button id="resetViewBtn" class="control-button">Reset</button>
+                            <button id="resetViewBtn" class="control-button">Reset View</button>
                         </div>
                     </div>
 
@@ -296,24 +325,24 @@
                             <div class="rounded-lg bg-slate-900/50 p-2">
                                 <canvas id="waveformCanvas" class="w-full h-40 cursor-grab"></canvas>
                             </div>
-                            <p id="waveform-caption" class="text-xs text-slate-400 mt-2 text-center h-8">Active Power (green) always delivers energy. Reactive Power (orange/purple) averages to zero, doing no net work.</p>
+                            <p id="waveform-caption" class="text-xs text-slate-400 mt-2 text-center h-8">Active Power (blue) always delivers energy. Reactive Power (orange/purple) averages to zero, doing no net work.</p>
                         </div>
 
                         <div class="grid grid-cols-2 gap-x-4 gap-y-3 text-sm mb-6">
                             <div>
-                                <div class="text-slate-400 tooltip-container">Power Factor<i class="tooltip-icon" role="img" aria-label="Information">i</i><span class="tooltip-text" role="tooltip">The ratio of Active Power (<span class="equation">P</span>) to Apparent Power (<span class="equation">S</span>). A value of 1.0 means all power is doing useful work. It is the cosine of the phase angle <span class="equation">&phi;</span>.</span></div>
+                                <div class="text-slate-400 tooltip-container">Power Factor<i class="tooltip-icon" tabindex="0" role="img" aria-label="Information about Power Factor">i</i><span class="tooltip-text" role="tooltip">The ratio of Active Power (<span class="equation">P</span>) to Apparent Power (<span class="equation">S</span>). A value of 1.0 means all power is doing useful work. It is the cosine of the phase angle <span class="equation">&phi;</span>.</span></div>
                                 <div id="pfValue" class="text-2xl font-bold text-sky-400"></div>
                             </div>
                             <div>
-                                <div class="text-slate-400 tooltip-container">Active Power (<span class="equation">P</span>)<i class="tooltip-icon" role="img" aria-label="Information">i</i><span class="tooltip-text" role="tooltip">The "True Power" that is converted into useful work (e.g., heat, light, mechanical motion). Measured in Watts (W).</span></div>
-                                <div id="activePowerValue" class="text-lg font-semibold text-green-400"></div>
+                                <div class="text-slate-400 tooltip-container">Active Power (<span class="equation">P</span>)<i class="tooltip-icon" tabindex="0" role="img" aria-label="Information about Active Power">i</i><span class="tooltip-text" role="tooltip">The "True Power" that is converted into useful work (e.g., heat, light, mechanical motion). Measured in Watts (W).</span></div>
+                                <div id="activePowerValue" class="text-lg font-semibold text-sky-400"></div>
                             </div>
                             <div>
-                                <div class="text-slate-400 tooltip-container">Net Reactive (<span class="equation">Q</span>)<i class="tooltip-icon" role="img" aria-label="Information">i</i><span class="tooltip-text" role="tooltip">Energy that "sloshes" back and forth. Because its average is zero, it performs no useful work, but is needed for electric/magnetic fields. Measured in VAR.</span></div>
+                                <div class="text-slate-400 tooltip-container">Net Reactive (<span class="equation">Q</span>)<i class="tooltip-icon" tabindex="0" role="img" aria-label="Information about Reactive Power">i</i><span class="tooltip-text" role="tooltip">Energy that "sloshes" back and forth. Because its average is zero, it performs no useful work, but is needed for electric/magnetic fields. Measured in VAR.</span></div>
                                 <div id="reactivePowerValue" class="text-lg font-semibold"></div>
                             </div>
                             <div>
-                                <div class="text-slate-400 tooltip-container">Apparent Power (<span class="equation">S</span>)<i class="tooltip-icon" role="img" aria-label="Information">i</i><span class="tooltip-text" role="tooltip">The total power in the circuit (<span class="equation">S = (P<sup>2</sup> + Q<sup>2</sup>)<sup>1/2</sup></span>). This determines the capacity required for wires and transformers. Measured in Volt-Amperes (VA).</span></div>
+                                <div class="text-slate-400 tooltip-container">Apparent Power (<span class="equation">S</span>)<i class="tooltip-icon" tabindex="0" role="img" aria-label="Information about Apparent Power">i</i><span class="tooltip-text" role="tooltip">The total power in the circuit (<span class="equation">S = (P<sup>2</sup> + Q<sup>2</sup>)<sup>1/2</sup></span>). This determines the capacity required for wires and transformers. Measured in Volt-Amperes (VA).</span></div>
                                 <div id="apparentPowerValue" class="text-lg font-semibold text-white"></div>
                             </div>
                         </div>
@@ -346,6 +375,12 @@
             <p>Understanding reactive power is crucial for engineers designing efficient power systems, as it impacts the sizing of transformers, cables, and other components.</p>
         </div>
     </main>
+
+    <div id="hint-toast" class="glass-panel">
+        <span>Drag to orbit &middot; scroll to zoom &middot; drag a chart to pan it, scroll over it to zoom</span>
+        <button id="hint-dismiss" type="button">Got it</button>
+    </div>
+
     <footer class="text-xs text-slate-500 pointer-events-none">Created by Babak Taheri (https://babaktaheri1.github.io/)</footer>
 
     <script type="importmap">
@@ -365,36 +400,38 @@
         import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
         import { FilmPass } from 'three/addons/postprocessing/FilmPass.js';
 
-        const PARTICLE_COUNT = 80000;
+        // fewer particles on mobile
+        const IS_LOW_POWER = window.innerWidth < 768 || /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+        const PARTICLE_COUNT = IS_LOW_POWER ? 35000 : 80000;
+        const STAR_COUNT = IS_LOW_POWER ? 8000 : 20000;
         const CONDUIT_RADIUS = 4.0;
         const CONDUIT_LENGTH = 42.0;
 
         const COLORS = {
-            REAL_POWER_3D: new THREE.Color(0x38bdf8), // Using Tailwind sky-400
+            REAL_POWER_3D: new THREE.Color(0x38bdf8), // sky-400
             REACTIVE_LAG_3D: new THREE.Color(0xf59e0b), // amber-500
             REACTIVE_LEAD_3D: new THREE.Color(0xd946ef), // fuchsia-500
             REACTIVE_LAG_UI: '#f59e0b',
             REACTIVE_LEAD_UI: '#d946ef',
             GLASS: new THREE.Color(0.2, 0.4, 0.5),
-            ACTIVE_POWER_UI: '#4ade80', // green-400
+            ACTIVE_POWER_UI: '#38bdf8',     // sky-400
+            ACTIVE_POWER_AVG_UI: '#0284c7', // sky-600
             APPARENT_POWER_UI: '#d1d5db',
             VOLTAGE_UI: '#3b82f6', // blue-500
-            CURRENT_UI: '#ef4444', // red-500,
+            CURRENT_UI: '#ef4444', // red-500
         };
 
         const INITIAL_STATE = {
             cameraPos: new THREE.Vector3(30, 2.5, 0),
-            pf: 0.707,
-            isCapacitive: false,
+            cameraTarget: new THREE.Vector3(0, 2.5, 0),
         };
 
         const ANIMATION_CONSTS = {
             AURA_SCALE_FACTOR: 0.6,
             AURA_OPACITY_FACTOR: 0.2,
-            CAMERA_WOBBLE_FACTOR: 0.01
         };
 
-        const particleVertexShader = `uniform float uTime; uniform float uTurbulence; uniform float uPowerRatio; uniform float uConduitRadius; uniform float uReactivePhase;attribute float aRandom; varying float vIsReactive;vec3 mod289(vec3 x){return x-floor(x*(1./289.))*289.;}vec4 mod289(vec4 x){return x-floor(x*(1./289.))*289.;}vec4 permute(vec4 x){return mod289(((x*34.)+1.)*x);}vec4 taylorInvSqrt(vec4 r){return 1.79284291400159-r*.85373472095314;}float snoise(vec3 v){const vec2 C=vec2(1./6.,1./3.);const vec4 D=vec4(0.,.5,1.,2.);vec3 i=floor(v+dot(v,C.yyy));vec3 x0=v-i+dot(i,C.xxx);vec3 g=step(x0.yzx,x0.xyz);vec3 l=1.-g;vec3 i1=min(g.xyz,l.zxy);vec3 i2=max(g.xyz,l.zxy);vec3 x1=x0-i1+C.xxx;vec3 x2=x0-i2+C.yyy;vec3 x3=x0-D.yyy;i=mod289(i);vec4 p=permute(permute(permute(i.z+vec4(0.,i1.z,i2.z,1.))+i.y+vec4(0.,i1.y,i2.y,1.))+i.x+vec4(0.,i1.x,i2.x,1.));float n_=.142857142857;vec3 ns=n_*D.wyz-D.xzx;vec4 j=p-49.*floor(p*ns.z*ns.z);vec4 x_=floor(j*ns.z);vec4 y_=floor(j-7.*x_);vec4 x=x_*ns.x+ns.yyyy;vec4 y=y_*ns.x+ns.yyyy;vec4 h=1.-abs(x)-abs(y);vec4 b0=vec4(x.xy,y.xy);vec4 b1=vec4(x.zw,y.zw);vec4 s0=floor(b0)*2.+1.;vec4 s1=floor(b1)*2.+1.;vec4 sh=-step(h,vec4(0.));vec4 a0=b0.xzyw+s0.xzyw*sh.xxyy;vec4 a1=b1.xzyw+s1.xzyw*sh.zzww;vec3 p0=vec3(a0.xy,h.x);vec3 p1=vec3(a0.zw,h.y);vec3 p2=vec3(a1.xy,h.z);vec3 p3=vec3(a1.zw,h.w);vec4 norm=taylorInvSqrt(vec4(dot(p0,p0),dot(p1,p1),dot(p2,p2),dot(p3,p3)));p0*=norm.x;p1*=norm.y;p2*=norm.z;p3*=norm.w;vec4 m=max(.6-vec4(dot(x0,x0),dot(x1,x1),dot(x2,x2),dot(x3,x3)),0.);m=m*m;return 42.*dot(m*m,vec4(dot(p0,x0),dot(p1,x1),dot(p2,x2),dot(p3,x3)));}void main(){vec3 pos=position;pos.z=mod(pos.z-uTime*5.,42.)-21.;vIsReactive=step(uPowerRatio,aRandom);float noise=snoise(vec3(pos.x*.5,pos.y*.5,pos.z*.1+uTime*.5));float initialRadius=length(position.xy);float targetRadius;vec2 displacement=vec2(0.);if(vIsReactive>.5){float realPowerRadius=uConduitRadius*sqrt(uPowerRatio);float phaseOffset=sin(uReactivePhase*3.14159265)*.5+.5;targetRadius=mix(realPowerRadius,uConduitRadius,phaseOffset*aRandom);displacement=vec2(noise*uTurbulence*3.);}else{targetRadius=initialRadius*sqrt(uPowerRatio);displacement=vec2(noise*.1);}pos.xy=normalize(pos.xy)*targetRadius+displacement;vec4 mvPosition=modelViewMatrix*vec4(pos,1.);mvPosition.y+=2.5;gl_PointSize=(30./-mvPosition.z)*(1.+aRandom);gl_Position=projectionMatrix*mvPosition;}`;
+        const particleVertexShader = `uniform float uTime; uniform float uTurbulence; uniform float uPowerRatio; uniform float uConduitRadius; uniform float uConduitLength; uniform float uReactivePhase; uniform float uReactiveFraction;attribute float aRandom; varying float vIsReactive;vec3 mod289(vec3 x){return x-floor(x*(1./289.))*289.;}vec4 mod289(vec4 x){return x-floor(x*(1./289.))*289.;}vec4 permute(vec4 x){return mod289(((x*34.)+1.)*x);}vec4 taylorInvSqrt(vec4 r){return 1.79284291400159-r*.85373472095314;}float snoise(vec3 v){const vec2 C=vec2(1./6.,1./3.);const vec4 D=vec4(0.,.5,1.,2.);vec3 i=floor(v+dot(v,C.yyy));vec3 x0=v-i+dot(i,C.xxx);vec3 g=step(x0.yzx,x0.xyz);vec3 l=1.-g;vec3 i1=min(g.xyz,l.zxy);vec3 i2=max(g.xyz,l.zxy);vec3 x1=x0-i1+C.xxx;vec3 x2=x0-i2+C.yyy;vec3 x3=x0-D.yyy;i=mod289(i);vec4 p=permute(permute(permute(i.z+vec4(0.,i1.z,i2.z,1.))+i.y+vec4(0.,i1.y,i2.y,1.))+i.x+vec4(0.,i1.x,i2.x,1.));float n_=.142857142857;vec3 ns=n_*D.wyz-D.xzx;vec4 j=p-49.*floor(p*ns.z*ns.z);vec4 x_=floor(j*ns.z);vec4 y_=floor(j-7.*x_);vec4 x=x_*ns.x+ns.yyyy;vec4 y=y_*ns.x+ns.yyyy;vec4 h=1.-abs(x)-abs(y);vec4 b0=vec4(x.xy,y.xy);vec4 b1=vec4(x.zw,y.zw);vec4 s0=floor(b0)*2.+1.;vec4 s1=floor(b1)*2.+1.;vec4 sh=-step(h,vec4(0.));vec4 a0=b0.xzyw+s0.xzyw*sh.xxyy;vec4 a1=b1.xzyw+s1.xzyw*sh.zzww;vec3 p0=vec3(a0.xy,h.x);vec3 p1=vec3(a0.zw,h.y);vec3 p2=vec3(a1.xy,h.z);vec3 p3=vec3(a1.zw,h.w);vec4 norm=taylorInvSqrt(vec4(dot(p0,p0),dot(p1,p1),dot(p2,p2),dot(p3,p3)));p0*=norm.x;p1*=norm.y;p2*=norm.z;p3*=norm.w;vec4 m=max(.6-vec4(dot(x0,x0),dot(x1,x1),dot(x2,x2),dot(x3,x3)),0.);m=m*m;return 42.*dot(m*m,vec4(dot(p0,x0),dot(p1,x1),dot(p2,x2),dot(p3,x3)));}void main(){vec3 pos=position;pos.z=mod(pos.z-uTime*5.,uConduitLength)-uConduitLength*0.5;vIsReactive=step(1.0-uReactiveFraction,aRandom);float noise=snoise(vec3(pos.x*.5,pos.y*.5,pos.z*.1+uTime*.5));float initialRadius=length(position.xy);float targetRadius;vec2 displacement=vec2(0.);if(vIsReactive>.5){float realPowerRadius=uConduitRadius*sqrt(uPowerRatio);float phaseOffset=sin(uReactivePhase*3.14159265)*.5+.5;targetRadius=mix(realPowerRadius,uConduitRadius,phaseOffset*aRandom);displacement=vec2(noise*uTurbulence*3.);}else{targetRadius=initialRadius*sqrt(uPowerRatio);displacement=vec2(noise*.1);}pos.xy=normalize(pos.xy)*targetRadius+displacement;vec4 mvPosition=modelViewMatrix*vec4(pos,1.);mvPosition.y+=2.5;gl_PointSize=(30./-mvPosition.z)*(1.+aRandom);gl_Position=projectionMatrix*mvPosition;}`;
         const particleFragmentShader = `uniform vec3 uRealColor; uniform vec3 uReactiveLagColor; uniform vec3 uReactiveLeadColor; uniform float uReactiveType; varying float vIsReactive;void main() { float dist = length(gl_PointCoord - vec2(0.5)); float alpha = 1.0 - smoothstep(0.45, 0.5, dist); vec3 reactiveColor = mix(uReactiveLagColor, uReactiveLeadColor, uReactiveType); vec3 finalColor = mix(uRealColor, reactiveColor, vIsReactive); gl_FragColor = vec4(finalColor, alpha * 0.8); }`;
 
         let renderer, scene, camera, controls, composer, particles, reactiveAura, conduit, cylinderGroup;
@@ -404,10 +441,6 @@
         let activeChart = 'pq';
         let state = {};
         let chartOffsets = { triangle: { x: 0, y: 0 }, waveform: { x: 0, y: 0 } };
-        let isDragging = false;
-        let previousMousePosition = { x: 0, y: 0 };
-        let rotationVelocity = { x: 0, y: 0 };
-
         let triangleZoom = 1.0;
         let waveformZoom = 1.0;
 
@@ -440,7 +473,8 @@
                 'presetResistive', 'presetInductive', 'presetCapacitive', 'chart-title',
                 'view-vi', 'view-pq', 'dashboard-panel', 'panel-toggle-button',
                 'toggle-icon-minus', 'toggle-icon-plus', 'pf-type-toggle', 'waveform-caption',
-                'concepts-panel', 'toggle-concepts-btn', 'close-concepts-btn'
+                'concepts-panel', 'toggle-concepts-btn', 'close-concepts-btn',
+                'hint-toast', 'hint-dismiss'
             ];
             ids.forEach(id => {
                 const camelCaseId = id.replace(/-([a-z])/g, g => g[1].toUpperCase());
@@ -448,13 +482,12 @@
             });
         }
 
+        // size only; dpr scale is set in each draw
         function setupCanvases() {
             [dom.triangleCanvas, dom.waveformCanvas].forEach(canvas => {
                 const dpr = window.devicePixelRatio || 1;
                 canvas.width = canvas.clientWidth * dpr;
                 canvas.height = canvas.clientHeight * dpr;
-                const ctx = canvas.getContext('2d');
-                ctx.scale(dpr, dpr);
             });
             triangleCtx = dom.triangleCanvas.getContext('2d');
             waveformCtx = dom.waveformCanvas.getContext('2d');
@@ -495,21 +528,25 @@
             });
         }
 
-        function drawTriangle() {
-            const w = dom.triangleCanvas.clientWidth, h = dom.triangleCanvas.clientHeight;
-            const ctx = triangleCtx;
-            ctx.clearRect(0, 0, dom.triangleCanvas.width, dom.triangleCanvas.height);
-            ctx.save();
+        // dpr scale, then pan, then centre zoom
+        function beginChartTransform(canvas, ctx, offset, zoom) {
+            const w = canvas.clientWidth, h = canvas.clientHeight;
             const dpr = window.devicePixelRatio || 1;
-            ctx.scale(dpr, dpr);
-
-            // Apply pan and zoom
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+            ctx.clearRect(0, 0, w, h);
+            ctx.save();
+            ctx.translate(offset.x, offset.y);
             ctx.translate(w / 2, h / 2);
-            ctx.scale(triangleZoom, triangleZoom);
+            ctx.scale(zoom, zoom);
             ctx.translate(-w / 2, -h / 2);
-            ctx.translate(chartOffsets.triangle.x / dpr, chartOffsets.triangle.y / dpr);
+            return { w, h };
+        }
 
-            const margin = {top: 20, right: 20, bottom: 40, left: 50};
+        function drawTriangle() {
+            const ctx = triangleCtx;
+            const { w, h } = beginChartTransform(dom.triangleCanvas, ctx, chartOffsets.triangle, triangleZoom);
+
+            const margin = { top: 20, right: 20, bottom: 40, left: 50 };
             const plotWidth = w - margin.left - margin.right;
             const plotHeight = h - margin.top - margin.bottom;
 
@@ -523,7 +560,6 @@
             const p_len = state.P * p_scale;
             const q_len = state.Q * q_scale;
 
-            // Draw Axes
             const axisColor = '#64748b';
             const labelColor = '#9ca3af';
             ctx.strokeStyle = axisColor;
@@ -551,26 +587,24 @@
             ctx.textAlign = "center";
             ctx.fillText("Active Power (P) [W]", w / 2, h - 15 / triangleZoom);
 
-            // Ticks
             ctx.textAlign = "right";
             ctx.textBaseline = "middle";
             ctx.fillText("0", originX - 8 / triangleZoom, originY);
 
-            // Draw Triangle
+            // Triangle
             ctx.lineWidth = 4 / triangleZoom;
-            // P
             ctx.strokeStyle = COLORS.ACTIVE_POWER_UI;
             ctx.beginPath();
             ctx.moveTo(originX, originY);
             ctx.lineTo(originX + p_len, originY);
             ctx.stroke();
-            // Q
+
             ctx.strokeStyle = state.qColor;
             ctx.beginPath();
             ctx.moveTo(originX + p_len, originY);
             ctx.lineTo(originX + p_len, originY - q_len);
             ctx.stroke();
-            // S
+
             ctx.strokeStyle = COLORS.APPARENT_POWER_UI;
             ctx.beginPath();
             ctx.moveTo(originX, originY);
@@ -581,24 +615,14 @@
         }
 
         function drawVIWaveforms() {
-            const w = dom.waveformCanvas.clientWidth, h = dom.waveformCanvas.clientHeight;
             const ctx = waveformCtx;
-            ctx.clearRect(0, 0, dom.waveformCanvas.width, dom.waveformCanvas.height);
-            ctx.save();
-            const dpr = window.devicePixelRatio || 1;
-            ctx.scale(dpr, dpr);
-
-            ctx.translate(w / 2, h / 2);
-            ctx.scale(waveformZoom, waveformZoom);
-            ctx.translate(-w / 2, -h / 2);
-            ctx.translate(chartOffsets.waveform.x / dpr, chartOffsets.waveform.y / dpr);
+            const { w, h } = beginChartTransform(dom.waveformCanvas, ctx, chartOffsets.waveform, waveformZoom);
 
             const axisMargin = 40;
             const plotWidth = w - axisMargin;
             const y_center = h / 2;
             const v_amp = h * 0.4;
 
-            // Draw Axes
             const axisColor = '#64748b';
             const labelColor = '#9ca3af';
             ctx.strokeStyle = axisColor;
@@ -618,7 +642,6 @@
             ctx.fillText("+Vmax", axisMargin - 5, y_center - v_amp);
             ctx.fillText("-Vmax", axisMargin - 5, y_center + v_amp);
 
-            // Draw Waveforms
             const v_path = new Path2D(), i_path = new Path2D();
             for (let i = 0; i <= plotWidth; i++) {
                 const x = i + axisMargin;
@@ -637,7 +660,6 @@
             ctx.strokeStyle = COLORS.VOLTAGE_UI; ctx.stroke(v_path);
             ctx.strokeStyle = COLORS.CURRENT_UI; ctx.stroke(i_path);
 
-            // Legend
             ctx.font = `${12 / waveformZoom}px Inter`;
             ctx.textAlign = "left";
             ctx.textBaseline = "alphabetic";
@@ -648,24 +670,14 @@
         }
 
         function drawPowerWaveforms() {
-            const w = dom.waveformCanvas.clientWidth, h = dom.waveformCanvas.clientHeight;
             const ctx = waveformCtx;
-            ctx.clearRect(0, 0, dom.waveformCanvas.width, dom.waveformCanvas.height);
-            ctx.save();
-            const dpr = window.devicePixelRatio || 1;
-            ctx.scale(dpr, dpr);
-
-            ctx.translate(w / 2, h / 2);
-            ctx.scale(waveformZoom, waveformZoom);
-            ctx.translate(-w / 2, -h / 2);
-            ctx.translate(chartOffsets.waveform.x / dpr, chartOffsets.waveform.y / dpr);
+            const { w, h } = beginChartTransform(dom.waveformCanvas, ctx, chartOffsets.waveform, waveformZoom);
 
             const axisMargin = 40;
             const plotWidth = w - axisMargin;
             const y_center = h / 2;
             const y_scale = (h * 0.4) / S_CONSTANT;
 
-            // Draw Axes
             const axisColor = '#64748b';
             const labelColor = '#9ca3af';
             ctx.strokeStyle = axisColor;
@@ -689,7 +701,7 @@
             ctx.beginPath(); ctx.moveTo(axisMargin, y_center); ctx.lineTo(w, y_center); ctx.stroke();
             ctx.setLineDash([]);
 
-            // Draw Waveforms
+            // p(t) = P(1 - cos2wt) - Q sin2wt
             const p_path = new Path2D(), q_path = new Path2D();
             for (let i = 0; i <= plotWidth; i++) {
                 const x = i + axisMargin;
@@ -705,7 +717,7 @@
                 }
             }
 
-            ctx.fillStyle = "rgba(74, 222, 128, .2)";
+            ctx.fillStyle = "rgba(56, 189, 248, .2)";
             const p_fill = new Path2D(p_path); p_fill.lineTo(plotWidth + axisMargin, y_center); p_fill.lineTo(axisMargin, y_center); ctx.fill(p_fill);
 
             ctx.fillStyle = state.qColor + "33";
@@ -715,15 +727,14 @@
             ctx.strokeStyle = state.qColor; ctx.stroke(q_path);
             ctx.strokeStyle = COLORS.ACTIVE_POWER_UI; ctx.stroke(p_path);
 
-            ctx.strokeStyle = "#16a34a";
+            ctx.strokeStyle = COLORS.ACTIVE_POWER_AVG_UI;
             ctx.lineWidth = 3 / waveformZoom;
             ctx.beginPath(); ctx.moveTo(axisMargin, p_avg_y); ctx.lineTo(w, p_avg_y); ctx.stroke();
 
-            // Legend
             ctx.font = `${10 / waveformZoom}px Inter`;
             ctx.textAlign = "left";
             ctx.textBaseline = "alphabetic";
-            ctx.fillStyle = "#16a34a"; ctx.fillText("p(avg)", axisMargin + 5, 12);
+            ctx.fillStyle = COLORS.ACTIVE_POWER_AVG_UI; ctx.fillText("p(avg)", axisMargin + 5, 12);
             ctx.fillStyle = COLORS.ACTIVE_POWER_UI; ctx.fillText("p(inst)", axisMargin + 55, 12);
             ctx.fillStyle = state.qColor; ctx.fillText("q(inst)", axisMargin + 110, 12);
 
@@ -732,7 +743,7 @@
 
         function createSceneObjects() {
             const starVertices = [];
-            for (let i = 0; i < 20000; i++) {
+            for (let i = 0; i < STAR_COUNT; i++) {
                 const v = new THREE.Vector3(THREE.MathUtils.randFloatSpread(2500), THREE.MathUtils.randFloatSpread(2500), THREE.MathUtils.randFloatSpread(2500));
                 if (v.length() > 300) starVertices.push(v.x, v.y, v.z);
             }
@@ -746,7 +757,7 @@
             const conduitGeom = new THREE.CylinderGeometry(CONDUIT_RADIUS, CONDUIT_RADIUS, CONDUIT_LENGTH, 64, 1, true);
             const conduitMat = new THREE.MeshBasicMaterial({ color: COLORS.GLASS, transparent: true, opacity: 0.15, blending: THREE.AdditiveBlending, side: THREE.FrontSide });
             conduit = new THREE.Mesh(conduitGeom, conduitMat);
-            conduit.rotation.x = Math.PI/2;
+            conduit.rotation.x = Math.PI / 2;
             conduit.position.y = 2.5;
             cylinderGroup.add(conduit);
 
@@ -772,7 +783,8 @@
                 vertexShader: particleVertexShader, fragmentShader: particleFragmentShader,
                 uniforms: {
                     uTime: { value: 0 }, uTurbulence: { value: 0 }, uPowerRatio: { value: 0 },
-                    uConduitRadius: { value: CONDUIT_RADIUS }, uReactivePhase: { value: 0 },
+                    uConduitRadius: { value: CONDUIT_RADIUS }, uConduitLength: { value: CONDUIT_LENGTH },
+                    uReactivePhase: { value: 0 }, uReactiveFraction: { value: 0 },
                     uRealColor: { value: COLORS.REAL_POWER_3D }, uReactiveLagColor: { value: COLORS.REACTIVE_LAG_3D },
                     uReactiveLeadColor: { value: COLORS.REACTIVE_LEAD_3D }, uReactiveType: { value: 0 }
                 },
@@ -784,47 +796,26 @@
 
         function update3DScene() {
             if (!particles) return;
-            const powerRatio = state.P / state.S;
-            const turbulence = Math.abs(state.Q) / state.S;
+            const powerRatio = state.P / state.S; // cos(phi)
+            const reactiveFraction = Math.abs(state.Q) / state.S; // sin(phi)
 
             particles.material.uniforms.uPowerRatio.value = powerRatio;
-            particles.material.uniforms.uTurbulence.value = turbulence;
+            particles.material.uniforms.uTurbulence.value = reactiveFraction;
+            particles.material.uniforms.uReactiveFraction.value = reactiveFraction;
             particles.material.uniforms.uReactiveType.value = state.Q >= 0 ? 0.0 : 1.0;
             reactiveAura.material.color.copy(state.Q >= 0 ? COLORS.REACTIVE_LAG_3D : COLORS.REACTIVE_LEAD_3D);
-        }
-
-        function rotateCylinder(event) {
-            if (!isDragging) return;
-            const mouseX = event.clientX / window.innerWidth * 2 - 1;
-            const mouseY = -(event.clientY / window.innerHeight * 2 - 1);
-            const deltaX = mouseX - previousMousePosition.x;
-            const deltaY = mouseY - previousMousePosition.y;
-
-            cylinderGroup.rotation.y += deltaX * 2;
-            cylinderGroup.rotation.x += deltaY * 2;
-
-            rotationVelocity.x = deltaY * 2;
-            rotationVelocity.y = deltaX * 2;
-
-            previousMousePosition = { x: mouseX, y: mouseY };
         }
 
         function animate() {
             requestAnimationFrame(animate);
             const t = clock.getElapsedTime();
-            if(particles) particles.material.uniforms.uTime.value = t;
-
-            if (!isDragging) {
-                cylinderGroup.rotation.x += rotationVelocity.x * 0.05;
-                cylinderGroup.rotation.y += rotationVelocity.y * 0.05;
-                rotationVelocity.x *= 0.9;
-                rotationVelocity.y *= 0.9;
-            }
+            if (particles) particles.material.uniforms.uTime.value = t;
 
             controls.update();
+
             const turbulence = Math.abs(state.Q) / S_CONSTANT;
             const reactivePhase = t * Math.PI * turbulence;
-            if(particles) particles.material.uniforms.uReactivePhase.value = reactivePhase;
+            if (particles) particles.material.uniforms.uReactivePhase.value = reactivePhase;
 
             const auraPulse = Math.sin(reactivePhase * 2) ** 2;
             reactiveAura.scale.setScalar(1 + auraPulse * turbulence * ANIMATION_CONSTS.AURA_SCALE_FACTOR);
@@ -848,42 +839,80 @@
             update3DScene();
         }
 
+        // drag to pan
+        function setupChartPan(canvas, key) {
+            let panning = false;
+            let last = { x: 0, y: 0 };
+            canvas.style.touchAction = 'none';
+            canvas.addEventListener('pointerdown', (e) => {
+                panning = true;
+                last = { x: e.clientX, y: e.clientY };
+                canvas.style.cursor = 'grabbing';
+                try { canvas.setPointerCapture(e.pointerId); } catch (_) {}
+            });
+            canvas.addEventListener('pointermove', (e) => {
+                if (!panning) return;
+                chartOffsets[key].x += e.clientX - last.x;
+                chartOffsets[key].y += e.clientY - last.y;
+                last = { x: e.clientX, y: e.clientY };
+                drawCharts();
+            });
+            const end = (e) => {
+                panning = false;
+                canvas.style.cursor = 'grab';
+                try { canvas.releasePointerCapture(e.pointerId); } catch (_) {}
+            };
+            canvas.addEventListener('pointerup', end);
+            canvas.addEventListener('pointercancel', end);
+        }
+
+        function showFallback(message) {
+            dom.webglContainer.innerHTML =
+                `<div style="display:flex;height:100vh;align-items:center;justify-content:center;` +
+                `color:#94a3b8;text-align:center;padding:24px;font-size:14px;">${message}</div>`;
+        }
+
         function init() {
             queryDOMElements();
             setupCanvases();
             setupAccessibleTooltips();
 
-            gsap.registerPlugin(Draggable);
-            Draggable.create(dom.triangleCanvas, { type: "x,y", cursor: "grab", onDrag: function() { chartOffsets.triangle.x = this.x; chartOffsets.triangle.y = this.y; drawTriangle(); } });
-            Draggable.create(dom.waveformCanvas, { type: "x,y", cursor: "grab", onDrag: function() { chartOffsets.waveform.x = this.x; chartOffsets.waveform.y = this.y; drawCharts(); } });
+            setupChartPan(dom.triangleCanvas, 'triangle');
+            setupChartPan(dom.waveformCanvas, 'waveform');
 
             dom.triangleCanvas.addEventListener('wheel', (event) => {
                 event.preventDefault();
                 const delta = event.deltaY > 0 ? 0.9 : 1.1;
                 triangleZoom = Math.min(Math.max(triangleZoom * delta, 0.5), 2.0);
                 drawTriangle();
-            });
+            }, { passive: false });
 
             dom.waveformCanvas.addEventListener('wheel', (event) => {
                 event.preventDefault();
                 const delta = event.deltaY > 0 ? 0.9 : 1.1;
                 waveformZoom = Math.min(Math.max(waveformZoom * delta, 0.5), 2.0);
                 drawCharts();
-            });
+            }, { passive: false });
 
             scene = new THREE.Scene();
             camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 3000);
             camera.position.copy(INITIAL_STATE.cameraPos);
 
-            renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
+            try {
+                renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
+            } catch (e) {
+                showFallback("Your browser or device could not initialise WebGL, so the 3D view is unavailable. The dashboard and charts still work fully.");
+                masterUpdate();
+                return;
+            }
             renderer.setSize(window.innerWidth, window.innerHeight);
-            renderer.setPixelRatio(window.devicePixelRatio);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // cap dpr at 2
             dom.webglContainer.appendChild(renderer.domElement);
 
             controls = new OrbitControls(camera, renderer.domElement);
             controls.enableDamping = true;
             controls.dampingFactor = 0.1;
-            controls.target.set(0, 2.5, 0);
+            controls.target.copy(INITIAL_STATE.cameraTarget);
             controls.minDistance = 10;
             controls.maxDistance = 100;
             controls.enablePan = true;
@@ -893,90 +922,29 @@
             composer = new EffectComposer(renderer);
             composer.addPass(new RenderPass(scene, camera));
             composer.addPass(new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.2, 0.5, 0.85));
-            composer.addPass(new FilmPass(0.15, 0.025, 648, false));
+            composer.addPass(new FilmPass(0.2, false)); // (intensity, grayscale)
 
             createSceneObjects();
 
-            dom.webglContainer.addEventListener('mousedown', (event) => {
-                if (event.button === 0) {
-                    isDragging = true;
-                    dom.webglContainer.classList.add('dragging');
-                    previousMousePosition = {
-                        x: event.clientX / window.innerWidth * 2 - 1,
-                        y: -(event.clientY / window.innerHeight * 2 - 1)
-                    };
-                    controls.enabled = false;
-                }
-            });
-
-            dom.webglContainer.addEventListener('mousemove', rotateCylinder);
-
-            dom.webglContainer.addEventListener('mouseup', () => {
-                isDragging = false;
-                dom.webglContainer.classList.remove('dragging');
-                controls.enabled = true;
-            });
-
-            dom.webglContainer.addEventListener('mouseleave', () => {
-                isDragging = false;
-                dom.webglContainer.classList.remove('dragging');
-                controls.enabled = true;
-            });
-
-            dom.webglContainer.addEventListener('touchstart', (event) => {
-                if (event.touches.length === 1) {
-                    isDragging = true;
-                    dom.webglContainer.classList.add('dragging');
-                    previousMousePosition = {
-                        x: event.touches[0].clientX / window.innerWidth * 2 - 1,
-                        y: -(event.touches[0].clientY / window.innerHeight * 2 - 1)
-                    };
-                    controls.enabled = false;
-                }
-            });
-
-            dom.webglContainer.addEventListener('touchmove', (event) => {
-                if (isDragging && event.touches.length === 1) {
-                    event.preventDefault();
-                    rotateCylinder({ clientX: event.touches[0].clientX, clientY: event.touches[0].clientY });
-                }
-            });
-
-            dom.webglContainer.addEventListener('touchend', () => {
-                isDragging = false;
-                dom.webglContainer.classList.remove('dragging');
-                controls.enabled = true;
-            });
+            dom.webglContainer.addEventListener('pointerdown', () => { dom.webglContainer.style.cursor = 'grabbing'; });
+            window.addEventListener('pointerup', () => { dom.webglContainer.style.cursor = 'grab'; });
 
             dom.pfSlider.addEventListener("input", masterUpdate);
             dom.pfTypeToggle.addEventListener("change", masterUpdate);
 
             const handlePreset = (pf, isCapacitive) => {
-                gsap.to(dom.pfSlider, { value: pf, duration: 0.7, ease: "power2.inOut", onUpdate: masterUpdate });
                 dom.pfTypeToggle.checked = isCapacitive;
-                masterUpdate();
+                gsap.to(dom.pfSlider, { value: pf, duration: 0.7, ease: "power2.inOut", onUpdate: masterUpdate, onComplete: masterUpdate });
             };
 
+            // resets the view + charts, keeps the PF
             dom.resetViewBtn.addEventListener("click", () => {
-                controls.reset();
-                gsap.to(camera.position, { ...INITIAL_STATE.cameraPos, duration: 1, ease: "power2.inOut" });
-                cylinderGroup.rotation.set(0, 0, 0);
-                rotationVelocity = { x: 0, y: 0 };
-                handlePreset(INITIAL_STATE.pf, INITIAL_STATE.isCapacitive);
-
+                gsap.to(camera.position, { ...INITIAL_STATE.cameraPos, duration: 1, ease: "power2.inOut", onUpdate: () => controls.update() });
+                gsap.to(controls.target, { x: INITIAL_STATE.cameraTarget.x, y: INITIAL_STATE.cameraTarget.y, z: INITIAL_STATE.cameraTarget.z, duration: 1, ease: "power2.inOut" });
                 triangleZoom = 1.0;
                 waveformZoom = 1.0;
-                chartOffsets.triangle.x = 0;
-                chartOffsets.triangle.y = 0;
-                chartOffsets.waveform.x = 0;
-                chartOffsets.waveform.y = 0;
-
-                // Redraw with reset transforms
-                const draggableTriangle = Draggable.get(dom.triangleCanvas);
-                const draggableWaveform = Draggable.get(dom.waveformCanvas);
-                if (draggableTriangle) gsap.set(dom.triangleCanvas, {x:0, y:0});
-                if (draggableWaveform) gsap.set(dom.waveformCanvas, {x:0, y:0});
-
+                chartOffsets.triangle = { x: 0, y: 0 };
+                chartOffsets.waveform = { x: 0, y: 0 };
                 drawCharts();
             });
 
@@ -1008,18 +976,30 @@
                 if (view === 'vi') {
                     dom.waveformCaption.textContent = "This shows Voltage (V) and Current (I). Their misalignment (phase shift) creates reactive power.";
                 } else {
-                    dom.waveformCaption.textContent = "Active Power (green) always delivers energy. Reactive Power (orange/purple) averages to zero, doing no net work.";
+                    dom.waveformCaption.textContent = "Active Power (blue) always delivers energy. Reactive Power (orange/purple) averages to zero, doing no net work.";
                 }
 
                 drawCharts();
-            };
+            }
             dom.viewVi.addEventListener('click', () => setChartView('vi'));
             dom.viewPq.addEventListener('click', () => setChartView('pq'));
+
+            const hideHint = () => {
+                if (!dom.hintToast) return;
+                dom.hintToast.classList.remove('visible');
+                dom.hintToast.style.pointerEvents = 'none';
+            };
+            if (dom.hintToast) {
+                requestAnimationFrame(() => dom.hintToast.classList.add('visible'));
+                if (dom.hintDismiss) dom.hintDismiss.addEventListener('click', hideHint);
+                setTimeout(hideHint, 8000);
+            }
 
             window.addEventListener("resize", () => {
                 camera.aspect = window.innerWidth / window.innerHeight;
                 camera.updateProjectionMatrix();
                 renderer.setSize(window.innerWidth, window.innerHeight);
+                renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
                 composer.setSize(window.innerWidth, window.innerHeight);
                 setupCanvases();
                 masterUpdate();
