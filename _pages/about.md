@@ -1,4 +1,5 @@
 ---
+zoom: true
 layout: about
 title: about
 permalink: /

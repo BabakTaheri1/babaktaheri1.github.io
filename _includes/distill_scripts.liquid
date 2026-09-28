@@ -138,7 +138,7 @@
   <script src="{{ '/assets/js/tooltips-setup.js' | relative_url | bust_file_cache }}"></script>
 {% endif %}
 
-{% if site.enable_medium_zoom %}
+{% if site.enable_medium_zoom and page.zoom %}
   <!-- Medium Zoom JS -->
   <script
     defer
@@ -175,7 +175,7 @@
 
 <!-- Removed Badges -->
 
-{% if site.enable_math %}
+{% if site.enable_math and page.math %}
   <!-- MathJax -->
   <script
     defer

@@ -1,6 +1,7 @@
 ---
 layout: page
-title: projects
+math: true
+title: Interactive Demos
 permalink: /projects/
 description: Some fun animations.
 nav: true

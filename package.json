@@ -1,6 +1,12 @@
 {
   "devDependencies": {
+    "@axe-core/playwright": "^4.13.0",
     "@shopify/prettier-plugin-liquid": "^1.4.0",
+    "playwright": "^1.63.0",
     "prettier": "^3.1.1"
+  },
+  "scripts": {
+    "check:a11y": "node scripts/check-accessibility.mjs",
+    "measure:scripts": "node scripts/measure-scripts.cjs"
   }
 }

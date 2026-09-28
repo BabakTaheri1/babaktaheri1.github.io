@@ -1,4 +1,5 @@
 ---
+zoom: true
 layout: page
 permalink: /publications/
 title: publications

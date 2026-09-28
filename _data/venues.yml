@@ -1,4 +1,3 @@
-
 "arXiv":
   url: https://arxiv.org/
   color: "#b31b1b"
@@ -14,10 +13,12 @@
 "EPSR (PSCC)":
   url: https://www.sciencedirect.com/journal/electric-power-systems-research
   color: "#f7941d"
+  text_color: "#172b35"
 
 "EPSR":
   url: https://www.sciencedirect.com/journal/electric-power-systems-research
   color: "#f7941d"
+  text_color: "#172b35"
 
 "IET GTD":
   url: https://ietresearch.onlinelibrary.wiley.com/journal/17518687
@@ -26,10 +27,12 @@
 "IEEE TPD":
   url: https://ieeexplore.ieee.org/xpl/RecentIssue.jsp?punumber=62
   color: "#4b9be2"
+  text_color: "#172b35"
 
 "IEEE Access":
   url: https://ieeexplore.ieee.org/xpl/RecentIssue.jsp?punumber=6287639
   color: "#00a19a"
+  text_color: "#172b35"
 
 "IET SG":
   url: https://ietresearch.onlinelibrary.wiley.com/journal/25152947

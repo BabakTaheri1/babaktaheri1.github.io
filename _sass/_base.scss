@@ -700,7 +700,7 @@ footer.sticky-bottom {
   }
 
   h2.category {
-    color: var(--global-divider-color);
+    color: var(--global-text-color-light);
     border-bottom: 1px solid var(--global-divider-color);
     padding-top: 0.5rem;
     margin-top: 2rem;
@@ -731,7 +731,7 @@ footer.sticky-bottom {
   }
 
   h2.bibliography {
-    color: var(--global-divider-color);
+    color: var(--global-text-color-light);
     border-top: 1px solid var(--global-divider-color);
     padding-top: 1rem;
     margin-top: 2rem;
@@ -771,10 +771,10 @@ footer.sticky-bottom {
           display: inline-block;
           background-color: var(--global-theme-color);
           margin-bottom: 0.5rem;
-          color: var(--global-card-bg-color) !important;
+          color: var(--venue-text-color, var(--global-card-bg-color)) !important;
 
           a {
-            color: white;
+            color: inherit;
 
             &:hover {
               text-decoration: none;
@@ -807,7 +807,11 @@ footer.sticky-bottom {
           font-style: normal;
         }
 
-        > span.more-authors {
+        > button.more-authors {
+          background: transparent;
+          border: 0;
+          padding: 0;
+          font: inherit;
           color: var(--global-text-color-light);
           border-bottom: 1px dashed var(--global-text-color-light);
           cursor: pointer;
@@ -820,7 +824,7 @@ footer.sticky-bottom {
       }
 
       .links {
-        a.btn {
+        .btn {
           color: var(--global-text-color);
           border: 1px solid var(--global-text-color);
           padding-left: 1rem;
@@ -834,7 +838,7 @@ footer.sticky-bottom {
             border-color: var(--global-theme-color);
           }
         }
-        a.award.btn {
+        .award.btn {
           border-color: var(--global-highlight-color);
         }
       }
@@ -855,6 +859,7 @@ footer.sticky-bottom {
       }
 
       .hidden {
+        display: none;
         font-size: 0.875rem;
         max-height: 0px;
         overflow: hidden;
@@ -878,6 +883,7 @@ footer.sticky-bottom {
       }
 
       .hidden.open {
+        display: block;
         max-height: 100em;
         transition-property: 0.15s ease;
         -moz-transition: 0.15s ease;
@@ -1425,4 +1431,21 @@ figure.cover {
   a.cover-link:hover {
     color: #23212d !important;
   }
+}
+
+// Distinguish prose links without relying on color alone.
+.post p a,
+.news td a,
+footer a {
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+
+.projects .card .card-text {
+  color: var(--global-text-color);
+}
+
+:focus-visible {
+  outline: 2px solid var(--global-theme-color);
+  outline-offset: 3px;
 }

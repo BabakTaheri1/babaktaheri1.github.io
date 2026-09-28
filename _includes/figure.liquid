@@ -62,9 +62,7 @@
           {% endif %}
         "
       {% endif %}
-      {% if include.alt %}
-        alt="{{ include.alt }}"
-      {% endif %}
+      alt="{{ include.alt | default: '' | escape }}"
       {% if include.title %}
         title="{{ include.title }}"
       {% endif %}
