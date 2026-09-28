@@ -1,9 +1,9 @@
 ---
 layout: page
-title: code
+title: Demos
 permalink: /code/
-nav: false
-nav_order: 3
+nav: true
+nav_order: 3.5
 ---
 
 I enjoy animating basic concepts and here you can find some of them.
