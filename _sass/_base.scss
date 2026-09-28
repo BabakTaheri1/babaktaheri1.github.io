@@ -747,6 +747,21 @@ footer.sticky-bottom {
       margin-bottom: 1rem;
 
       .preview {
+        display: block;
+        width: 160px;
+        max-width: 100%;
+        height: auto;
+        aspect-ratio: 4 / 3;
+        object-fit: contain;
+        padding: 0.25rem;
+        background-color: white;
+        border: 1px solid var(--global-divider-color);
+      }
+
+      .publication-summary {
+        margin: 0.5rem 0;
+        line-height: 1.5;
+        color: var(--global-text-color);
       }
 
       .abbr {
