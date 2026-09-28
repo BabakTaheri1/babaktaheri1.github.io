@@ -3,11 +3,11 @@
   color: "#b31b1b"
 
 "IEEE TSG":
-  url: https://ieeexplore.ieee.org/xpl/RecentIssue.jsp?punumber=5165411
+  url: https://ieee-pes.org/publications/transactions-on-smart-grid/
   color: "#00629b"
 
 "IEEE TPWRS":
-  url: https://ieeexplore.ieee.org/xpl/RecentIssue.jsp?punumber=61
+  url: https://ieee-pes.org/publications/transactions-on-power-systems/
   color: "#0073b0"
 
 "EPSR (PSCC)":
@@ -21,16 +21,16 @@
   text_color: "#172b35"
 
 "IET GTD":
-  url: https://ietresearch.onlinelibrary.wiley.com/journal/17518687
+  url: https://ietresearch.onlinelibrary.wiley.com/journal/17518695
   color: "#6a0dad"
 
 "IEEE TPD":
-  url: https://ieeexplore.ieee.org/xpl/RecentIssue.jsp?punumber=62
+  url: https://ieee-pes.org/publications/transactions-on-power-delivery/
   color: "#4b9be2"
   text_color: "#172b35"
 
 "IEEE Access":
-  url: https://ieeexplore.ieee.org/xpl/RecentIssue.jsp?punumber=6287639
+  url: https://ieeeaccess.ieee.org/
   color: "#00a19a"
   text_color: "#172b35"
 
@@ -39,11 +39,11 @@
   color: "#800080"
 
 "TPEC":
-  url: https://ieeexplore.ieee.org/xpl/conhome/1800627/all-proceedings
+  url: https://tpec.engr.tamu.edu/tpec-2024.html
   color: "#008080"
 
 "ACC":
-  url: https://ieeexplore.ieee.org/xpl/conhome/1000010/all-proceedings
+  url: https://a2c2.org/events/acc
   color: "#555555"
 
 "SGC":
