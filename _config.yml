@@ -135,13 +135,12 @@ kramdown:
       start_line: 1
 
 # Includes & excludes
-include: ["_pages"]
+include: ["_pages", "_scripts"]
 exclude:
   - node_modules/
   - docs/
   - reports/
   - scripts/
-  - _scripts/
   - _posts/
   - _books/
   - _pages/blog.md

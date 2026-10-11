@@ -1,5 +1,15 @@
 require 'json'
 require 'nokogiri'
+require 'yaml'
+
+config = YAML.load_file('_config.yml')
+if config['enable_google_analytics']
+  analytics_path = '/assets/js/google-analytics-setup.js'
+  analytics_file = File.join('_site', analytics_path.delete_prefix('/'))
+  raise 'Google Analytics initialization script missing from build' unless File.file?(analytics_file)
+  analytics = File.read(analytics_file)
+  raise 'Google Analytics tracking ID missing or unresolved' unless analytics.include?(config.fetch('google_analytics')) && !analytics.include?('{{')
+end
 
 pages = {
   '' => [false, true],
@@ -13,6 +23,10 @@ pages.each do |path, (math, zoom)|
   file = File.join('_site', path, 'index.html')
   doc = Nokogiri::HTML(File.read(file))
   scripts = doc.css('script[src]').map { |s| s['src'] }
+  if config['enable_google_analytics']
+    raise "#{path}: Google Analytics loader missing" unless scripts.include?("https://www.googletagmanager.com/gtag/js?id=#{config.fetch('google_analytics')}")
+    raise "#{path}: Google Analytics initialization missing" unless scripts.include?("#{config['baseurl']}#{analytics_path}")
+  end
   raise "#{path}: incorrect MathJax loading" unless scripts.any? { |s| s.include?('tex-mml-chtml') } == math
   raise "#{path}: incorrect zoom loading" unless scripts.any? { |s| s.include?('medium-zoom') } == zoom
   schema = doc.at_css('script[type="application/ld+json"]')
