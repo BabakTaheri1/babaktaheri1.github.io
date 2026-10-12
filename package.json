@@ -6,6 +6,7 @@
     "prettier": "^3.1.1"
   },
   "scripts": {
+    "check:demos": "node scripts/check-power-models.cjs",
     "check:a11y": "node scripts/check-accessibility.mjs",
     "measure:scripts": "node scripts/measure-scripts.cjs"
   }

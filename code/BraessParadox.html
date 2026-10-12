@@ -1,978 +1,1879 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Braess Paradox Network Lab</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-<style>
-:root{
-    --bg:#050816;
-    --bg2:#0b1020;
-    --card:rgba(15,23,42,.76);
-    --card2:rgba(15,23,42,.52);
-    --line:rgba(148,163,184,.22);
-    --text:#e5e7eb;
-    --muted:#94a3b8;
-    --blue:#60a5fa;
-    --sky:#38bdf8;
-    --green:#34d399;
-    --amber:#f59e0b;
-    --orange:#fb923c;
-    --red:#fb7185;
-    --purple:#a78bfa;
-    --white:#f8fafc;
-}
-*{box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{
-    margin:0;
-    min-height:100vh;
-    font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-    color:var(--text);
-    background:
-        radial-gradient(circle at 9% 0%,rgba(56,189,248,.25),transparent 34rem),
-        radial-gradient(circle at 91% 6%,rgba(167,139,250,.22),transparent 34rem),
-        radial-gradient(circle at 50% 105%,rgba(52,211,153,.14),transparent 36rem),
-        linear-gradient(135deg,var(--bg),var(--bg2));
-    overflow-x:hidden;
-}
-button,input{font:inherit}
-.shell{
-    width:min(1840px,100%);
-    margin:0 auto;
-    padding:clamp(14px,2vw,30px);
-}
-.glass{
-    background:linear-gradient(180deg,var(--card),var(--card2));
-    border:1px solid var(--line);
-    box-shadow:0 28px 90px rgba(0,0,0,.34),inset 0 1px 0 rgba(255,255,255,.04);
-    backdrop-filter:blur(18px);
-}
-.hero{
-    border-radius:34px;
-    padding:clamp(22px,4vw,44px);
-    display:grid;
-    grid-template-columns:minmax(0,1fr) auto;
-    align-items:center;
-    gap:24px;
-    margin-bottom:18px;
-}
-.eyebrow{
-    display:flex;
-    align-items:center;
-    gap:10px;
-    color:#bae6fd;
-    text-transform:uppercase;
-    letter-spacing:.24em;
-    font-size:12px;
-    font-weight:900;
-    margin-bottom:10px;
-}
-.dot{
-    width:10px;
-    height:10px;
-    border-radius:999px;
-    background:var(--green);
-    box-shadow:0 0 28px rgba(52,211,153,.9);
-}
-h1{
-    margin:0;
-    color:white;
-    font-size:clamp(34px,5.2vw,82px);
-    line-height:.92;
-    letter-spacing:-.065em;
-    font-weight:950;
-}
-.subtitle{
-    margin:16px 0 0;
-    max-width:930px;
-    color:#cbd5e1;
-    font-size:clamp(15px,1.4vw,18px);
-    line-height:1.58;
-}
-.heroStats{
-    display:grid;
-    grid-template-columns:repeat(2,minmax(150px,1fr));
-    gap:12px;
-    min-width:min(460px,100%);
-}
-.stat{
-    border:1px solid rgba(148,163,184,.18);
-    background:rgba(2,6,23,.34);
-    border-radius:26px;
-    padding:18px;
-    overflow:hidden;
-    position:relative;
-}
-.stat:before{
-    content:"";
-    position:absolute;
-    inset:0;
-    background:linear-gradient(135deg,rgba(255,255,255,.08),transparent 45%);
-    pointer-events:none;
-}
-.statLabel{
-    margin:0;
-    color:#94a3b8;
-    text-transform:uppercase;
-    letter-spacing:.13em;
-    font-size:11px;
-    font-weight:900;
-}
-.statValue{
-    display:flex;
-    align-items:flex-end;
-    gap:7px;
-    margin-top:9px;
-}
-.statValue strong{
-    font-size:clamp(28px,3vw,44px);
-    line-height:.92;
-    color:white;
-    letter-spacing:-.055em;
-}
-.statValue span{
-    color:#94a3b8;
-    font-weight:900;
-    font-size:13px;
-    margin-bottom:2px;
-}
-.tabs{
-    display:flex;
-    gap:10px;
-    flex-wrap:wrap;
-    margin:0 0 18px;
-}
-.tab{
-    border:1px solid rgba(148,163,184,.24);
-    background:rgba(15,23,42,.66);
-    color:#e2e8f0;
-    border-radius:999px;
-    padding:12px 16px;
-    font-size:13px;
-    font-weight:900;
-    cursor:pointer;
-    transition:transform .18s ease,background .18s ease,border-color .18s ease;
-}
-.tab:hover{transform:translateY(-1px);border-color:rgba(125,211,252,.65)}
-.tab.active{background:linear-gradient(135deg,#0ea5e9,#6366f1);border-color:rgba(125,211,252,.75)}
-.section{
-    display:none;
-    grid-template-columns:minmax(0,1.35fr) minmax(400px,.7fr);
-    gap:18px;
-    align-items:stretch;
-}
-.section.active{display:grid}
-.board{
-    border-radius:34px;
-    padding:18px;
-    min-width:0;
-}
-.panel{
-    border-radius:34px;
-    padding:18px;
-    min-width:0;
-    display:flex;
-    flex-direction:column;
-    gap:14px;
-}
-.gridTwo{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:16px;
-}
-.canvasCard{
-    border:1px solid rgba(148,163,184,.17);
-    background:rgba(2,6,23,.34);
-    border-radius:28px;
-    padding:16px;
-    min-width:0;
-    display:flex;
-    flex-direction:column;
-    gap:12px;
-}
-.cardTop{
-    display:flex;
-    justify-content:space-between;
-    gap:12px;
-    align-items:flex-start;
-}
-.cardTitle{
-    margin:0;
-    color:white;
-    font-size:20px;
-    letter-spacing:-.025em;
-    font-weight:900;
-}
-.cardSub{
-    margin:4px 0 0;
-    color:#94a3b8;
-    font-size:13px;
-    line-height:1.45;
-}
-.badge{
-    display:inline-flex;
-    align-items:center;
-    gap:7px;
-    border:1px solid rgba(148,163,184,.22);
-    border-radius:999px;
-    padding:8px 10px;
-    background:rgba(15,23,42,.66);
-    color:#cbd5e1;
-    font-size:12px;
-    font-weight:900;
-    white-space:nowrap;
-}
-.canvasBox{
-    height:430px;
-    border-radius:24px;
-    overflow:hidden;
-    background:radial-gradient(circle at 50% 30%,rgba(30,41,59,.8),rgba(2,6,23,.86));
-    border:1px solid rgba(148,163,184,.16);
-}
-.canvasBox.small{height:380px}
-canvas{
-    width:100%;
-    height:100%;
-    display:block;
-}
-.miniMetrics{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:10px;
-}
-.mini{
-    border:1px solid rgba(148,163,184,.14);
-    background:rgba(15,23,42,.56);
-    border-radius:18px;
-    padding:12px;
-}
-.mini p{margin:0;color:#94a3b8;font-size:11px;text-transform:uppercase;letter-spacing:.12em;font-weight:900}
-.mini strong{display:block;color:white;font-size:20px;letter-spacing:-.04em;margin-top:6px}
-.box{
-    border:1px solid rgba(148,163,184,.18);
-    background:rgba(2,6,23,.34);
-    border-radius:26px;
-    padding:18px;
-}
-.boxTitle{
-    margin:0 0 14px;
-    color:white;
-    font-size:19px;
-    font-weight:900;
-    letter-spacing:-.025em;
-}
-.control{
-    margin-bottom:18px;
-}
-.control:last-child{margin-bottom:0}
-.controlHead{
-    display:flex;
-    justify-content:space-between;
-    gap:14px;
-    align-items:center;
-    margin-bottom:9px;
-}
-.controlHead label{
-    color:#e2e8f0;
-    font-weight:850;
-    font-size:14px;
-}
-.readout{
-    color:#bae6fd;
-    font-weight:950;
-    font-size:13px;
-    white-space:nowrap;
-}
-.slider{
-    width:100%;
-    appearance:none;
-    height:10px;
-    border-radius:999px;
-    outline:none;
-    background:#334155;
-}
-.slider::-webkit-slider-thumb{
-    appearance:none;
-    width:24px;
-    height:24px;
-    border-radius:50%;
-    background:white;
-    border:4px solid var(--sky);
-    box-shadow:0 0 0 8px rgba(56,189,248,.14);
-    cursor:pointer;
-}
-.slider::-moz-range-thumb{
-    width:24px;
-    height:24px;
-    border-radius:50%;
-    background:white;
-    border:4px solid var(--sky);
-    box-shadow:0 0 0 8px rgba(56,189,248,.14);
-    cursor:pointer;
-}
-.scale{
-    display:flex;
-    justify-content:space-between;
-    color:#64748b;
-    text-transform:uppercase;
-    letter-spacing:.1em;
-    font-size:10px;
-    font-weight:900;
-    margin-top:8px;
-}
-.noteList{
-    display:grid;
-    gap:10px;
-    color:#cbd5e1;
-    line-height:1.5;
-    font-size:14px;
-}
-.note{
-    display:grid;
-    grid-template-columns:9px 1fr;
-    gap:10px;
-}
-.note:before{
-    content:"";
-    width:8px;
-    height:8px;
-    border-radius:999px;
-    background:var(--sky);
-    box-shadow:0 0 18px rgba(56,189,248,.8);
-    margin-top:7px;
-}
-.formula{
-    display:grid;
-    gap:9px;
-    color:#e2e8f0;
-    font-size:13px;
-    line-height:1.45;
-}
-.formula div{
-    border:1px solid rgba(148,163,184,.14);
-    background:rgba(15,23,42,.58);
-    border-radius:16px;
-    padding:11px 13px;
-    overflow:auto;
-    white-space:nowrap;
-}
-.buttons{
-    display:flex;
-    gap:10px;
-    flex-wrap:wrap;
-}
-.btn{
-    border:1px solid rgba(148,163,184,.24);
-    background:rgba(30,41,59,.7);
-    color:#e2e8f0;
-    border-radius:999px;
-    padding:10px 13px;
-    font-size:12px;
-    font-weight:900;
-    cursor:pointer;
-}
-.btn:hover{border-color:rgba(125,211,252,.65)}
-.btn.primary{background:linear-gradient(135deg,#0ea5e9,#6366f1);border-color:rgba(125,211,252,.75)}
-.statusBar{
-    border-radius:28px;
-    padding:18px;
-    display:grid;
-    gap:8px;
-    background:linear-gradient(135deg,rgba(14,165,233,.17),rgba(99,102,241,.14));
-    border:1px solid rgba(125,211,252,.22);
-}
-.statusBar strong{
-    color:white;
-    font-size:18px;
-    letter-spacing:-.02em;
-}
-.statusBar span{
-    color:#cbd5e1;
-    line-height:1.48;
-    font-size:14px;
-}
-@media(max-width:1280px){
-    .hero{grid-template-columns:1fr}
-    .section{grid-template-columns:1fr}
-}
-@media(max-width:900px){
-    .gridTwo{grid-template-columns:1fr}
-    .heroStats{grid-template-columns:1fr 1fr;min-width:0}
-    .canvasBox{height:390px}
-}
-@media(max-width:560px){
-    .heroStats,.miniMetrics{grid-template-columns:1fr}
-    .tabs{position:sticky;top:8px;z-index:10}
-    .canvasBox,.canvasBox.small{height:360px}
-}
-</style>
-</head>
-<body>
-<div class="shell">
-    <header class="glass hero">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Braess Paradox Network Lab</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <style>
+      :root {
+        --bg: #050816;
+        --bg2: #0b1020;
+        --card: rgba(15, 23, 42, 0.76);
+        --card2: rgba(15, 23, 42, 0.52);
+        --line: rgba(148, 163, 184, 0.22);
+        --text: #e5e7eb;
+        --muted: #94a3b8;
+        --blue: #60a5fa;
+        --sky: #38bdf8;
+        --green: #34d399;
+        --amber: #f59e0b;
+        --orange: #fb923c;
+        --red: #fb7185;
+        --purple: #a78bfa;
+        --white: #f8fafc;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family:
+          Inter,
+          system-ui,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          sans-serif;
+        color: var(--text);
+        background: radial-gradient(circle at 9% 0%, rgba(56, 189, 248, 0.25), transparent 34rem),
+          radial-gradient(circle at 91% 6%, rgba(167, 139, 250, 0.22), transparent 34rem),
+          radial-gradient(circle at 50% 105%, rgba(52, 211, 153, 0.14), transparent 36rem), linear-gradient(135deg, var(--bg), var(--bg2));
+        overflow-x: hidden;
+      }
+      button,
+      input {
+        font: inherit;
+      }
+      .shell {
+        width: min(1840px, 100%);
+        margin: 0 auto;
+        padding: clamp(14px, 2vw, 30px);
+      }
+      .glass {
+        background: linear-gradient(180deg, var(--card), var(--card2));
+        border: 1px solid var(--line);
+        box-shadow:
+          0 28px 90px rgba(0, 0, 0, 0.34),
+          inset 0 1px 0 rgba(255, 255, 255, 0.04);
+        backdrop-filter: blur(18px);
+      }
+      .hero {
+        border-radius: 34px;
+        padding: clamp(22px, 4vw, 44px);
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        align-items: center;
+        gap: 24px;
+        margin-bottom: 18px;
+      }
+      .eyebrow {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: #bae6fd;
+        text-transform: uppercase;
+        letter-spacing: 0.24em;
+        font-size: 12px;
+        font-weight: 900;
+        margin-bottom: 10px;
+      }
+      .dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 999px;
+        background: var(--green);
+        box-shadow: 0 0 28px rgba(52, 211, 153, 0.9);
+      }
+      h1 {
+        margin: 0;
+        color: white;
+        font-size: clamp(34px, 5.2vw, 82px);
+        line-height: 0.92;
+        letter-spacing: -0.065em;
+        font-weight: 950;
+      }
+      .subtitle {
+        margin: 16px 0 0;
+        max-width: 930px;
+        color: #cbd5e1;
+        font-size: clamp(15px, 1.4vw, 18px);
+        line-height: 1.58;
+      }
+      .heroStats {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(150px, 1fr));
+        gap: 12px;
+        min-width: min(460px, 100%);
+      }
+      .stat {
+        border: 1px solid rgba(148, 163, 184, 0.18);
+        background: rgba(2, 6, 23, 0.34);
+        border-radius: 26px;
+        padding: 18px;
+        overflow: hidden;
+        position: relative;
+      }
+      .stat:before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), transparent 45%);
+        pointer-events: none;
+      }
+      .statLabel {
+        margin: 0;
+        color: #94a3b8;
+        text-transform: uppercase;
+        letter-spacing: 0.13em;
+        font-size: 11px;
+        font-weight: 900;
+      }
+      .statValue {
+        display: flex;
+        align-items: flex-end;
+        gap: 7px;
+        margin-top: 9px;
+      }
+      .statValue strong {
+        font-size: clamp(28px, 3vw, 44px);
+        line-height: 0.92;
+        color: white;
+        letter-spacing: -0.055em;
+      }
+      .statValue span {
+        color: #94a3b8;
+        font-weight: 900;
+        font-size: 13px;
+        margin-bottom: 2px;
+      }
+      .tabs {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin: 0 0 18px;
+      }
+      .tab {
+        border: 1px solid rgba(148, 163, 184, 0.24);
+        background: rgba(15, 23, 42, 0.66);
+        color: #e2e8f0;
+        border-radius: 999px;
+        padding: 12px 16px;
+        font-size: 13px;
+        font-weight: 900;
+        cursor: pointer;
+        transition:
+          transform 0.18s ease,
+          background 0.18s ease,
+          border-color 0.18s ease;
+      }
+      .tab:hover {
+        transform: translateY(-1px);
+        border-color: rgba(125, 211, 252, 0.65);
+      }
+      .tab.active {
+        background: linear-gradient(135deg, #0ea5e9, #6366f1);
+        border-color: rgba(125, 211, 252, 0.75);
+      }
+      .section {
+        display: none;
+        grid-template-columns: minmax(0, 1.35fr) minmax(400px, 0.7fr);
+        gap: 18px;
+        align-items: stretch;
+      }
+      .section.active {
+        display: grid;
+      }
+      .board {
+        border-radius: 34px;
+        padding: 18px;
+        min-width: 0;
+      }
+      .panel {
+        border-radius: 34px;
+        padding: 18px;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+      }
+      .gridTwo {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+      }
+      .canvasCard {
+        border: 1px solid rgba(148, 163, 184, 0.17);
+        background: rgba(2, 6, 23, 0.34);
+        border-radius: 28px;
+        padding: 16px;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+      .cardTop {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        align-items: flex-start;
+      }
+      .cardTitle {
+        margin: 0;
+        color: white;
+        font-size: 20px;
+        letter-spacing: -0.025em;
+        font-weight: 900;
+      }
+      .cardSub {
+        margin: 4px 0 0;
+        color: #94a3b8;
+        font-size: 13px;
+        line-height: 1.45;
+      }
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        border: 1px solid rgba(148, 163, 184, 0.22);
+        border-radius: 999px;
+        padding: 8px 10px;
+        background: rgba(15, 23, 42, 0.66);
+        color: #cbd5e1;
+        font-size: 12px;
+        font-weight: 900;
+        white-space: nowrap;
+      }
+      .canvasBox {
+        height: 430px;
+        border-radius: 24px;
+        overflow: hidden;
+        background: radial-gradient(circle at 50% 30%, rgba(30, 41, 59, 0.8), rgba(2, 6, 23, 0.86));
+        border: 1px solid rgba(148, 163, 184, 0.16);
+      }
+      .canvasBox.small {
+        height: 380px;
+      }
+      canvas {
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+      .miniMetrics {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+      }
+      .mini {
+        border: 1px solid rgba(148, 163, 184, 0.14);
+        background: rgba(15, 23, 42, 0.56);
+        border-radius: 18px;
+        padding: 12px;
+      }
+      .mini p {
+        margin: 0;
+        color: #94a3b8;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        font-weight: 900;
+      }
+      .mini strong {
+        display: block;
+        color: white;
+        font-size: 20px;
+        letter-spacing: -0.04em;
+        margin-top: 6px;
+      }
+      .box {
+        border: 1px solid rgba(148, 163, 184, 0.18);
+        background: rgba(2, 6, 23, 0.34);
+        border-radius: 26px;
+        padding: 18px;
+      }
+      .boxTitle {
+        margin: 0 0 14px;
+        color: white;
+        font-size: 19px;
+        font-weight: 900;
+        letter-spacing: -0.025em;
+      }
+      .control {
+        margin-bottom: 18px;
+      }
+      .control:last-child {
+        margin-bottom: 0;
+      }
+      .controlHead {
+        display: flex;
+        justify-content: space-between;
+        gap: 14px;
+        align-items: center;
+        margin-bottom: 9px;
+      }
+      .controlHead label {
+        color: #e2e8f0;
+        font-weight: 850;
+        font-size: 14px;
+      }
+      .readout {
+        color: #bae6fd;
+        font-weight: 950;
+        font-size: 13px;
+        white-space: nowrap;
+      }
+      .slider {
+        width: 100%;
+        appearance: none;
+        height: 10px;
+        border-radius: 999px;
+        outline: none;
+        background: #334155;
+      }
+      .slider::-webkit-slider-thumb {
+        appearance: none;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background: white;
+        border: 4px solid var(--sky);
+        box-shadow: 0 0 0 8px rgba(56, 189, 248, 0.14);
+        cursor: pointer;
+      }
+      .slider::-moz-range-thumb {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background: white;
+        border: 4px solid var(--sky);
+        box-shadow: 0 0 0 8px rgba(56, 189, 248, 0.14);
+        cursor: pointer;
+      }
+      .scale {
+        display: flex;
+        justify-content: space-between;
+        color: #64748b;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        font-size: 10px;
+        font-weight: 900;
+        margin-top: 8px;
+      }
+      .noteList {
+        display: grid;
+        gap: 10px;
+        color: #cbd5e1;
+        line-height: 1.5;
+        font-size: 14px;
+      }
+      .note {
+        display: grid;
+        grid-template-columns: 9px 1fr;
+        gap: 10px;
+      }
+      .note:before {
+        content: "";
+        width: 8px;
+        height: 8px;
+        border-radius: 999px;
+        background: var(--sky);
+        box-shadow: 0 0 18px rgba(56, 189, 248, 0.8);
+        margin-top: 7px;
+      }
+      .formula {
+        display: grid;
+        gap: 9px;
+        color: #e2e8f0;
+        font-size: 13px;
+        line-height: 1.45;
+      }
+      .formula div {
+        border: 1px solid rgba(148, 163, 184, 0.14);
+        background: rgba(15, 23, 42, 0.58);
+        border-radius: 16px;
+        padding: 11px 13px;
+        overflow: auto;
+        white-space: nowrap;
+      }
+      .buttons {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+      .btn {
+        border: 1px solid rgba(148, 163, 184, 0.24);
+        background: rgba(30, 41, 59, 0.7);
+        color: #e2e8f0;
+        border-radius: 999px;
+        padding: 10px 13px;
+        font-size: 12px;
+        font-weight: 900;
+        cursor: pointer;
+      }
+      .btn:hover {
+        border-color: rgba(125, 211, 252, 0.65);
+      }
+      .btn.primary {
+        background: linear-gradient(135deg, #0ea5e9, #6366f1);
+        border-color: rgba(125, 211, 252, 0.75);
+      }
+      .statusBar {
+        border-radius: 28px;
+        padding: 18px;
+        display: grid;
+        gap: 8px;
+        background: linear-gradient(135deg, rgba(14, 165, 233, 0.17), rgba(99, 102, 241, 0.14));
+        border: 1px solid rgba(125, 211, 252, 0.22);
+      }
+      .statusBar strong {
+        color: white;
+        font-size: 18px;
+        letter-spacing: -0.02em;
+      }
+      .statusBar span {
+        color: #cbd5e1;
+        line-height: 1.48;
+        font-size: 14px;
+      }
+      @media (max-width: 1280px) {
+        .hero {
+          grid-template-columns: 1fr;
+        }
+        .section {
+          grid-template-columns: 1fr;
+        }
+      }
+      @media (max-width: 900px) {
+        .gridTwo {
+          grid-template-columns: 1fr;
+        }
+        .heroStats {
+          grid-template-columns: 1fr 1fr;
+          min-width: 0;
+        }
+        .canvasBox {
+          height: 390px;
+        }
+      }
+      @media (max-width: 560px) {
+        .heroStats,
+        .miniMetrics {
+          grid-template-columns: 1fr;
+        }
+        .tabs {
+          position: sticky;
+          top: 8px;
+          z-index: 10;
+        }
+        .canvasBox,
+        .canvasBox.small {
+          height: 360px;
+        }
+      }
+      .backLink {
+        display: inline-block;
+        color: #bae6fd;
+        margin-bottom: 16px;
+        text-decoration: none;
+        font-size: 14px;
+      }
+      .backLink:hover {
+        text-decoration: underline;
+      }
+      :focus-visible {
+        outline: 3px solid #7dd3fc;
+        outline-offset: 4px;
+      }
+      .section {
+        align-items: start;
+      }
+      .flowList {
+        margin: 0;
+        font-size: 12px;
+        line-height: 1.6;
+        color: #cbd5e1;
+      }
+      .flowList > div {
+        display: flex;
+        justify-content: space-between;
+        gap: 8px;
+        border-bottom: 1px solid rgba(148, 163, 184, 0.14);
+        padding: 5px 0;
+        flex-wrap: wrap;
+      }
+      .flowList dt {
+        font-weight: 600;
+      }
+      .flowList dd {
+        margin: 0;
+        font-variant-numeric: tabular-nums;
+      }
+      .flowList .overLimit {
+        color: #fda4af;
+      }
+      .formula div {
+        white-space: normal;
+      }
+      .modelDetails {
+        order: 2;
+      }
+      .modelDetails summary {
+        cursor: pointer;
+        margin-bottom: 0;
+      }
+      .modelDetails[open] summary {
+        margin-bottom: 12px;
+      }
+      #powerSection .panel {
+        order: -1;
+      }
+      @media (min-width: 1281px) {
+        #powerSection .panel {
+          order: 0;
+        }
+      }
+      @media (max-width: 560px) {
+        .heroStats {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+        .statValue {
+          flex-wrap: wrap;
+        }
+        .statValue strong {
+          font-size: 26px;
+        }
+        .miniMetrics {
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+        .mini {
+          padding: 10px;
+        }
+        .mini strong {
+          font-size: 17px;
+        }
+        .board,
+        .canvasCard {
+          padding: 12px;
+        }
+        .tabs {
+          position: static;
+          flex-wrap: wrap;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="shell">
+      <a class="backLink" href="/projects/">← All demos</a>
+      <header class="glass hero">
         <div>
-            <div class="eyebrow"><span class="dot"></span><span>Network equilibrium laboratory</span></div>
-            <h1>Braess Paradox</h1>
-            <p class="subtitle">A faster-looking connection can make the whole network worse. Explore the paradox in road traffic and in a small electric grid where a connected tie line can force costly redispatch.</p>
+          <div class="eyebrow"><span class="dot"></span><span>Network equilibrium laboratory</span></div>
+          <h1>Braess Paradox</h1>
+          <p class="subtitle">
+            An extra connection can make a network worse. On a road, drivers choose their own routes. In a grid, an operator chooses generation, but
+            the power flows still have to obey the network.
+          </p>
         </div>
         <div class="heroStats">
-            <div class="stat"><p class="statLabel">Traffic penalty</p><div class="statValue"><strong id="trafficPenaltyHero">+15</strong><span>min</span></div></div>
-            <div class="stat"><p class="statLabel">Grid savings from removal</p><div class="statValue"><strong id="gridSavingsHero">$9.1k</strong><span>/hr</span></div></div>
-            <div class="stat"><p class="statLabel">Equilibrium type</p><div class="statValue"><strong id="equilibriumHero">Worse</strong><span>after shortcut</span></div></div>
-            <div class="stat"><p class="statLabel">Grid status</p><div class="statValue"><strong id="gridStatusHero">Congested</strong><span>tie connected</span></div></div>
+          <div class="stat">
+            <p class="statLabel">Traffic penalty</p>
+            <div class="statValue"><strong id="trafficPenaltyHero">+15</strong><span>min</span></div>
+          </div>
+          <div class="stat">
+            <p class="statLabel">Grid savings from removal</p>
+            <div class="statValue"><strong id="gridSavingsHero">$9.1k</strong><span>/hr</span></div>
+          </div>
+          <div class="stat">
+            <p class="statLabel">Equilibrium type</p>
+            <div class="statValue"><strong id="equilibriumHero">Worse</strong><span>after shortcut</span></div>
+          </div>
+          <div class="stat">
+            <p class="statLabel">Grid status</p>
+            <div class="statValue"><strong id="gridStatusHero">Congested</strong><span>tie connected</span></div>
+          </div>
         </div>
-    </header>
+      </header>
 
-    <nav class="tabs" aria-label="Sections">
-        <button class="tab active" data-target="trafficSection">Traffic Network</button>
-        <button class="tab" data-target="powerSection">Power Grid</button>
-    </nav>
+      <nav class="tabs" aria-label="Sections">
+        <button class="tab active" data-target="trafficSection" aria-controls="trafficSection" aria-pressed="true">Traffic Network</button>
+        <button class="tab" data-target="powerSection" aria-controls="powerSection" aria-pressed="false">Power Grid</button>
+        <button class="btn" id="pauseAnimation" aria-pressed="false">Pause animation</button>
+      </nav>
 
-    <section id="trafficSection" class="section active">
+      <section id="trafficSection" class="section active">
         <div class="glass board">
-            <div class="gridTwo">
-                <article class="canvasCard">
-                    <div class="cardTop">
-                        <div><p class="cardTitle">Original network</p><p class="cardSub">Drivers split between two equal routes at equilibrium.</p></div>
-                        <span class="badge" id="trafficBeforeBadge">65 min</span>
-                    </div>
-                    <div class="canvasBox"><canvas id="trafficBeforeCanvas"></canvas></div>
-                    <div class="miniMetrics">
-                        <div class="mini"><p>Top route</p><strong id="beforeTopFlow">2000</strong></div>
-                        <div class="mini"><p>Bottom route</p><strong id="beforeBottomFlow">2000</strong></div>
-                        <div class="mini"><p>Travel time</p><strong id="beforeTime">65</strong></div>
-                    </div>
-                </article>
-                <article class="canvasCard">
-                    <div class="cardTop">
-                        <div><p class="cardTitle">Shortcut added</p><p class="cardSub">Individual choices shift the system into a worse equilibrium.</p></div>
-                        <span class="badge" id="trafficAfterBadge">80 min</span>
-                    </div>
-                    <div class="canvasBox"><canvas id="trafficAfterCanvas"></canvas></div>
-                    <div class="miniMetrics">
-                        <div class="mini"><p>Shortcut users</p><strong id="afterShortcutFlow">4000</strong></div>
-                        <div class="mini"><p>Old-route users</p><strong id="afterOldFlow">0</strong></div>
-                        <div class="mini"><p>Travel time</p><strong id="afterTime">80</strong></div>
-                    </div>
-                </article>
-            </div>
+          <div class="gridTwo">
+            <article class="canvasCard">
+              <div class="cardTop">
+                <div>
+                  <p class="cardTitle">Original network</p>
+                  <p class="cardSub">Drivers split between two equal routes at equilibrium.</p>
+                </div>
+                <span class="badge" id="trafficBeforeBadge">65 min</span>
+              </div>
+              <div class="canvasBox"><canvas id="trafficBeforeCanvas"></canvas></div>
+              <div class="miniMetrics">
+                <div class="mini">
+                  <p>Top route</p>
+                  <strong id="beforeTopFlow">2000</strong>
+                </div>
+                <div class="mini">
+                  <p>Bottom route</p>
+                  <strong id="beforeBottomFlow">2000</strong>
+                </div>
+                <div class="mini">
+                  <p>Travel time</p>
+                  <strong id="beforeTime">65</strong>
+                </div>
+              </div>
+            </article>
+            <article class="canvasCard">
+              <div class="cardTop">
+                <div>
+                  <p class="cardTitle">Shortcut added</p>
+                  <p class="cardSub">Individual choices shift the system into a worse equilibrium.</p>
+                </div>
+                <span class="badge" id="trafficAfterBadge">80 min</span>
+              </div>
+              <div class="canvasBox"><canvas id="trafficAfterCanvas"></canvas></div>
+              <div class="miniMetrics">
+                <div class="mini">
+                  <p>Shortcut users</p>
+                  <strong id="afterShortcutFlow">4000</strong>
+                </div>
+                <div class="mini">
+                  <p>Old-route users</p>
+                  <strong id="afterOldFlow">0</strong>
+                </div>
+                <div class="mini">
+                  <p>Travel time</p>
+                  <strong id="afterTime">80</strong>
+                </div>
+              </div>
+            </article>
+          </div>
         </div>
 
         <aside class="glass panel">
-            <div class="statusBar"><strong id="trafficStatusTitle">The shortcut makes everyone slower.</strong><span id="trafficStatusText">At this demand, drivers individually prefer the shortcut route, but the resulting equilibrium overloads both variable-delay segments.</span></div>
-            <div class="box">
-                <p class="boxTitle">Traffic controls</p>
-                <div class="control">
-                    <div class="controlHead"><label for="carSlider">Number of cars</label><span class="readout" id="carReadout">4000</span></div>
-                    <input id="carSlider" class="slider" type="range" min="500" max="8000" step="100" value="4000">
-                    <div class="scale"><span>light</span><span>classic case</span><span>heavy</span></div>
-                </div>
-                <div class="buttons">
-                    <button class="btn" id="trafficLight">Light</button>
-                    <button class="btn primary" id="trafficClassic">Classic</button>
-                    <button class="btn" id="trafficHeavy">Heavy</button>
-                </div>
+          <div class="statusBar">
+            <strong id="trafficStatusTitle">The shortcut makes everyone slower.</strong
+            ><span id="trafficStatusText"
+              >At this demand, drivers individually prefer the shortcut route, but the resulting equilibrium overloads both variable-delay
+              segments.</span
+            >
+          </div>
+          <div class="box">
+            <p class="boxTitle">Traffic controls</p>
+            <div class="control">
+              <div class="controlHead"><label for="carSlider">Number of cars</label><span class="readout" id="carReadout">4000</span></div>
+              <input id="carSlider" class="slider" type="range" min="500" max="8000" step="100" value="4000" />
+              <div class="scale"><span>light</span><span>classic case</span><span>heavy</span></div>
             </div>
-            <div class="box">
-                <p class="boxTitle">Model</p>
-                <div class="formula">
-                    <div>Upper old route: T = flow(S-A) / 100 + 45</div>
-                    <div>Lower old route: T = 45 + flow(B-E) / 100</div>
-                    <div>Shortcut route: T = flow(S-A) / 100 + flow(B-E) / 100</div>
-                    <div>Wardrop equilibrium: all used routes have equal minimum travel time.</div>
-                </div>
+            <div class="buttons">
+              <button class="btn" id="trafficLight">Light</button>
+              <button class="btn primary" id="trafficClassic">Classic</button>
+              <button class="btn" id="trafficHeavy">Heavy</button>
             </div>
-            <div class="box" style="flex:1">
-                <p class="boxTitle">What to notice</p>
-                <div class="noteList" id="trafficNotes"></div>
+          </div>
+          <div class="box">
+            <p class="boxTitle">Model</p>
+            <div class="formula">
+              <div>Upper old route: T = flow(S-A) / 100 + 45</div>
+              <div>Lower old route: T = 45 + flow(B-E) / 100</div>
+              <div>Shortcut route: T = flow(S-A) / 100 + flow(B-E) / 100</div>
+              <div>Wardrop equilibrium: all used routes have equal minimum travel time.</div>
             </div>
+          </div>
+          <div class="box" style="flex: 1">
+            <p class="boxTitle">What to notice</p>
+            <div class="noteList" id="trafficNotes"></div>
+          </div>
         </aside>
-    </section>
+      </section>
 
-    <section id="powerSection" class="section">
+      <section id="powerSection" class="section">
         <div class="glass board">
-            <div class="gridTwo">
-                <article class="canvasCard">
-                    <div class="cardTop">
-                        <div><p class="cardTitle">Tie connected</p><p class="cardSub">The low-impedance tie creates loop flow and may bind its thermal limit.</p></div>
-                        <span class="badge" id="connectedBadge">Congested</span>
-                    </div>
-                    <div class="canvasBox small"><canvas id="gridConnectedCanvas"></canvas></div>
-                    <div class="miniMetrics">
-                        <div class="mini"><p>Total cost</p><strong id="connectedCost">$14.1k</strong></div>
-                        <div class="mini"><p>G1 dispatch</p><strong id="connectedG1">360</strong></div>
-                        <div class="mini"><p>G2 dispatch</p><strong id="connectedG2">140</strong></div>
-                    </div>
-                </article>
-                <article class="canvasCard">
-                    <div class="cardTop">
-                        <div><p class="cardTitle">Tie removed</p><p class="cardSub">Removing the troublesome connection can restore cheaper dispatch.</p></div>
-                        <span class="badge" id="removedBadge">Optimal</span>
-                    </div>
-                    <div class="canvasBox small"><canvas id="gridRemovedCanvas"></canvas></div>
-                    <div class="miniMetrics">
-                        <div class="mini"><p>Total cost</p><strong id="removedCost">$5.0k</strong></div>
-                        <div class="mini"><p>G1 dispatch</p><strong id="removedG1">500</strong></div>
-                        <div class="mini"><p>G2 dispatch</p><strong id="removedG2">0</strong></div>
-                    </div>
-                </article>
-            </div>
+          <div class="gridTwo">
+            <article class="canvasCard">
+              <div class="cardTop">
+                <div>
+                  <p class="cardTitle">Tie connected</p>
+                  <p class="cardSub">The low-impedance tie creates loop flow and may bind its thermal limit.</p>
+                </div>
+                <span class="badge" id="connectedBadge">Congested</span>
+              </div>
+              <div class="canvasBox small">
+                <canvas
+                  id="gridConnectedCanvas"
+                  role="img"
+                  aria-label="Grid with the tie connected. Generator output and line flows are listed below."
+                ></canvas>
+              </div>
+              <dl class="flowList" id="connectedFlows"></dl>
+              <div class="miniMetrics">
+                <div class="mini">
+                  <p>Cost / hour</p>
+                  <strong id="connectedCost">$14.1k</strong>
+                </div>
+                <div class="mini">
+                  <p>G1 dispatch</p>
+                  <strong id="connectedG1">360</strong>
+                </div>
+                <div class="mini">
+                  <p>G2 dispatch</p>
+                  <strong id="connectedG2">140</strong>
+                </div>
+              </div>
+            </article>
+            <article class="canvasCard">
+              <div class="cardTop">
+                <div>
+                  <p class="cardTitle">Tie removed</p>
+                  <p class="cardSub">Removing the troublesome connection can restore cheaper dispatch.</p>
+                </div>
+                <span class="badge" id="removedBadge">Optimal</span>
+              </div>
+              <div class="canvasBox small">
+                <canvas
+                  id="gridRemovedCanvas"
+                  role="img"
+                  aria-label="Grid with the tie removed. Generator output and line flows are listed below."
+                ></canvas>
+              </div>
+              <dl class="flowList" id="removedFlows"></dl>
+              <div class="miniMetrics">
+                <div class="mini">
+                  <p>Cost / hour</p>
+                  <strong id="removedCost">$5.0k</strong>
+                </div>
+                <div class="mini">
+                  <p>G1 dispatch</p>
+                  <strong id="removedG1">500</strong>
+                </div>
+                <div class="mini">
+                  <p>G2 dispatch</p>
+                  <strong id="removedG2">0</strong>
+                </div>
+              </div>
+            </article>
+          </div>
         </div>
 
         <aside class="glass panel">
-            <div class="statusBar"><strong id="gridStatusTitle">Removing the line lowers operating cost.</strong><span id="gridStatusText">The connected network forces expensive generation to relieve the tie-line constraint.</span></div>
-            <div class="box">
-                <p class="boxTitle">Grid controls</p>
-                <div class="control">
-                    <div class="controlHead"><label for="loadSlider">System load</label><span class="readout" id="loadReadout">500 MW</span></div>
-                    <input id="loadSlider" class="slider" type="range" min="100" max="900" step="10" value="500">
-                </div>
-                <div class="control">
-                    <div class="controlHead"><label for="g1CostSlider">G1 cost</label><span class="readout" id="g1CostReadout">$10/MWh</span></div>
-                    <input id="g1CostSlider" class="slider" type="range" min="5" max="50" step="1" value="10">
-                </div>
-                <div class="control">
-                    <div class="controlHead"><label for="g2CostSlider">G2 cost</label><span class="readout" id="g2CostReadout">$75/MWh</span></div>
-                    <input id="g2CostSlider" class="slider" type="range" min="55" max="150" step="1" value="75">
-                </div>
-                <div class="control">
-                    <div class="controlHead"><label for="g1MaxSlider">G1 maximum output</label><span class="readout" id="g1MaxReadout">500 MW</span></div>
-                    <input id="g1MaxSlider" class="slider" type="range" min="100" max="900" step="10" value="500">
-                </div>
-                <div class="control">
-                    <div class="controlHead"><label for="tieLimitSlider">Tie-line limit</label><span class="readout" id="tieLimitReadout">100 MW</span></div>
-                    <input id="tieLimitSlider" class="slider" type="range" min="20" max="260" step="5" value="100">
-                </div>
-                <div class="buttons">
-                    <button class="btn primary" id="gridClassic">Classic grid case</button>
-                    <button class="btn" id="gridRelaxed">Relaxed tie</button>
-                    <button class="btn" id="gridReset">Reset</button>
-                </div>
+          <div class="statusBar">
+            <strong id="gridStatusTitle">Removing the line lowers operating cost.</strong
+            ><span id="gridStatusText">The connected network forces expensive generation to relieve the tie-line constraint.</span>
+          </div>
+          <div class="box">
+            <p class="boxTitle">Grid controls</p>
+            <p class="cardSub">
+              Try this: raise the tie-line limit until both networks cost the same. Reset, then lower G1’s maximum output until the connected grid
+              becomes infeasible.
+            </p>
+            <div class="control">
+              <div class="controlHead"><label for="loadSlider">System load</label><span class="readout" id="loadReadout">500 MW</span></div>
+              <input id="loadSlider" class="slider" type="range" min="100" max="900" step="10" value="500" />
             </div>
-            <div class="box">
-                <p class="boxTitle">DC dispatch model</p>
-                <div class="formula">
-                    <div>Minimize: C = c₁P₁ + c₂P₂</div>
-                    <div>Balance: P₁ + P₂ = Load</div>
-                    <div>DC flow: Fᵢⱼ = (θᵢ − θⱼ) / Xᵢⱼ</div>
-                    <div>Feasibility: |Fᵢⱼ| ≤ line limit, with the connected and removed topologies solved separately.</div>
-                </div>
+            <div class="control">
+              <div class="controlHead"><label for="g1CostSlider">G1 cost</label><span class="readout" id="g1CostReadout">$10/MWh</span></div>
+              <input id="g1CostSlider" class="slider" type="range" min="5" max="50" step="1" value="10" />
             </div>
-            <div class="box" style="flex:1">
-                <p class="boxTitle">Dispatch result</p>
-                <div class="noteList" id="gridNotes"></div>
+            <div class="control">
+              <div class="controlHead"><label for="g2CostSlider">G2 cost</label><span class="readout" id="g2CostReadout">$75/MWh</span></div>
+              <input id="g2CostSlider" class="slider" type="range" min="55" max="150" step="1" value="75" />
             </div>
+            <div class="control">
+              <div class="controlHead"><label for="g1MaxSlider">G1 maximum output</label><span class="readout" id="g1MaxReadout">500 MW</span></div>
+              <input id="g1MaxSlider" class="slider" type="range" min="100" max="900" step="10" value="500" />
+            </div>
+            <div class="control">
+              <div class="controlHead">
+                <label for="tieLimitSlider">Tie-line limit</label><span class="readout" id="tieLimitReadout">100 MW</span>
+              </div>
+              <input id="tieLimitSlider" class="slider" type="range" min="20" max="260" step="5" value="100" />
+            </div>
+            <div class="buttons">
+              <button class="btn primary" id="gridClassic">Classic grid case</button>
+              <button class="btn" id="gridRelaxed">Relaxed tie</button>
+              <button class="btn" id="gridReset">Reset</button>
+            </div>
+          </div>
+          <details class="box modelDetails">
+            <summary class="boxTitle">Equations and assumptions</summary>
+            <div class="formula">
+              <div>Minimize: C = c₁P₁ + c₂P₂</div>
+              <div>Generation: 0 ≤ P₁ ≤ G1 max, 0 ≤ P₂ ≤ 1200 MW</div>
+              <div>Balance: P₁ + P₂ = Load</div>
+              <div>DC flow: Fᵢⱼ = (θᵢ − θⱼ) / Xᵢⱼ</div>
+              <div>Feasibility: |Fᵢⱼ| ≤ line limit, with the connected and removed topologies solved separately.</div>
+            </div>
+            <p class="cardSub">
+              A lossless DC approximation with fixed voltage magnitudes. Line reactances are relative weights (1 on the main lines, 0.2 on the tie); a
+              common scale is absorbed into the angles. Voltage limits, reactive power, and contingencies are outside this example.
+            </p>
+          </details>
+          <div class="box" style="flex: 1">
+            <p class="boxTitle">Dispatch result</p>
+            <div class="noteList" id="gridNotes"></div>
+          </div>
         </aside>
-    </section>
-</div>
+      </section>
+    </div>
 
-<script>
-const App={
-    dom:{},
-    state:{
-        tab:'trafficSection',
-        t:0,
-        last:0,
-        traffic:null,
-        grid:null,
-        inputs:{cars:4000,load:500,g1Cost:10,g2Cost:75,g1Max:500,tieLimit:100}
-    },
-    colors:{blue:'#60a5fa',sky:'#38bdf8',green:'#34d399',amber:'#f59e0b',orange:'#fb923c',red:'#fb7185',purple:'#a78bfa',white:'#f8fafc',muted:'#94a3b8'},
-    trafficCoords:{S:[.11,.5],A:[.5,.22],B:[.5,.78],E:[.89,.5]},
-    gridCoords:{G1:[.13,.22],G2:[.13,.78],J:[.5,.5],L:[.88,.62]},
-    init(){
-        this.ids(['trafficPenaltyHero','gridSavingsHero','equilibriumHero','gridStatusHero','trafficBeforeCanvas','trafficAfterCanvas','gridConnectedCanvas','gridRemovedCanvas','carSlider','carReadout','trafficLight','trafficClassic','trafficHeavy','beforeTopFlow','beforeBottomFlow','beforeTime','afterShortcutFlow','afterOldFlow','afterTime','trafficBeforeBadge','trafficAfterBadge','trafficStatusTitle','trafficStatusText','trafficNotes','loadSlider','g1CostSlider','g2CostSlider','g1MaxSlider','tieLimitSlider','loadReadout','g1CostReadout','g2CostReadout','g1MaxReadout','tieLimitReadout','gridClassic','gridRelaxed','gridReset','connectedBadge','removedBadge','connectedCost','removedCost','connectedG1','connectedG2','removedG1','removedG2','gridStatusTitle','gridStatusText','gridNotes']);
-        document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>this.setTab(b.dataset.target)));
-        this.dom.carSlider.addEventListener('input',()=>{this.state.inputs.cars=+this.dom.carSlider.value;this.update()});
-        ['loadSlider','g1CostSlider','g2CostSlider','g1MaxSlider','tieLimitSlider'].forEach(id=>this.dom[id].addEventListener('input',()=>this.syncGridInputs()));
-        this.dom.trafficLight.addEventListener('click',()=>this.setTraffic(1800));
-        this.dom.trafficClassic.addEventListener('click',()=>this.setTraffic(4000));
-        this.dom.trafficHeavy.addEventListener('click',()=>this.setTraffic(6000));
-        this.dom.gridClassic.addEventListener('click',()=>this.setGrid(500,10,75,500,100));
-        this.dom.gridRelaxed.addEventListener('click',()=>this.setGrid(500,10,75,500,230));
-        this.dom.gridReset.addEventListener('click',()=>this.setGrid(500,10,75,500,100));
-        window.addEventListener('resize',()=>this.update());
-        this.update();
-        requestAnimationFrame(this.loop.bind(this));
-    },
-    ids(list){list.forEach(id=>this.dom[id]=document.getElementById(id))},
-    setTab(id){
-        this.state.tab=id;
-        document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.target===id));
-        document.querySelectorAll('.section').forEach(s=>s.classList.toggle('active',s.id===id));
-        setTimeout(()=>this.update(),40);
-    },
-    setTraffic(v){this.tweenInput(this.dom.carSlider,v,()=>{this.state.inputs.cars=+this.dom.carSlider.value;this.update()})},
-    setGrid(load,c1,c2,pmax,limit){
-        const items=[[this.dom.loadSlider,load],[this.dom.g1CostSlider,c1],[this.dom.g2CostSlider,c2],[this.dom.g1MaxSlider,pmax],[this.dom.tieLimitSlider,limit]];
-        items.forEach(([el,v])=>this.tweenInput(el,v,()=>this.syncGridInputs(false)));
-        setTimeout(()=>this.syncGridInputs(),580);
-    },
-    tweenInput(el,target,onStep){
-        const start=+el.value,dur=520,t0=performance.now(),step=now=>{const t=this.ease(Math.min(1,(now-t0)/dur));el.value=start+(target-start)*t;onStep();if(t<1)requestAnimationFrame(step)};requestAnimationFrame(step);
-    },
-    ease(t){return 1-Math.pow(1-t,3)},
-    syncGridInputs(update=true){
-        this.state.inputs.load=+this.dom.loadSlider.value;
-        this.state.inputs.g1Cost=+this.dom.g1CostSlider.value;
-        this.state.inputs.g2Cost=+this.dom.g2CostSlider.value;
-        this.state.inputs.g1Max=+this.dom.g1MaxSlider.value;
-        this.state.inputs.tieLimit=+this.dom.tieLimitSlider.value;
-        if(update)this.update();
-    },
-    update(){
-        this.state.traffic=this.calcTraffic(this.state.inputs.cars);
-        this.state.grid=this.calcGrid(this.state.inputs);
-        this.updateTrafficUI();
-        this.updateGridUI();
-        this.drawAll();
-    },
-    loop(now){
-        const dt=Math.min(.05,(now-this.state.last)/1000||0);this.state.last=now;this.state.t+=dt;this.drawAll();requestAnimationFrame(this.loop.bind(this));
-    },
-    calcTraffic(N){
-        const beforeTop=N/2,beforeBottom=N/2,beforeTime=N/200+45;
-        let top=0,bottom=0,shortcut=N;
-        if(N>4500&&N<9000){top=N-4500;bottom=N-4500;shortcut=9000-N}
-        if(N>=9000){top=N/2;bottom=N/2;shortcut=0}
-        const sa=top+shortcut,ae=top,sb=bottom,be=bottom+shortcut,ab=shortcut;
-        const topTime=sa/100+45,bottomTime=45+be/100,shortcutTime=sa/100+be/100;
-        const used=[];
-        if(top>1)used.push(topTime);
-        if(bottom>1)used.push(bottomTime);
-        if(shortcut>1)used.push(shortcutTime);
-        const afterTime=used.length?used.reduce((a,b)=>a+b,0)/used.length:Math.min(topTime,bottomTime,shortcutTime);
-        return{N,beforeTop,beforeBottom,beforeTime,top,bottom,shortcut,afterTime,edges:{sa,ae,sb,be,ab},times:{topTime,bottomTime,shortcutTime},penalty:afterTime-beforeTime};
-    },
-    calcGrid(input){
-        const connected=this.dispatch(input,true),removed=this.dispatch(input,false),savings=connected.cost-removed.cost;
-        return{connected,removed,savings};
-    },
-    dispatch(input,connected){
-        const load=input.load,g1Max=input.g1Max,g2Max=1200,lo=Math.max(0,load-g2Max),hi=Math.min(g1Max,load),steps=1400,lines=this.gridLines(input,connected);
-        let best=null,backup=null;
-        for(let i=0;i<=steps;i++){
-            const p1=lo+(hi-lo)*i/steps,p2=load-p1,flows=this.dcSolve(lines,[p1,p2,0,-load]),violation=this.maxViolation(lines,flows),cost=p1*input.g1Cost+p2*input.g2Cost,cand={p1,p2,flows,cost,violation,feasible:violation<=1e-5,lines,connected};
-            if(!backup||cost+violation*10000000<backup.cost+backup.violation*10000000)backup=cand;
-            if(cand.feasible&&(!best||cost<best.cost))best=cand;
-        }
-        return best||backup;
-    },
-    gridLines(input,connected){
-        const base=[
-            {id:'g1j',name:'G1-J',a:0,b:2,x:1,limit:1200,color:this.colors.blue},
-            {id:'jl',name:'J-L',a:2,b:3,x:1,limit:1200,color:this.colors.green},
-            {id:'g2l',name:'G2-L',a:1,b:3,x:1,limit:1200,color:this.colors.red}
-        ];
-        if(connected)base.push({id:'tie',name:'Tie',a:1,b:2,x:.2,limit:input.tieLimit,color:this.colors.amber});
-        return base;
-    },
-    dcSolve(lines,inj){
-        const n=4,slack=3,B=Array.from({length:n},()=>Array(n).fill(0));
-        lines.forEach(l=>{const b=1/l.x;B[l.a][l.a]+=b;B[l.b][l.b]+=b;B[l.a][l.b]-=b;B[l.b][l.a]-=b});
-        const idx=[0,1,2],A=idx.map(i=>idx.map(j=>B[i][j])),rhs=idx.map(i=>inj[i]),sol=this.solve(A,rhs),theta=[sol[0],sol[1],sol[2],0],flows={};
-        lines.forEach(l=>flows[l.id]=(theta[l.a]-theta[l.b])/l.x);
-        return flows;
-    },
-    solve(A,b){
-        const n=b.length,M=A.map((r,i)=>r.concat(b[i]));
-        for(let i=0;i<n;i++){
-            let max=i;
-            for(let r=i+1;r<n;r++)if(Math.abs(M[r][i])>Math.abs(M[max][i]))max=r;
-            [M[i],M[max]]=[M[max],M[i]];
-            const piv=M[i][i]||1e-12;
-            for(let c=i;c<=n;c++)M[i][c]/=piv;
-            for(let r=0;r<n;r++)if(r!==i){const f=M[r][i];for(let c=i;c<=n;c++)M[r][c]-=f*M[i][c]}
-        }
-        return M.map(r=>r[n]);
-    },
-    maxViolation(lines,flows){return Math.max(0,...lines.map(l=>Math.abs(flows[l.id])-l.limit))},
-    updateTrafficUI(){
-        const d=this.state.traffic;
-        this.dom.carReadout.textContent=this.num(d.N);
-        this.dom.beforeTopFlow.textContent=this.num(d.beforeTop);
-        this.dom.beforeBottomFlow.textContent=this.num(d.beforeBottom);
-        this.dom.beforeTime.textContent=`${d.beforeTime.toFixed(0)} min`;
-        this.dom.afterShortcutFlow.textContent=this.num(d.shortcut);
-        this.dom.afterOldFlow.textContent=this.num(d.top+d.bottom);
-        this.dom.afterTime.textContent=`${d.afterTime.toFixed(0)} min`;
-        this.dom.trafficBeforeBadge.textContent=`${d.beforeTime.toFixed(0)} min`;
-        this.dom.trafficAfterBadge.textContent=`${d.afterTime.toFixed(0)} min`;
-        this.dom.trafficPenaltyHero.textContent=`${d.penalty>=0?'+':''}${d.penalty.toFixed(0)}`;
-        this.dom.equilibriumHero.textContent=d.penalty>0?'Worse':d.penalty<0?'Better':'Equal';
-        if(d.penalty>1){
-            this.dom.trafficStatusTitle.textContent='The shortcut makes the equilibrium slower.';
-            this.dom.trafficStatusText.textContent='Drivers chase the individually attractive route, but that loads both variable-delay roads and raises the common travel time.';
-        }else if(d.penalty<-1){
-            this.dom.trafficStatusTitle.textContent='The shortcut helps at this demand.';
-            this.dom.trafficStatusText.textContent='At low traffic, the shortcut can reduce travel time because the variable-delay roads are not yet overloaded.';
-        }else{
-            this.dom.trafficStatusTitle.textContent='The two networks are nearly tied.';
-            this.dom.trafficStatusText.textContent='This is close to the threshold where the shortcut stops helping and begins to hurt.';
-        }
-        const notes=[
-            `Without the shortcut, the equilibrium split is ${this.num(d.beforeTop)} cars on the upper route and ${this.num(d.beforeBottom)} on the lower route.`,
-            `With the shortcut, ${this.num(d.shortcut)} cars use the shortcut route and ${this.num(d.top+d.bottom)} cars stay on the old routes.`,
-            `The system-level penalty from adding the shortcut is ${d.penalty>=0?'+':''}${d.penalty.toFixed(1)} minutes per driver.`,
-            `The paradox appears when individual route choice pushes flow onto segments whose delay grows with congestion.`
-        ];
-        this.dom.trafficNotes.innerHTML=notes.map(x=>`<div class="note"><div>${x}</div></div>`).join('');
-    },
-    updateGridUI(){
-        const g=this.state.grid,c=g.connected,r=g.removed,connectedCongested=c.lines.some(l=>Math.abs(c.flows[l.id])>=l.limit-.75),savings=g.savings;
-        this.dom.loadReadout.textContent=`${this.state.inputs.load} MW`;
-        this.dom.g1CostReadout.textContent=`$${this.state.inputs.g1Cost}/MWh`;
-        this.dom.g2CostReadout.textContent=`$${this.state.inputs.g2Cost}/MWh`;
-        this.dom.g1MaxReadout.textContent=`${this.state.inputs.g1Max} MW`;
-        this.dom.tieLimitReadout.textContent=`${this.state.inputs.tieLimit} MW`;
-        this.dom.connectedCost.textContent=this.moneyShort(c.cost);
-        this.dom.removedCost.textContent=this.moneyShort(r.cost);
-        this.dom.connectedG1.textContent=`${c.p1.toFixed(0)} MW`;
-        this.dom.connectedG2.textContent=`${c.p2.toFixed(0)} MW`;
-        this.dom.removedG1.textContent=`${r.p1.toFixed(0)} MW`;
-        this.dom.removedG2.textContent=`${r.p2.toFixed(0)} MW`;
-        this.dom.connectedBadge.textContent=connectedCongested?'Congested':'Feasible';
-        this.dom.connectedBadge.style.color=connectedCongested?this.colors.red:this.colors.green;
-        this.dom.removedBadge.textContent=r.feasible?'Feasible':'Limited';
-        this.dom.removedBadge.style.color=r.feasible?this.colors.green:this.colors.red;
-        this.dom.gridSavingsHero.textContent=`${savings>=0?'$':'-$'}${this.short(Math.abs(savings))}`;
-        this.dom.gridStatusHero.textContent=savings>1?'Removal wins':savings<-1?'Tie wins':'Similar';
-        if(savings>1){
-            this.dom.gridStatusTitle.textContent='Removing the tie lowers operating cost.';
-            this.dom.gridStatusText.textContent='The connected network creates a loop-flow constraint that reduces cheap G1 output and forces more expensive G2 output.';
-        }else if(savings<-1){
-            this.dom.gridStatusTitle.textContent='The tie is beneficial under these settings.';
-            this.dom.gridStatusText.textContent='The tie limit is loose enough, or the economics are close enough, that the connected network no longer produces a Braess penalty.';
-        }else{
-            this.dom.gridStatusTitle.textContent='Both topologies cost about the same.';
-            this.dom.gridStatusText.textContent='The constraint and dispatch economics are near the break-even point.';
-        }
-        const tieFlow=c.flows.tie??0;
-        const notes=[
+    <script>
+      const App = {
+        dom: {},
+        state: {
+          tab: "trafficSection",
+          paused: window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+          t: 0,
+          last: 0,
+          traffic: null,
+          grid: null,
+          inputs: { cars: 4000, load: 500, g1Cost: 10, g2Cost: 75, g1Max: 500, tieLimit: 100 },
+        },
+        colors: {
+          blue: "#60a5fa",
+          sky: "#38bdf8",
+          green: "#34d399",
+          amber: "#f59e0b",
+          orange: "#fb923c",
+          red: "#fb7185",
+          purple: "#a78bfa",
+          white: "#f8fafc",
+          muted: "#94a3b8",
+        },
+        trafficCoords: { S: [0.11, 0.5], A: [0.5, 0.22], B: [0.5, 0.78], E: [0.89, 0.5] },
+        gridCoords: { G1: [0.18, 0.19], G2: [0.18, 0.7], J: [0.57, 0.19], L: [0.82, 0.7] },
+        init() {
+          this.ids([
+            "trafficPenaltyHero",
+            "gridSavingsHero",
+            "equilibriumHero",
+            "gridStatusHero",
+            "trafficBeforeCanvas",
+            "trafficAfterCanvas",
+            "gridConnectedCanvas",
+            "gridRemovedCanvas",
+            "carSlider",
+            "carReadout",
+            "trafficLight",
+            "trafficClassic",
+            "trafficHeavy",
+            "beforeTopFlow",
+            "beforeBottomFlow",
+            "beforeTime",
+            "afterShortcutFlow",
+            "afterOldFlow",
+            "afterTime",
+            "trafficBeforeBadge",
+            "trafficAfterBadge",
+            "trafficStatusTitle",
+            "trafficStatusText",
+            "trafficNotes",
+            "loadSlider",
+            "g1CostSlider",
+            "g2CostSlider",
+            "g1MaxSlider",
+            "tieLimitSlider",
+            "loadReadout",
+            "g1CostReadout",
+            "g2CostReadout",
+            "g1MaxReadout",
+            "tieLimitReadout",
+            "gridClassic",
+            "gridRelaxed",
+            "gridReset",
+            "connectedBadge",
+            "removedBadge",
+            "connectedCost",
+            "removedCost",
+            "connectedG1",
+            "connectedG2",
+            "removedG1",
+            "removedG2",
+            "gridStatusTitle",
+            "gridStatusText",
+            "gridNotes",
+            "connectedFlows",
+            "removedFlows",
+            "pauseAnimation",
+          ]);
+          document.querySelectorAll(".tab").forEach((b) => b.addEventListener("click", () => this.setTab(b.dataset.target)));
+          this.dom.carSlider.addEventListener("input", () => {
+            this.state.inputs.cars = +this.dom.carSlider.value;
+            this.update();
+          });
+          ["loadSlider", "g1CostSlider", "g2CostSlider", "g1MaxSlider", "tieLimitSlider"].forEach((id) =>
+            this.dom[id].addEventListener("input", () => {
+              cancelAnimationFrame(this.dom[id]._frame);
+              this.syncGridInputs();
+            })
+          );
+          this.dom.trafficLight.addEventListener("click", () => this.setTraffic(1800));
+          this.dom.trafficClassic.addEventListener("click", () => this.setTraffic(4000));
+          this.dom.trafficHeavy.addEventListener("click", () => this.setTraffic(6000));
+          this.dom.gridClassic.addEventListener("click", () => this.setGrid(500, 10, 75, 500, 100));
+          this.dom.gridRelaxed.addEventListener("click", () => this.setGrid(500, 10, 75, 500, 230));
+          this.dom.gridReset.addEventListener("click", () => this.setGrid(500, 10, 75, 500, 100));
+          window.addEventListener("resize", () => this.update());
+          const pause = this.dom.pauseAnimation;
+          const syncPause = () => {
+            pause.textContent = this.state.paused ? "Resume animation" : "Pause animation";
+            pause.setAttribute("aria-pressed", String(this.state.paused));
+          };
+          syncPause();
+          pause.addEventListener("click", () => {
+            this.state.paused = !this.state.paused;
+            syncPause();
+          });
+          if (location.hash === "#power-grid") this.setTab("powerSection");
+          this.update();
+          requestAnimationFrame(this.loop.bind(this));
+        },
+        ids(list) {
+          list.forEach((id) => (this.dom[id] = document.getElementById(id)));
+        },
+        setTab(id) {
+          this.state.tab = id;
+          document.querySelectorAll(".tab").forEach((b) => {
+            b.classList.toggle("active", b.dataset.target === id);
+            b.setAttribute("aria-pressed", String(b.dataset.target === id));
+          });
+          document.querySelectorAll(".section").forEach((s) => s.classList.toggle("active", s.id === id));
+          setTimeout(() => this.update(), 40);
+        },
+        setTraffic(v) {
+          this.tweenInput(this.dom.carSlider, v, () => {
+            this.state.inputs.cars = +this.dom.carSlider.value;
+            this.update();
+          });
+        },
+        setGrid(load, c1, c2, pmax, limit) {
+          const items = [
+            [this.dom.loadSlider, load],
+            [this.dom.g1CostSlider, c1],
+            [this.dom.g2CostSlider, c2],
+            [this.dom.g1MaxSlider, pmax],
+            [this.dom.tieLimitSlider, limit],
+          ];
+          items.forEach(([el, v]) => this.tweenInput(el, v, () => this.syncGridInputs(false)));
+          setTimeout(() => this.syncGridInputs(), 580);
+        },
+        tweenInput(el, target, onStep) {
+          cancelAnimationFrame(el._frame);
+          if (this.state.paused) {
+            el.value = target;
+            onStep();
+            return;
+          }
+          const start = +el.value,
+            dur = 520,
+            t0 = performance.now(),
+            step = (now) => {
+              const t = this.ease(Math.min(1, (now - t0) / dur));
+              el.value = start + (target - start) * t;
+              onStep();
+              if (t < 1) el._frame = requestAnimationFrame(step);
+            };
+          el._frame = requestAnimationFrame(step);
+        },
+        ease(t) {
+          return 1 - Math.pow(1 - t, 3);
+        },
+        syncGridInputs(update = true) {
+          this.state.inputs.load = +this.dom.loadSlider.value;
+          this.state.inputs.g1Cost = +this.dom.g1CostSlider.value;
+          this.state.inputs.g2Cost = +this.dom.g2CostSlider.value;
+          this.state.inputs.g1Max = +this.dom.g1MaxSlider.value;
+          this.state.inputs.tieLimit = +this.dom.tieLimitSlider.value;
+          if (update) this.update();
+        },
+        update() {
+          this.state.traffic = this.calcTraffic(this.state.inputs.cars);
+          this.state.grid = this.calcGrid(this.state.inputs);
+          this.updateTrafficUI();
+          this.updateGridUI();
+          this.drawAll();
+        },
+        loop(now) {
+          const dt = Math.min(0.05, (now - this.state.last) / 1000 || 0);
+          this.state.last = now;
+          if (!this.state.paused) this.state.t += dt;
+          this.drawAll();
+          requestAnimationFrame(this.loop.bind(this));
+        },
+        calcTraffic(N) {
+          const beforeTop = N / 2,
+            beforeBottom = N / 2,
+            beforeTime = N / 200 + 45;
+          let top = 0,
+            bottom = 0,
+            shortcut = N;
+          if (N > 4500 && N < 9000) {
+            top = N - 4500;
+            bottom = N - 4500;
+            shortcut = 9000 - N;
+          }
+          if (N >= 9000) {
+            top = N / 2;
+            bottom = N / 2;
+            shortcut = 0;
+          }
+          const sa = top + shortcut,
+            ae = top,
+            sb = bottom,
+            be = bottom + shortcut,
+            ab = shortcut;
+          const topTime = sa / 100 + 45,
+            bottomTime = 45 + be / 100,
+            shortcutTime = sa / 100 + be / 100;
+          const used = [];
+          if (top > 1) used.push(topTime);
+          if (bottom > 1) used.push(bottomTime);
+          if (shortcut > 1) used.push(shortcutTime);
+          const afterTime = used.length ? used.reduce((a, b) => a + b, 0) / used.length : Math.min(topTime, bottomTime, shortcutTime);
+          return {
+            N,
+            beforeTop,
+            beforeBottom,
+            beforeTime,
+            top,
+            bottom,
+            shortcut,
+            afterTime,
+            edges: { sa, ae, sb, be, ab },
+            times: { topTime, bottomTime, shortcutTime },
+            penalty: afterTime - beforeTime,
+          };
+        },
+        calcGrid(input) {
+          const connected = this.dispatch(input, true),
+            removed = this.dispatch(input, false),
+            savings = connected.feasible && removed.feasible ? connected.cost - removed.cost : null;
+          return { connected, removed, savings };
+        },
+        dispatch(input, connected) {
+          // Balance leaves one variable, P1. Every DC line flow is affine in P1,
+          // so intersect the line limits with the generator bounds exactly.
+          const load = input.load,
+            lo = Math.max(0, load - 1200),
+            hi = Math.min(input.g1Max, load),
+            lines = this.gridLines(input, connected);
+          const zero = this.dcSolve(lines, [0, load, 0, -load]),
+            unit = this.dcSolve(lines, [1, load - 1, 0, -load]);
+          let lower = lo,
+            upper = hi;
+          const candidates = [lo, hi];
+          for (const line of lines) {
+            const intercept = zero[line.id],
+              slope = unit[line.id] - intercept;
+            if (Math.abs(slope) < 1e-10) {
+              if (Math.abs(intercept) > line.limit + 1e-7) {
+                lower = Infinity;
+                upper = -Infinity;
+              }
+              continue;
+            }
+            const a = (-line.limit - intercept) / slope,
+              b = (line.limit - intercept) / slope;
+            lower = Math.max(lower, Math.min(a, b));
+            upper = Math.min(upper, Math.max(a, b));
+            candidates.push(Math.max(lo, Math.min(hi, -intercept / slope)));
+          }
+          const feasible = lower <= upper + 1e-7;
+          let p1;
+          if (feasible) {
+            p1 = input.g1Cost <= input.g2Cost ? upper : lower;
+            p1 = Math.max(lo, Math.min(hi, p1));
+          } else {
+            // Diagnostic flows only; never present their cost as a feasible optimum.
+            p1 = candidates.reduce(
+              (best, p) =>
+                this.maxViolation(lines, this.dcSolve(lines, [p, load - p, 0, -load])) <
+                this.maxViolation(lines, this.dcSolve(lines, [best, load - best, 0, -load]))
+                  ? p
+                  : best,
+              lo
+            );
+          }
+          const p2 = load - p1,
+            flows = this.dcSolve(lines, [p1, p2, 0, -load]);
+          return {
+            p1,
+            p2,
+            flows,
+            cost: feasible ? p1 * input.g1Cost + p2 * input.g2Cost : null,
+            violation: this.maxViolation(lines, flows),
+            feasible,
+            lines,
+            connected,
+          };
+        },
+        gridLines(input, connected) {
+          const base = [
+            { id: "g1j", name: "G1-J", a: 0, b: 2, x: 1, limit: 1200, color: this.colors.blue },
+            { id: "jl", name: "J-L", a: 2, b: 3, x: 1, limit: 1200, color: this.colors.green },
+            { id: "g2l", name: "G2-L", a: 1, b: 3, x: 1, limit: 1200, color: this.colors.red },
+          ];
+          if (connected) base.push({ id: "tie", name: "Tie", a: 1, b: 2, x: 0.2, limit: input.tieLimit, color: this.colors.amber });
+          return base;
+        },
+        dcSolve(lines, inj) {
+          const n = 4,
+            slack = 3,
+            B = Array.from({ length: n }, () => Array(n).fill(0));
+          lines.forEach((l) => {
+            const b = 1 / l.x;
+            B[l.a][l.a] += b;
+            B[l.b][l.b] += b;
+            B[l.a][l.b] -= b;
+            B[l.b][l.a] -= b;
+          });
+          const idx = [0, 1, 2],
+            A = idx.map((i) => idx.map((j) => B[i][j])),
+            rhs = idx.map((i) => inj[i]),
+            sol = this.solve(A, rhs),
+            theta = [sol[0], sol[1], sol[2], 0],
+            flows = {};
+          lines.forEach((l) => (flows[l.id] = (theta[l.a] - theta[l.b]) / l.x));
+          return flows;
+        },
+        solve(A, b) {
+          const n = b.length,
+            M = A.map((r, i) => r.concat(b[i]));
+          for (let i = 0; i < n; i++) {
+            let max = i;
+            for (let r = i + 1; r < n; r++) if (Math.abs(M[r][i]) > Math.abs(M[max][i])) max = r;
+            [M[i], M[max]] = [M[max], M[i]];
+            const piv = M[i][i] || 1e-12;
+            for (let c = i; c <= n; c++) M[i][c] /= piv;
+            for (let r = 0; r < n; r++)
+              if (r !== i) {
+                const f = M[r][i];
+                for (let c = i; c <= n; c++) M[r][c] -= f * M[i][c];
+              }
+          }
+          return M.map((r) => r[n]);
+        },
+        maxViolation(lines, flows) {
+          return Math.max(0, ...lines.map((l) => Math.abs(flows[l.id]) - l.limit));
+        },
+        updateTrafficUI() {
+          const d = this.state.traffic;
+          this.dom.carReadout.textContent = this.num(d.N);
+          this.dom.beforeTopFlow.textContent = this.num(d.beforeTop);
+          this.dom.beforeBottomFlow.textContent = this.num(d.beforeBottom);
+          this.dom.beforeTime.textContent = `${d.beforeTime.toFixed(0)} min`;
+          this.dom.afterShortcutFlow.textContent = this.num(d.shortcut);
+          this.dom.afterOldFlow.textContent = this.num(d.top + d.bottom);
+          this.dom.afterTime.textContent = `${d.afterTime.toFixed(0)} min`;
+          this.dom.trafficBeforeBadge.textContent = `${d.beforeTime.toFixed(0)} min`;
+          this.dom.trafficAfterBadge.textContent = `${d.afterTime.toFixed(0)} min`;
+          this.dom.trafficPenaltyHero.textContent = `${d.penalty >= 0 ? "+" : ""}${d.penalty.toFixed(0)}`;
+          this.dom.equilibriumHero.textContent = d.penalty > 0 ? "Worse" : d.penalty < 0 ? "Better" : "Equal";
+          if (d.penalty > 1) {
+            this.dom.trafficStatusTitle.textContent = "The shortcut makes the equilibrium slower.";
+            this.dom.trafficStatusText.textContent =
+              "Drivers chase the individually attractive route, but that loads both variable-delay roads and raises the common travel time.";
+          } else if (d.penalty < -1) {
+            this.dom.trafficStatusTitle.textContent = "The shortcut helps at this demand.";
+            this.dom.trafficStatusText.textContent =
+              "At low traffic, the shortcut can reduce travel time because the variable-delay roads are not yet overloaded.";
+          } else {
+            this.dom.trafficStatusTitle.textContent = "The two networks are nearly tied.";
+            this.dom.trafficStatusText.textContent = "This is close to the threshold where the shortcut stops helping and begins to hurt.";
+          }
+          const notes = [
+            `Without the shortcut, the equilibrium split is ${this.num(d.beforeTop)} cars on the upper route and ${this.num(
+              d.beforeBottom
+            )} on the lower route.`,
+            `With the shortcut, ${this.num(d.shortcut)} cars use the shortcut route and ${this.num(d.top + d.bottom)} cars stay on the old routes.`,
+            `The system-level penalty from adding the shortcut is ${d.penalty >= 0 ? "+" : ""}${d.penalty.toFixed(1)} minutes per driver.`,
+            `The paradox appears when individual route choice pushes flow onto segments whose delay grows with congestion.`,
+          ];
+          this.dom.trafficNotes.innerHTML = notes.map((x) => `<div class="note"><div>${x}</div></div>`).join("");
+        },
+        updateGridUI() {
+          const g = this.state.grid,
+            c = g.connected,
+            r = g.removed,
+            connectedCongested = c.lines.some((l) => Math.abs(c.flows[l.id]) >= l.limit - 0.75),
+            savings = g.savings;
+          this.dom.loadReadout.textContent = `${this.state.inputs.load} MW`;
+          this.dom.g1CostReadout.textContent = `$${this.state.inputs.g1Cost}/MWh`;
+          this.dom.g2CostReadout.textContent = `$${this.state.inputs.g2Cost}/MWh`;
+          this.dom.g1MaxReadout.textContent = `${this.state.inputs.g1Max} MW`;
+          this.dom.tieLimitReadout.textContent = `${this.state.inputs.tieLimit} MW`;
+          this.dom.connectedCost.textContent = c.feasible ? this.moneyShort(c.cost) : "—";
+          this.dom.removedCost.textContent = r.feasible ? this.moneyShort(r.cost) : "—";
+          this.dom.connectedG1.textContent = c.feasible ? `${c.p1.toFixed(0)} MW` : "—";
+          this.dom.connectedG2.textContent = c.feasible ? `${c.p2.toFixed(0)} MW` : "—";
+          this.dom.removedG1.textContent = r.feasible ? `${r.p1.toFixed(0)} MW` : "—";
+          this.dom.removedG2.textContent = r.feasible ? `${r.p2.toFixed(0)} MW` : "—";
+          this.dom.connectedBadge.textContent = !c.feasible ? "Infeasible" : connectedCongested ? "At limit" : "Feasible";
+          this.dom.connectedBadge.style.color = !c.feasible ? this.colors.red : connectedCongested ? this.colors.amber : this.colors.green;
+          this.dom.removedBadge.textContent = r.feasible ? "Feasible" : "Infeasible";
+          this.dom.removedBadge.style.color = r.feasible ? this.colors.green : this.colors.red;
+          this.dom.gridSavingsHero.textContent = savings === null ? "—" : `${savings >= 0 ? "$" : "-$"}${this.short(Math.abs(savings))}`;
+          this.dom.gridStatusHero.textContent =
+            savings === null ? "Infeasible" : savings > 1 ? "Removal wins" : savings < -1 ? "Tie wins" : "Same cost";
+          if (savings === null) {
+            this.dom.gridStatusTitle.textContent =
+              "No feasible dispatch for " + (!c.feasible ? "the connected grid." : "the grid with the tie removed.");
+            this.dom.gridStatusText.textContent =
+              "Generation can balance the load, but it cannot do so within every line limit. Raise the tie limit, reduce demand, or increase G1’s available output. A cost comparison would be misleading here.";
+          } else if (savings > 1) {
+            this.dom.gridStatusTitle.textContent = "Removing the tie lowers operating cost.";
+            this.dom.gridStatusText.textContent =
+              "The connected network creates a loop-flow constraint that reduces cheap G1 output and forces more expensive G2 output.";
+          } else if (savings < -1) {
+            this.dom.gridStatusTitle.textContent = "The tie is beneficial under these settings.";
+            this.dom.gridStatusText.textContent =
+              "The tie limit is loose enough, or the economics are close enough, that the connected network no longer produces a Braess penalty.";
+          } else {
+            this.dom.gridStatusTitle.textContent = "Both topologies cost about the same.";
+            this.dom.gridStatusText.textContent =
+              "The tie is no longer restricting the cheapest dispatch. In this example, the other lines have enough capacity, so removing the tie gives no further savings.";
+          }
+          const flowList = (d) =>
+            d.lines
+              .map((l) => {
+                const f = d.flows[l.id],
+                  names = ["G1", "G2", "J", "Load"],
+                  from = f >= 0 ? l.a : l.b,
+                  to = f >= 0 ? l.b : l.a,
+                  over = Math.abs(f) > l.limit + 1e-6;
+                return `<div${over ? ' class="overLimit"' : ""}><dt>${names[from]} → ${names[to]}</dt><dd>${Math.abs(f).toFixed(1)} / ${l.limit} MW${
+                  over ? " · over limit" : ""
+                }</dd></div>`;
+              })
+              .join("");
+          this.dom.connectedFlows.innerHTML = flowList(c);
+          this.dom.removedFlows.innerHTML = flowList(r);
+          const tieFlow = c.flows.tie ?? 0;
+          const notes = [
             `With the tie connected, dispatch is G1 = ${c.p1.toFixed(1)} MW and G2 = ${c.p2.toFixed(1)} MW at ${this.money(c.cost)}/hr.`,
             `With the tie removed, dispatch is G1 = ${r.p1.toFixed(1)} MW and G2 = ${r.p2.toFixed(1)} MW at ${this.money(r.cost)}/hr.`,
             `Tie-line flow is ${tieFlow.toFixed(1)} MW against a ${this.state.inputs.tieLimit.toFixed(0)} MW limit.`,
-            savings>=0?`Removing the tie saves ${this.money(savings)}/hr for this operating point.`:`Keeping the tie saves ${this.money(Math.abs(savings))}/hr for this operating point.`
-        ];
-        this.dom.gridNotes.innerHTML=notes.map(x=>`<div class="note"><div>${x}</div></div>`).join('');
-    },
-    drawAll(){
-        if(this.state.tab==='trafficSection'){
-            this.drawTraffic(this.dom.trafficBeforeCanvas,false);
-            this.drawTraffic(this.dom.trafficAfterCanvas,true);
-        }else{
-            this.drawGrid(this.dom.gridConnectedCanvas,this.state.grid.connected,true);
-            this.drawGrid(this.dom.gridRemovedCanvas,this.state.grid.removed,false);
-        }
-    },
-    setup(canvas){
-        const rect=canvas.getBoundingClientRect(),dpr=Math.max(1,Math.min(2.5,window.devicePixelRatio||1));
-        const w=Math.max(1,rect.width),h=Math.max(1,rect.height);
-        if(canvas.width!==Math.round(w*dpr)||canvas.height!==Math.round(h*dpr)){canvas.width=Math.round(w*dpr);canvas.height=Math.round(h*dpr)}
-        const ctx=canvas.getContext('2d');ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,w,h);return{ctx,w,h};
-    },
+            savings >= 0
+              ? `Removing the tie saves ${this.money(savings)}/hr for this operating point.`
+              : `Keeping the tie saves ${this.money(Math.abs(savings))}/hr for this operating point.`,
+          ];
+          if (savings === null) {
+            notes.length = 0;
+            notes.push(
+              "The connected and removed networks are checked separately. A dash means there is no feasible dispatch.",
+              `The connected diagram shows diagnostic balancing flows, not an operating schedule. Its tie carries ${Math.abs(tieFlow).toFixed(
+                1
+              )} MW against a ${this.state.inputs.tieLimit} MW limit.`,
+              `${
+                r.feasible
+                  ? "The grid with the tie removed remains feasible at " + this.money(r.cost) + "/hr."
+                  : "The grid with the tie removed is also infeasible."
+              }`
+            );
+          }
+          this.dom.gridNotes.innerHTML = notes.map((x) => `<div class="note"><div>${x}</div></div>`).join("");
+        },
+        drawAll() {
+          if (this.state.tab === "trafficSection") {
+            this.drawTraffic(this.dom.trafficBeforeCanvas, false);
+            this.drawTraffic(this.dom.trafficAfterCanvas, true);
+          } else {
+            this.drawGrid(this.dom.gridConnectedCanvas, this.state.grid.connected, true);
+            this.drawGrid(this.dom.gridRemovedCanvas, this.state.grid.removed, false);
+          }
+        },
+        setup(canvas) {
+          const rect = canvas.getBoundingClientRect(),
+            dpr = Math.max(1, Math.min(2.5, window.devicePixelRatio || 1));
+          const w = Math.max(1, rect.width),
+            h = Math.max(1, rect.height);
+          if (canvas.width !== Math.round(w * dpr) || canvas.height !== Math.round(h * dpr)) {
+            canvas.width = Math.round(w * dpr);
+            canvas.height = Math.round(h * dpr);
+          }
+          const ctx = canvas.getContext("2d");
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+          ctx.clearRect(0, 0, w, h);
+          return { ctx, w, h };
+        },
 
-    drawTraffic(canvas,shortcut){
-        const {ctx,w,h}=this.setup(canvas),d=this.state.traffic,p=this.trafficCoords,C=this.colors;
-        this.bg(ctx,w,h);
-        const pts={S:this.xy(p.S,w,h),A:this.xy(p.A,w,h),B:this.xy(p.B,w,h),E:this.xy(p.E,w,h)};
-        const heat=v=>Math.max(0,Math.min(1,(v/100-15)/55));
-        const routes=shortcut?[
-            {path:[pts.S,pts.A,pts.E],flow:d.top,color:C.blue},
-            {path:[pts.S,pts.B,pts.E],flow:d.bottom,color:C.purple},
-            {path:[pts.S,pts.A,pts.B,pts.E],flow:d.shortcut,color:C.orange}
-        ]:[
-            {path:[pts.S,pts.A,pts.E],flow:d.beforeTop,color:C.blue},
-            {path:[pts.S,pts.B,pts.E],flow:d.beforeBottom,color:C.purple}
-        ];
-        const edges=shortcut?[
-            {path:[pts.S,pts.A],flow:d.edges.sa,heat:heat(d.edges.sa),color:C.blue,label:`S-A ${this.num(d.edges.sa)} cars`,sub:`delay ${(d.edges.sa/100).toFixed(0)} min`,off:[0,-18]},
-            {path:[pts.A,pts.E],flow:d.edges.ae,heat:0,color:C.blue,label:`A-E ${this.num(d.edges.ae)} cars`,sub:'45 min',off:[8,-20]},
-            {path:[pts.S,pts.B],flow:d.edges.sb,heat:0,color:C.purple,label:`S-B ${this.num(d.edges.sb)} cars`,sub:'45 min',off:[8,20]},
-            {path:[pts.B,pts.E],flow:d.edges.be,heat:heat(d.edges.be),color:C.purple,label:`B-E ${this.num(d.edges.be)} cars`,sub:`delay ${(d.edges.be/100).toFixed(0)} min`,off:[0,18]},
-            {path:[pts.A,pts.B],flow:d.edges.ab,heat:0,color:C.orange,label:`A-B ${this.num(d.edges.ab)} cars`,sub:'shortcut 0 min',off:[36,0]}
-        ]:[
-            {path:[pts.S,pts.A],flow:d.beforeTop,heat:heat(d.beforeTop),color:C.blue,label:`S-A ${this.num(d.beforeTop)} cars`,sub:`delay ${(d.beforeTop/100).toFixed(0)} min`,off:[0,-18]},
-            {path:[pts.A,pts.E],flow:d.beforeTop,heat:0,color:C.blue,label:`A-E ${this.num(d.beforeTop)} cars`,sub:'45 min',off:[8,-20]},
-            {path:[pts.S,pts.B],flow:d.beforeBottom,heat:0,color:C.purple,label:`S-B ${this.num(d.beforeBottom)} cars`,sub:'45 min',off:[8,20]},
-            {path:[pts.B,pts.E],flow:d.beforeBottom,heat:heat(d.beforeBottom),color:C.purple,label:`B-E ${this.num(d.beforeBottom)} cars`,sub:`delay ${(d.beforeBottom/100).toFixed(0)} min`,off:[0,18]}
-        ];
-        edges.forEach(e=>this.road(ctx,e.path,e.flow,e.heat,e.color));
-        routes.forEach((r,i)=>this.cars(ctx,r.path,r.flow,r.color,.05+i*.006,26));
-        this.node(ctx,pts.S,'S',C.green,'origin');
-        this.node(ctx,pts.A,'A',C.blue,'');
-        this.node(ctx,pts.B,'B',C.purple,'');
-        this.node(ctx,pts.E,'E',C.muted,'destination');
-        edges.forEach(e=>this.edgeLabel(ctx,e.path,e.label,e.sub,e.off));
-    },
-    drawGrid(canvas,d,connected){
-        const {ctx,w,h}=this.setup(canvas),P=this.gridCoords,C=this.colors;
-        this.bg(ctx,w,h);
-        const pts={G1:this.xy(P.G1,w,h),G2:this.xy(P.G2,w,h),J:this.xy(P.J,w,h),L:this.xy(P.L,w,h)};
-        const map={g1j:[pts.G1,pts.J],jl:[pts.J,pts.L],g2l:[pts.G2,pts.L],tie:[pts.G2,pts.J]};
-        if(!connected)this.removedLine(ctx,map.tie);
-        d.lines.forEach(l=>{
-            const flow=d.flows[l.id]||0,congested=Math.abs(flow)>=l.limit-.75,color=congested?C.red:l.color,path=flow>=0?map[l.id]:[...map[l.id]].reverse();
-            this.powerLine(ctx,map[l.id],flow,color,congested,l.id==='tie');
-            this.dots(ctx,path,Math.abs(flow)*6,color,.11,70);
-            if(Math.abs(flow)>3)this.arrows(ctx,path,color,[.6]);
-        });
-        d.lines.forEach(l=>{
-            const flow=d.flows[l.id]||0,lim=l.id==='tie'?`limit ${l.limit.toFixed(0)} MW`:'thermal OK';
-            this.edgeLabel(ctx,map[l.id],`${l.name}: ${flow.toFixed(0)} MW`,lim,l.id==='tie'?[24,-10]:[0,-20]);
-        });
-        this.generator(ctx,pts.G1,C.blue);this.gridLabel(ctx,pts.G1,'G1',`$${this.state.inputs.g1Cost}/MWh`,`${d.p1.toFixed(0)} MW`,26);
-        this.generator(ctx,pts.G2,C.red);this.gridLabel(ctx,pts.G2,'G2',`$${this.state.inputs.g2Cost}/MWh`,`${d.p2.toFixed(0)} MW`,26);
-        this.junction(ctx,pts.J,C.amber);this.gridLabel(ctx,pts.J,'J','junction','',18);
-        this.load(ctx,pts.L,C.green);this.gridLabel(ctx,pts.L,'Load',`${this.state.inputs.load.toFixed(0)} MW`,'',26);
-    },
-    bg(ctx,w,h){
-        const g=ctx.createRadialGradient(w*.5,h*.32,40,w*.5,h*.5,Math.max(w,h)*.78);
-        g.addColorStop(0,'rgba(30,41,59,.5)');g.addColorStop(1,'rgba(2,6,23,.9)');
-        ctx.fillStyle=g;ctx.fillRect(0,0,w,h);
-        ctx.save();ctx.fillStyle='rgba(148,163,184,.14)';
-        for(let x=18;x<w;x+=30)for(let y=18;y<h;y+=30){ctx.beginPath();ctx.arc(x,y,1,0,Math.PI*2);ctx.fill()}
-        ctx.restore();
-    },
-    road(ctx,path,flow,heat,color){
-        ctx.save();ctx.lineCap='round';ctx.lineJoin='round';
-        ctx.strokeStyle='rgba(148,163,184,.22)';ctx.lineWidth=24;this.strokePath(ctx,path);
-        ctx.strokeStyle='#0b1220';ctx.lineWidth=18;this.strokePath(ctx,path);
-        if(heat>.02){ctx.save();ctx.strokeStyle=`rgba(251,113,133,${.5*heat})`;ctx.lineWidth=18;ctx.shadowColor='rgba(251,113,133,.7)';ctx.shadowBlur=15*heat;this.strokePath(ctx,path);ctx.restore()}
-        ctx.strokeStyle=color;ctx.globalAlpha=.5;ctx.lineWidth=Math.max(5,Math.min(16,5+flow/380));this.strokePath(ctx,path);ctx.globalAlpha=1;
-        ctx.strokeStyle='rgba(255,255,255,.5)';ctx.lineWidth=2;ctx.setLineDash([10,13]);ctx.lineDashOffset=-this.state.t*42;this.strokePath(ctx,path);ctx.setLineDash([]);
-        ctx.restore();
-    },
-    powerLine(ctx,path,flow,color,congested,isTie){
-        ctx.save();ctx.lineCap='round';ctx.lineJoin='round';
-        ctx.strokeStyle='rgba(148,163,184,.2)';ctx.lineWidth=20;this.strokePath(ctx,path);
-        ctx.strokeStyle='#0b1220';ctx.lineWidth=14;this.strokePath(ctx,path);
-        const wd=Math.max(4,Math.min(18,4+Math.abs(flow)/35));
-        if(congested){
-            ctx.save();ctx.shadowColor='rgba(251,113,133,.85)';ctx.shadowBlur=16;ctx.strokeStyle=color;ctx.lineWidth=wd;this.strokePath(ctx,path);ctx.restore();
-            ctx.strokeStyle='rgba(255,255,255,.85)';ctx.lineWidth=2;ctx.setLineDash([7,9]);ctx.lineDashOffset=-this.state.t*30;this.strokePath(ctx,path);ctx.setLineDash([]);
-        }else{
-            ctx.strokeStyle=color;ctx.globalAlpha=.7;ctx.lineWidth=wd;this.strokePath(ctx,path);ctx.globalAlpha=1;
-            if(isTie){ctx.strokeStyle='rgba(245,158,11,.55)';ctx.lineWidth=2;ctx.setLineDash([4,6]);this.strokePath(ctx,path);ctx.setLineDash([])}
-        }
-        ctx.restore();
-    },
-    removedLine(ctx,path){
-        ctx.save();ctx.lineCap='round';
-        ctx.strokeStyle='rgba(100,116,139,.32)';ctx.lineWidth=8;ctx.setLineDash([10,12]);this.strokePath(ctx,path);ctx.setLineDash([]);
-        const m=this.pointAt(path,.5);
-        ctx.strokeStyle='rgba(251,113,133,.8)';ctx.lineWidth=2.6;
-        ctx.beginPath();ctx.moveTo(m.x-7,m.y-7);ctx.lineTo(m.x+7,m.y+7);ctx.moveTo(m.x+7,m.y-7);ctx.lineTo(m.x-7,m.y+7);ctx.stroke();
-        this.pill(ctx,m.x,m.y-20,'line removed','#cbd5e1');
-        ctx.restore();
-    },
-    strokePath(ctx,path){ctx.beginPath();ctx.moveTo(path[0].x,path[0].y);path.slice(1).forEach(p=>ctx.lineTo(p.x,p.y));ctx.stroke()},
-    cars(ctx,path,flow,color,speed,max){
-        const count=Math.min(max,Math.floor(flow/120));
-        if(count<=0)return;
-        ctx.save();
-        for(let i=0;i<count;i++){
-            const u=(this.state.t*speed+i/count)%1,p=this.pointAt(path,u),tan=this.tangentAt(path,u),ang=Math.atan2(tan.y,tan.x);
-            ctx.save();ctx.translate(p.x,p.y);ctx.rotate(ang);
-            ctx.fillStyle='rgba(2,6,23,.5)';this.round(ctx,-6.5,-4,13,8,3);ctx.fill();
-            ctx.fillStyle=color;this.round(ctx,-6,-3.4,12,6.8,2.6);ctx.fill();
-            ctx.fillStyle='rgba(255,255,255,.85)';this.round(ctx,.4,-2.4,3.6,4.8,1.4);ctx.fill();
+        drawTraffic(canvas, shortcut) {
+          const { ctx, w, h } = this.setup(canvas),
+            d = this.state.traffic,
+            p = this.trafficCoords,
+            C = this.colors;
+          this.bg(ctx, w, h);
+          const pts = { S: this.xy(p.S, w, h), A: this.xy(p.A, w, h), B: this.xy(p.B, w, h), E: this.xy(p.E, w, h) };
+          const heat = (v) => Math.max(0, Math.min(1, (v / 100 - 15) / 55));
+          const routes = shortcut
+            ? [
+                { path: [pts.S, pts.A, pts.E], flow: d.top, color: C.blue },
+                { path: [pts.S, pts.B, pts.E], flow: d.bottom, color: C.purple },
+                { path: [pts.S, pts.A, pts.B, pts.E], flow: d.shortcut, color: C.orange },
+              ]
+            : [
+                { path: [pts.S, pts.A, pts.E], flow: d.beforeTop, color: C.blue },
+                { path: [pts.S, pts.B, pts.E], flow: d.beforeBottom, color: C.purple },
+              ];
+          const edges = shortcut
+            ? [
+                {
+                  path: [pts.S, pts.A],
+                  flow: d.edges.sa,
+                  heat: heat(d.edges.sa),
+                  color: C.blue,
+                  label: `S-A ${this.num(d.edges.sa)} cars`,
+                  sub: `delay ${(d.edges.sa / 100).toFixed(0)} min`,
+                  off: [0, -18],
+                },
+                {
+                  path: [pts.A, pts.E],
+                  flow: d.edges.ae,
+                  heat: 0,
+                  color: C.blue,
+                  label: `A-E ${this.num(d.edges.ae)} cars`,
+                  sub: "45 min",
+                  off: [8, -20],
+                },
+                {
+                  path: [pts.S, pts.B],
+                  flow: d.edges.sb,
+                  heat: 0,
+                  color: C.purple,
+                  label: `S-B ${this.num(d.edges.sb)} cars`,
+                  sub: "45 min",
+                  off: [8, 20],
+                },
+                {
+                  path: [pts.B, pts.E],
+                  flow: d.edges.be,
+                  heat: heat(d.edges.be),
+                  color: C.purple,
+                  label: `B-E ${this.num(d.edges.be)} cars`,
+                  sub: `delay ${(d.edges.be / 100).toFixed(0)} min`,
+                  off: [0, 18],
+                },
+                {
+                  path: [pts.A, pts.B],
+                  flow: d.edges.ab,
+                  heat: 0,
+                  color: C.orange,
+                  label: `A-B ${this.num(d.edges.ab)} cars`,
+                  sub: "shortcut 0 min",
+                  off: [36, 0],
+                },
+              ]
+            : [
+                {
+                  path: [pts.S, pts.A],
+                  flow: d.beforeTop,
+                  heat: heat(d.beforeTop),
+                  color: C.blue,
+                  label: `S-A ${this.num(d.beforeTop)} cars`,
+                  sub: `delay ${(d.beforeTop / 100).toFixed(0)} min`,
+                  off: [0, -18],
+                },
+                {
+                  path: [pts.A, pts.E],
+                  flow: d.beforeTop,
+                  heat: 0,
+                  color: C.blue,
+                  label: `A-E ${this.num(d.beforeTop)} cars`,
+                  sub: "45 min",
+                  off: [8, -20],
+                },
+                {
+                  path: [pts.S, pts.B],
+                  flow: d.beforeBottom,
+                  heat: 0,
+                  color: C.purple,
+                  label: `S-B ${this.num(d.beforeBottom)} cars`,
+                  sub: "45 min",
+                  off: [8, 20],
+                },
+                {
+                  path: [pts.B, pts.E],
+                  flow: d.beforeBottom,
+                  heat: heat(d.beforeBottom),
+                  color: C.purple,
+                  label: `B-E ${this.num(d.beforeBottom)} cars`,
+                  sub: `delay ${(d.beforeBottom / 100).toFixed(0)} min`,
+                  off: [0, 18],
+                },
+              ];
+          edges.forEach((e) => this.road(ctx, e.path, e.flow, e.heat, e.color));
+          routes.forEach((r, i) => this.cars(ctx, r.path, r.flow, r.color, 0.05 + i * 0.006, 26));
+          this.node(ctx, pts.S, "S", C.green, "origin");
+          this.node(ctx, pts.A, "A", C.blue, "");
+          this.node(ctx, pts.B, "B", C.purple, "");
+          this.node(ctx, pts.E, "E", C.muted, "destination");
+          edges.forEach((e) => this.edgeLabel(ctx, e.path, e.label, e.sub, e.off));
+        },
+        drawGrid(canvas, d, connected) {
+          const { ctx, w, h } = this.setup(canvas),
+            P = this.gridCoords,
+            C = this.colors;
+          this.bg(ctx, w, h);
+          const pts = { G1: this.xy(P.G1, w, h), G2: this.xy(P.G2, w, h), J: this.xy(P.J, w, h), L: this.xy(P.L, w, h) };
+          const map = { g1j: [pts.G1, pts.J], jl: [pts.J, pts.L], g2l: [pts.G2, pts.L], tie: [pts.G2, pts.J] };
+          if (!connected) this.removedLine(ctx, map.tie);
+          d.lines.forEach((l) => {
+            const flow = d.flows[l.id] || 0,
+              congested = Math.abs(flow) >= l.limit - 0.75,
+              color = congested ? C.red : l.color,
+              path = flow >= 0 ? map[l.id] : [...map[l.id]].reverse();
+            this.powerLine(ctx, map[l.id], flow, color, congested, l.id === "tie");
+            this.dots(ctx, path, Math.abs(flow) * 6, color, 0.11, 70);
+            if (Math.abs(flow) > 3) this.arrows(ctx, path, color, [0.6]);
+          });
+          if (connected) {
+            const m = this.pointAt(map.tie, 0.5);
+            this.pill(
+              ctx,
+              m.x + 15,
+              m.y,
+              `Tie: ${Math.abs(d.flows.tie).toFixed(0)} / ${this.state.inputs.tieLimit} MW`,
+              d.feasible ? C.amber : C.red
+            );
+          }
+          this.generator(ctx, pts.G1, C.blue);
+          this.gridLabel(ctx, pts.G1, "G1", `$${this.state.inputs.g1Cost}/MWh`, d.feasible ? `${d.p1.toFixed(0)} MW` : "no dispatch", 26);
+          this.generator(ctx, pts.G2, C.red);
+          this.gridLabel(ctx, pts.G2, "G2", `$${this.state.inputs.g2Cost}/MWh`, d.feasible ? `${d.p2.toFixed(0)} MW` : "no dispatch", 26);
+          this.junction(ctx, pts.J, C.amber);
+          this.gridLabel(ctx, pts.J, "J", "junction", "", -53);
+          this.load(ctx, pts.L, C.green);
+          this.gridLabel(ctx, pts.L, "Load", `${this.state.inputs.load.toFixed(0)} MW`, "", 26);
+        },
+        bg(ctx, w, h) {
+          const g = ctx.createRadialGradient(w * 0.5, h * 0.32, 40, w * 0.5, h * 0.5, Math.max(w, h) * 0.78);
+          g.addColorStop(0, "rgba(30,41,59,.5)");
+          g.addColorStop(1, "rgba(2,6,23,.9)");
+          ctx.fillStyle = g;
+          ctx.fillRect(0, 0, w, h);
+          ctx.save();
+          ctx.fillStyle = "rgba(148,163,184,.14)";
+          for (let x = 18; x < w; x += 30)
+            for (let y = 18; y < h; y += 30) {
+              ctx.beginPath();
+              ctx.arc(x, y, 1, 0, Math.PI * 2);
+              ctx.fill();
+            }
+          ctx.restore();
+        },
+        road(ctx, path, flow, heat, color) {
+          ctx.save();
+          ctx.lineCap = "round";
+          ctx.lineJoin = "round";
+          ctx.strokeStyle = "rgba(148,163,184,.22)";
+          ctx.lineWidth = 24;
+          this.strokePath(ctx, path);
+          ctx.strokeStyle = "#0b1220";
+          ctx.lineWidth = 18;
+          this.strokePath(ctx, path);
+          if (heat > 0.02) {
+            ctx.save();
+            ctx.strokeStyle = `rgba(251,113,133,${0.5 * heat})`;
+            ctx.lineWidth = 18;
+            ctx.shadowColor = "rgba(251,113,133,.7)";
+            ctx.shadowBlur = 15 * heat;
+            this.strokePath(ctx, path);
             ctx.restore();
-        }
-        ctx.restore();
-    },
-    dots(ctx,path,flow,color,speed,max){
-        const count=Math.min(max,Math.floor(flow/70));
-        if(count<=0)return;
-        ctx.save();ctx.fillStyle=color;ctx.shadowColor=color;ctx.shadowBlur=9;
-        for(let i=0;i<count;i++){const u=(this.state.t*speed+i/count)%1,p=this.pointAt(path,u),pulse=.65+.35*Math.sin(this.state.t*5+i);ctx.globalAlpha=.35+.5*pulse;ctx.beginPath();ctx.arc(p.x,p.y,2.2+1.2*pulse,0,Math.PI*2);ctx.fill()}
-        ctx.restore();
-    },
-    pointAt(path,t){
-        const segs=[];let total=0;
-        for(let i=0;i<path.length-1;i++){const a=path[i],b=path[i+1],len=Math.hypot(b.x-a.x,b.y-a.y);segs.push({a,b,len});total+=len}
-        let d=t*total;
-        for(const s of segs){if(d<=s.len){const u=s.len?d/s.len:0;return{x:s.a.x+(s.b.x-s.a.x)*u,y:s.a.y+(s.b.y-s.a.y)*u}}d-=s.len}
-        const last=path[path.length-1];return{x:last.x,y:last.y};
-    },
-    tangentAt(path,t){
-        const segs=[];let total=0;
-        for(let i=0;i<path.length-1;i++){const a=path[i],b=path[i+1],len=Math.hypot(b.x-a.x,b.y-a.y);segs.push({a,b,len});total+=len}
-        let d=t*total;
-        for(const s of segs){if(d<=s.len){const L=s.len||1;return{x:(s.b.x-s.a.x)/L,y:(s.b.y-s.a.y)/L}}d-=s.len}
-        const s=segs[segs.length-1],L=s.len||1;return{x:(s.b.x-s.a.x)/L,y:(s.b.y-s.a.y)/L};
-    },
-    arrows(ctx,path,color,positions){
-        ctx.save();ctx.fillStyle=color;ctx.strokeStyle='rgba(2,6,23,.7)';ctx.lineWidth=1;
-        positions.forEach(t=>{const p=this.pointAt(path,t),tan=this.tangentAt(path,t),ang=Math.atan2(tan.y,tan.x);ctx.save();ctx.translate(p.x,p.y);ctx.rotate(ang);ctx.beginPath();ctx.moveTo(-4,-5);ctx.lineTo(6,0);ctx.lineTo(-4,5);ctx.closePath();ctx.fill();ctx.stroke();ctx.restore()});
-        ctx.restore();
-    },
-    node(ctx,p,label,color,caption){
-        ctx.save();
-        ctx.fillStyle='rgba(2,6,23,.5)';ctx.beginPath();ctx.arc(p.x,p.y+4,27,0,Math.PI*2);ctx.fill();
-        const g=ctx.createRadialGradient(p.x-9,p.y-11,3,p.x,p.y,27);g.addColorStop(0,'rgba(255,255,255,.5)');g.addColorStop(1,color);
-        ctx.fillStyle=g;ctx.beginPath();ctx.arc(p.x,p.y,26,0,Math.PI*2);ctx.fill();
-        ctx.strokeStyle='rgba(255,255,255,.82)';ctx.lineWidth=2.5;ctx.stroke();
-        ctx.fillStyle='white';ctx.font='900 18px Inter';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(label,p.x,p.y);
-        if(caption){ctx.fillStyle='#cbd5e1';ctx.font='800 10px Inter';ctx.fillText(caption,p.x,p.y+40)}
-        ctx.restore();
-    },
-    generator(ctx,p,color){
-        ctx.save();
-        ctx.fillStyle='rgba(2,6,23,.5)';ctx.beginPath();ctx.arc(p.x,p.y+4,24,0,Math.PI*2);ctx.fill();
-        const g=ctx.createRadialGradient(p.x-8,p.y-10,3,p.x,p.y,24);g.addColorStop(0,'rgba(255,255,255,.5)');g.addColorStop(1,color);
-        ctx.fillStyle=g;ctx.beginPath();ctx.arc(p.x,p.y,22,0,Math.PI*2);ctx.fill();
-        ctx.strokeStyle='rgba(255,255,255,.82)';ctx.lineWidth=2.4;ctx.stroke();
-        ctx.strokeStyle='white';ctx.lineWidth=2.4;ctx.lineCap='round';ctx.beginPath();
-        for(let a=-11;a<=11;a++){const y=p.y+Math.sin(a/11*Math.PI*2)*6;a===-11?ctx.moveTo(p.x+a,y):ctx.lineTo(p.x+a,y)}
-        ctx.stroke();ctx.restore();
-    },
-    junction(ctx,p,color){
-        ctx.save();ctx.lineCap='round';
-        ctx.strokeStyle='rgba(2,6,23,.5)';ctx.lineWidth=12;ctx.beginPath();ctx.moveTo(p.x-20,p.y+4);ctx.lineTo(p.x+20,p.y+4);ctx.stroke();
-        ctx.strokeStyle=color;ctx.lineWidth=8;ctx.beginPath();ctx.moveTo(p.x-20,p.y);ctx.lineTo(p.x+20,p.y);ctx.stroke();
-        ctx.fillStyle=color;[-20,0,20].forEach(dx=>{ctx.beginPath();ctx.arc(p.x+dx,p.y,3.4,0,Math.PI*2);ctx.fill()});
-        ctx.restore();
-    },
-    load(ctx,p,color){
-        ctx.save();
-        ctx.fillStyle='rgba(2,6,23,.5)';this.round(ctx,p.x-22,p.y-14,44,40,11);ctx.fill();
-        const g=ctx.createLinearGradient(p.x,p.y-20,p.x,p.y+20);g.addColorStop(0,'rgba(255,255,255,.42)');g.addColorStop(.22,color);g.addColorStop(1,color);
-        ctx.fillStyle=g;this.round(ctx,p.x-22,p.y-18,44,38,11);ctx.fill();
-        ctx.strokeStyle='rgba(255,255,255,.82)';ctx.lineWidth=2.2;ctx.stroke();
-        ctx.fillStyle='rgba(255,255,255,.92)';ctx.beginPath();ctx.moveTo(p.x,p.y+13);ctx.lineTo(p.x-8,p.y+2);ctx.lineTo(p.x+8,p.y+2);ctx.closePath();ctx.fill();
-        ctx.restore();
-    },
-    gridLabel(ctx,p,title,sub,value,dy){
-        const lines=[{t:title,c:'#f8fafc',f:'900 13px Inter'}];
-        if(sub)lines.push({t:sub,c:'#94a3b8',f:'800 10px Inter'});
-        if(value)lines.push({t:value,c:'#e2e8f0',f:'900 11px Inter'});
-        ctx.save();let maxW=0;lines.forEach(l=>{ctx.font=l.f;maxW=Math.max(maxW,ctx.measureText(l.t).width)});
-        const bw=maxW+22,bh=12+lines.length*14,bx=p.x-bw/2,by=p.y+dy;
-        ctx.fillStyle='rgba(2,6,23,.82)';ctx.strokeStyle='rgba(148,163,184,.22)';ctx.lineWidth=1;this.round(ctx,bx,by,bw,bh,12);ctx.fill();ctx.stroke();
-        ctx.textAlign='center';ctx.textBaseline='middle';
-        lines.forEach((l,i)=>{ctx.font=l.f;ctx.fillStyle=l.c;ctx.fillText(l.t,p.x,by+12+i*14)});
-        ctx.restore();
-    },
-    edgeLabel(ctx,path,label,sub,off){
-        const m=this.pointAt(path,.5),x=m.x+(off?.[0]||0),y=m.y+(off?.[1]||0),text=`${label}`;
-        ctx.save();ctx.font='800 12px Inter';const w=Math.max(ctx.measureText(text).width,ctx.measureText(sub).width)+20,h=39;ctx.fillStyle='rgba(2,6,23,.78)';ctx.strokeStyle='rgba(148,163,184,.22)';ctx.lineWidth=1;this.round(ctx,x-w/2,y-h/2,w,h,12);ctx.fill();ctx.stroke();ctx.fillStyle='#f8fafc';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(text,x,y-6);ctx.fillStyle='#94a3b8';ctx.font='800 10px Inter';ctx.fillText(sub,x,y+10);ctx.restore();
-    },
-    pill(ctx,x,y,text,color){
-        ctx.font='900 11px Inter';const w=ctx.measureText(text).width+18,h=26;ctx.fillStyle='rgba(2,6,23,.82)';this.round(ctx,x-w/2,y-h/2,w,h,999);ctx.fill();ctx.strokeStyle='rgba(148,163,184,.24)';ctx.stroke();ctx.fillStyle=color;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(text,x,y+1);
-    },
-    xy(a,w,h){return{x:a[0]*w,y:a[1]*h}},
-    round(ctx,x,y,w,h,r){const rr=Math.min(r,w/2,h/2);ctx.beginPath();ctx.moveTo(x+rr,y);ctx.arcTo(x+w,y,x+w,y+h,rr);ctx.arcTo(x+w,y+h,x,y+h,rr);ctx.arcTo(x,y+h,x,y,rr);ctx.arcTo(x,y,x+w,y,rr);ctx.closePath()},
-    num(n){return Math.round(n).toLocaleString()},
-    money(n){return `$${Math.round(n).toLocaleString()}`},
-    moneyShort(n){return `$${this.short(n)}`},
-    short(n){return n>=1000?`${(n/1000).toFixed(n>=10000?1:1)}k`:`${Math.round(n)}`}
-};
-App.init();
-</script>
-</body>
+          }
+          ctx.strokeStyle = color;
+          ctx.globalAlpha = 0.5;
+          ctx.lineWidth = Math.max(5, Math.min(16, 5 + flow / 380));
+          this.strokePath(ctx, path);
+          ctx.globalAlpha = 1;
+          ctx.strokeStyle = "rgba(255,255,255,.5)";
+          ctx.lineWidth = 2;
+          ctx.setLineDash([10, 13]);
+          ctx.lineDashOffset = -this.state.t * 42;
+          this.strokePath(ctx, path);
+          ctx.setLineDash([]);
+          ctx.restore();
+        },
+        powerLine(ctx, path, flow, color, congested, isTie) {
+          ctx.save();
+          ctx.lineCap = "round";
+          ctx.lineJoin = "round";
+          ctx.strokeStyle = "rgba(148,163,184,.2)";
+          ctx.lineWidth = 20;
+          this.strokePath(ctx, path);
+          ctx.strokeStyle = "#0b1220";
+          ctx.lineWidth = 14;
+          this.strokePath(ctx, path);
+          const wd = Math.max(4, Math.min(18, 4 + Math.abs(flow) / 35));
+          if (congested) {
+            ctx.save();
+            ctx.shadowColor = "rgba(251,113,133,.85)";
+            ctx.shadowBlur = 16;
+            ctx.strokeStyle = color;
+            ctx.lineWidth = wd;
+            this.strokePath(ctx, path);
+            ctx.restore();
+            ctx.strokeStyle = "rgba(255,255,255,.85)";
+            ctx.lineWidth = 2;
+            ctx.setLineDash([7, 9]);
+            ctx.lineDashOffset = -this.state.t * 30;
+            this.strokePath(ctx, path);
+            ctx.setLineDash([]);
+          } else {
+            ctx.strokeStyle = color;
+            ctx.globalAlpha = 0.7;
+            ctx.lineWidth = wd;
+            this.strokePath(ctx, path);
+            ctx.globalAlpha = 1;
+            if (isTie) {
+              ctx.strokeStyle = "rgba(245,158,11,.55)";
+              ctx.lineWidth = 2;
+              ctx.setLineDash([4, 6]);
+              this.strokePath(ctx, path);
+              ctx.setLineDash([]);
+            }
+          }
+          ctx.restore();
+        },
+        removedLine(ctx, path) {
+          ctx.save();
+          ctx.lineCap = "round";
+          ctx.strokeStyle = "rgba(100,116,139,.32)";
+          ctx.lineWidth = 8;
+          ctx.setLineDash([10, 12]);
+          this.strokePath(ctx, path);
+          ctx.setLineDash([]);
+          const m = this.pointAt(path, 0.5);
+          ctx.strokeStyle = "rgba(251,113,133,.8)";
+          ctx.lineWidth = 2.6;
+          ctx.beginPath();
+          ctx.moveTo(m.x - 7, m.y - 7);
+          ctx.lineTo(m.x + 7, m.y + 7);
+          ctx.moveTo(m.x + 7, m.y - 7);
+          ctx.lineTo(m.x - 7, m.y + 7);
+          ctx.stroke();
+          this.pill(ctx, m.x, m.y - 20, "line removed", "#cbd5e1");
+          ctx.restore();
+        },
+        strokePath(ctx, path) {
+          ctx.beginPath();
+          ctx.moveTo(path[0].x, path[0].y);
+          path.slice(1).forEach((p) => ctx.lineTo(p.x, p.y));
+          ctx.stroke();
+        },
+        cars(ctx, path, flow, color, speed, max) {
+          const count = Math.min(max, Math.floor(flow / 120));
+          if (count <= 0) return;
+          ctx.save();
+          for (let i = 0; i < count; i++) {
+            const u = (this.state.t * speed + i / count) % 1,
+              p = this.pointAt(path, u),
+              tan = this.tangentAt(path, u),
+              ang = Math.atan2(tan.y, tan.x);
+            ctx.save();
+            ctx.translate(p.x, p.y);
+            ctx.rotate(ang);
+            ctx.fillStyle = "rgba(2,6,23,.5)";
+            this.round(ctx, -6.5, -4, 13, 8, 3);
+            ctx.fill();
+            ctx.fillStyle = color;
+            this.round(ctx, -6, -3.4, 12, 6.8, 2.6);
+            ctx.fill();
+            ctx.fillStyle = "rgba(255,255,255,.85)";
+            this.round(ctx, 0.4, -2.4, 3.6, 4.8, 1.4);
+            ctx.fill();
+            ctx.restore();
+          }
+          ctx.restore();
+        },
+        dots(ctx, path, flow, color, speed, max) {
+          const count = Math.min(max, Math.floor(flow / 70));
+          if (count <= 0) return;
+          ctx.save();
+          ctx.fillStyle = color;
+          ctx.shadowColor = color;
+          ctx.shadowBlur = 9;
+          for (let i = 0; i < count; i++) {
+            const u = (this.state.t * speed + i / count) % 1,
+              p = this.pointAt(path, u),
+              pulse = 0.65 + 0.35 * Math.sin(this.state.t * 5 + i);
+            ctx.globalAlpha = 0.35 + 0.5 * pulse;
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, 2.2 + 1.2 * pulse, 0, Math.PI * 2);
+            ctx.fill();
+          }
+          ctx.restore();
+        },
+        pointAt(path, t) {
+          const segs = [];
+          let total = 0;
+          for (let i = 0; i < path.length - 1; i++) {
+            const a = path[i],
+              b = path[i + 1],
+              len = Math.hypot(b.x - a.x, b.y - a.y);
+            segs.push({ a, b, len });
+            total += len;
+          }
+          let d = t * total;
+          for (const s of segs) {
+            if (d <= s.len) {
+              const u = s.len ? d / s.len : 0;
+              return { x: s.a.x + (s.b.x - s.a.x) * u, y: s.a.y + (s.b.y - s.a.y) * u };
+            }
+            d -= s.len;
+          }
+          const last = path[path.length - 1];
+          return { x: last.x, y: last.y };
+        },
+        tangentAt(path, t) {
+          const segs = [];
+          let total = 0;
+          for (let i = 0; i < path.length - 1; i++) {
+            const a = path[i],
+              b = path[i + 1],
+              len = Math.hypot(b.x - a.x, b.y - a.y);
+            segs.push({ a, b, len });
+            total += len;
+          }
+          let d = t * total;
+          for (const s of segs) {
+            if (d <= s.len) {
+              const L = s.len || 1;
+              return { x: (s.b.x - s.a.x) / L, y: (s.b.y - s.a.y) / L };
+            }
+            d -= s.len;
+          }
+          const s = segs[segs.length - 1],
+            L = s.len || 1;
+          return { x: (s.b.x - s.a.x) / L, y: (s.b.y - s.a.y) / L };
+        },
+        arrows(ctx, path, color, positions) {
+          ctx.save();
+          ctx.fillStyle = color;
+          ctx.strokeStyle = "rgba(2,6,23,.7)";
+          ctx.lineWidth = 1;
+          positions.forEach((t) => {
+            const p = this.pointAt(path, t),
+              tan = this.tangentAt(path, t),
+              ang = Math.atan2(tan.y, tan.x);
+            ctx.save();
+            ctx.translate(p.x, p.y);
+            ctx.rotate(ang);
+            ctx.beginPath();
+            ctx.moveTo(-4, -5);
+            ctx.lineTo(6, 0);
+            ctx.lineTo(-4, 5);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+            ctx.restore();
+          });
+          ctx.restore();
+        },
+        node(ctx, p, label, color, caption) {
+          ctx.save();
+          ctx.fillStyle = "rgba(2,6,23,.5)";
+          ctx.beginPath();
+          ctx.arc(p.x, p.y + 4, 27, 0, Math.PI * 2);
+          ctx.fill();
+          const g = ctx.createRadialGradient(p.x - 9, p.y - 11, 3, p.x, p.y, 27);
+          g.addColorStop(0, "rgba(255,255,255,.5)");
+          g.addColorStop(1, color);
+          ctx.fillStyle = g;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, 26, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.strokeStyle = "rgba(255,255,255,.82)";
+          ctx.lineWidth = 2.5;
+          ctx.stroke();
+          ctx.fillStyle = "white";
+          ctx.font = "900 18px Inter";
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          ctx.fillText(label, p.x, p.y);
+          if (caption) {
+            ctx.fillStyle = "#cbd5e1";
+            ctx.font = "800 10px Inter";
+            ctx.fillText(caption, p.x, p.y + 40);
+          }
+          ctx.restore();
+        },
+        generator(ctx, p, color) {
+          ctx.save();
+          ctx.fillStyle = "rgba(2,6,23,.5)";
+          ctx.beginPath();
+          ctx.arc(p.x, p.y + 4, 24, 0, Math.PI * 2);
+          ctx.fill();
+          const g = ctx.createRadialGradient(p.x - 8, p.y - 10, 3, p.x, p.y, 24);
+          g.addColorStop(0, "rgba(255,255,255,.5)");
+          g.addColorStop(1, color);
+          ctx.fillStyle = g;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, 22, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.strokeStyle = "rgba(255,255,255,.82)";
+          ctx.lineWidth = 2.4;
+          ctx.stroke();
+          ctx.strokeStyle = "white";
+          ctx.lineWidth = 2.4;
+          ctx.lineCap = "round";
+          ctx.beginPath();
+          for (let a = -11; a <= 11; a++) {
+            const y = p.y + Math.sin((a / 11) * Math.PI * 2) * 6;
+            a === -11 ? ctx.moveTo(p.x + a, y) : ctx.lineTo(p.x + a, y);
+          }
+          ctx.stroke();
+          ctx.restore();
+        },
+        junction(ctx, p, color) {
+          ctx.save();
+          ctx.lineCap = "round";
+          ctx.strokeStyle = "rgba(2,6,23,.5)";
+          ctx.lineWidth = 12;
+          ctx.beginPath();
+          ctx.moveTo(p.x - 20, p.y + 4);
+          ctx.lineTo(p.x + 20, p.y + 4);
+          ctx.stroke();
+          ctx.strokeStyle = color;
+          ctx.lineWidth = 8;
+          ctx.beginPath();
+          ctx.moveTo(p.x - 20, p.y);
+          ctx.lineTo(p.x + 20, p.y);
+          ctx.stroke();
+          ctx.fillStyle = color;
+          [-20, 0, 20].forEach((dx) => {
+            ctx.beginPath();
+            ctx.arc(p.x + dx, p.y, 3.4, 0, Math.PI * 2);
+            ctx.fill();
+          });
+          ctx.restore();
+        },
+        load(ctx, p, color) {
+          ctx.save();
+          ctx.fillStyle = "rgba(2,6,23,.5)";
+          this.round(ctx, p.x - 22, p.y - 14, 44, 40, 11);
+          ctx.fill();
+          const g = ctx.createLinearGradient(p.x, p.y - 20, p.x, p.y + 20);
+          g.addColorStop(0, "rgba(255,255,255,.42)");
+          g.addColorStop(0.22, color);
+          g.addColorStop(1, color);
+          ctx.fillStyle = g;
+          this.round(ctx, p.x - 22, p.y - 18, 44, 38, 11);
+          ctx.fill();
+          ctx.strokeStyle = "rgba(255,255,255,.82)";
+          ctx.lineWidth = 2.2;
+          ctx.stroke();
+          ctx.fillStyle = "rgba(255,255,255,.92)";
+          ctx.beginPath();
+          ctx.moveTo(p.x, p.y + 13);
+          ctx.lineTo(p.x - 8, p.y + 2);
+          ctx.lineTo(p.x + 8, p.y + 2);
+          ctx.closePath();
+          ctx.fill();
+          ctx.restore();
+        },
+        gridLabel(ctx, p, title, sub, value, dy) {
+          const lines = [{ t: title, c: "#f8fafc", f: "900 13px Inter" }];
+          if (sub) lines.push({ t: sub, c: "#94a3b8", f: "800 10px Inter" });
+          if (value) lines.push({ t: value, c: "#e2e8f0", f: "900 11px Inter" });
+          ctx.save();
+          let maxW = 0;
+          lines.forEach((l) => {
+            ctx.font = l.f;
+            maxW = Math.max(maxW, ctx.measureText(l.t).width);
+          });
+          const bw = maxW + 22,
+            bh = 12 + lines.length * 14,
+            bx = p.x - bw / 2,
+            by = p.y + dy;
+          ctx.fillStyle = "rgba(2,6,23,.82)";
+          ctx.strokeStyle = "rgba(148,163,184,.22)";
+          ctx.lineWidth = 1;
+          this.round(ctx, bx, by, bw, bh, 12);
+          ctx.fill();
+          ctx.stroke();
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          lines.forEach((l, i) => {
+            ctx.font = l.f;
+            ctx.fillStyle = l.c;
+            ctx.fillText(l.t, p.x, by + 12 + i * 14);
+          });
+          ctx.restore();
+        },
+        edgeLabel(ctx, path, label, sub, off) {
+          const m = this.pointAt(path, 0.5),
+            x = m.x + (off?.[0] || 0),
+            y = m.y + (off?.[1] || 0),
+            text = `${label}`;
+          ctx.save();
+          ctx.font = "800 12px Inter";
+          const w = Math.max(ctx.measureText(text).width, ctx.measureText(sub).width) + 20,
+            h = 39;
+          ctx.fillStyle = "rgba(2,6,23,.78)";
+          ctx.strokeStyle = "rgba(148,163,184,.22)";
+          ctx.lineWidth = 1;
+          this.round(ctx, x - w / 2, y - h / 2, w, h, 12);
+          ctx.fill();
+          ctx.stroke();
+          ctx.fillStyle = "#f8fafc";
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          ctx.fillText(text, x, y - 6);
+          ctx.fillStyle = "#94a3b8";
+          ctx.font = "800 10px Inter";
+          ctx.fillText(sub, x, y + 10);
+          ctx.restore();
+        },
+        pill(ctx, x, y, text, color) {
+          ctx.font = "900 11px Inter";
+          const w = ctx.measureText(text).width + 18,
+            h = 26;
+          ctx.fillStyle = "rgba(2,6,23,.82)";
+          this.round(ctx, x - w / 2, y - h / 2, w, h, 999);
+          ctx.fill();
+          ctx.strokeStyle = "rgba(148,163,184,.24)";
+          ctx.stroke();
+          ctx.fillStyle = color;
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          ctx.fillText(text, x, y + 1);
+        },
+        xy(a, w, h) {
+          return { x: a[0] * w, y: a[1] * h };
+        },
+        round(ctx, x, y, w, h, r) {
+          const rr = Math.min(r, w / 2, h / 2);
+          ctx.beginPath();
+          ctx.moveTo(x + rr, y);
+          ctx.arcTo(x + w, y, x + w, y + h, rr);
+          ctx.arcTo(x + w, y + h, x, y + h, rr);
+          ctx.arcTo(x, y + h, x, y, rr);
+          ctx.arcTo(x, y, x + w, y, rr);
+          ctx.closePath();
+        },
+        num(n) {
+          return Math.round(n).toLocaleString();
+        },
+        money(n) {
+          return `$${Math.round(n).toLocaleString()}`;
+        },
+        moneyShort(n) {
+          return `$${this.short(n)}`;
+        },
+        short(n) {
+          return n >= 1000 ? `${(n / 1000).toFixed(n >= 10000 ? 1 : 1)}k` : `${Math.round(n)}`;
+        },
+      };
+      App.init();
+    </script>
+  </body>
 </html>

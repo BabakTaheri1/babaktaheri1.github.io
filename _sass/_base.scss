@@ -673,6 +673,12 @@ footer.sticky-bottom {
 // Projects
 
 .projects {
+  .demo-intro {
+    max-width: 48rem;
+    line-height: 1.65;
+    color: var(--global-text-color-light);
+  }
+
   a {
     text-decoration: none;
 
@@ -686,6 +692,8 @@ footer.sticky-bottom {
   .card {
     img {
       width: 100%;
+      aspect-ratio: 16 / 10;
+      object-fit: cover;
     }
   }
 

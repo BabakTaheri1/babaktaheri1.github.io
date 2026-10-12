@@ -211,7 +211,9 @@ sass:
 
 jekyll-minifier:
   compress_javascript: false # set to false since we are using terser as the js minifier
-  exclude: ["robots.txt", "assets/js/search/*.js"]
+  # Sass already compresses this stylesheet. Recompressing its Unicode icon
+  # rules with cssminify2 makes the build unnecessarily slow.
+  exclude: ["robots.txt", "assets/js/search/*.js", "assets/css/main.css"]
 
 # -----------------------------------------------------------------------------
 # Terser

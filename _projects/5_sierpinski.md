@@ -1,10 +1,9 @@
 ---
 layout: page
-title: 'Sierpinski Triangle'
-description: > 
-  This visualization demonstrates the Chaos Game, a stochastic
-  process that beautifully generates the deterministic fractal
-  known as the Sierpinski Triangle.
+title: "Sierpinski Triangle"
+description: >
+  Pick a vertex at random, move halfway toward it, and repeat.
+  Watch a triangle emerge from a simple rule.
 importance: 5
 category: Math
 redirect: /code/Sierpinski.html

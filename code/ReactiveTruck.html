@@ -1,875 +1,1769 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Reactive Power & Power Factor Correction Lab</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-<style>
-:root{
-    --bg0:#020617;
-    --bg1:#07111f;
-    --card:rgba(15,23,42,.74);
-    --card2:rgba(15,23,42,.52);
-    --line:rgba(148,163,184,.22);
-    --text:#e5e7eb;
-    --muted:#94a3b8;
-    --green:#34d399;
-    --sky:#38bdf8;
-    --blue:#60a5fa;
-    --amber:#f59e0b;
-    --purple:#a78bfa;
-    --red:#fb7185;
-    --white:#f8fafc;
-}
-*{box-sizing:border-box}
-html,body{min-height:100%}
-body{
-    margin:0;
-    font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-    color:var(--text);
-    background:
-        radial-gradient(circle at 10% -10%,rgba(56,189,248,.28),transparent 34rem),
-        radial-gradient(circle at 88% 8%,rgba(167,139,250,.24),transparent 30rem),
-        radial-gradient(circle at 55% 105%,rgba(52,211,153,.14),transparent 34rem),
-        linear-gradient(135deg,var(--bg0),var(--bg1));
-    overflow-x:hidden;
-}
-button,input{font:inherit}
-.shell{
-    width:min(1800px,100%);
-    min-height:100vh;
-    margin:0 auto;
-    padding:clamp(14px,2vw,28px);
-    display:flex;
-    flex-direction:column;
-    gap:16px;
-}
-.glass{
-    background:linear-gradient(180deg,var(--card),var(--card2));
-    border:1px solid var(--line);
-    box-shadow:0 26px 90px rgba(0,0,0,.34),inset 0 1px 0 rgba(255,255,255,.04);
-    backdrop-filter:blur(18px);
-}
-.header{
-    border-radius:32px;
-    padding:22px clamp(20px,3vw,34px);
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    gap:22px;
-}
-.eyebrow{
-    display:flex;
-    align-items:center;
-    gap:10px;
-    color:#bae6fd;
-    text-transform:uppercase;
-    letter-spacing:.26em;
-    font-size:12px;
-    font-weight:900;
-    margin-bottom:9px;
-}
-.dot{
-    width:10px;
-    height:10px;
-    border-radius:50%;
-    background:var(--green);
-    box-shadow:0 0 28px rgba(52,211,153,.9);
-}
-h1{
-    margin:0;
-    font-size:clamp(28px,4vw,58px);
-    line-height:.98;
-    letter-spacing:-.055em;
-    color:white;
-    font-weight:900;
-}
-.subtitle{
-    max-width:820px;
-    margin:12px 0 0;
-    color:#cbd5e1;
-    line-height:1.55;
-    font-size:clamp(14px,1.4vw,17px);
-}
-.actions{
-    display:flex;
-    flex-wrap:wrap;
-    gap:10px;
-    justify-content:flex-end;
-}
-.btn{
-    border:1px solid rgba(148,163,184,.28);
-    background:rgba(30,41,59,.7);
-    color:#e2e8f0;
-    border-radius:999px;
-    padding:11px 15px;
-    font-size:13px;
-    font-weight:800;
-    cursor:pointer;
-    transition:transform .18s ease,background .18s ease,border-color .18s ease,box-shadow .18s ease;
-}
-.btn:hover{
-    transform:translateY(-1px);
-    background:rgba(51,65,85,.9);
-    border-color:rgba(125,211,252,.55);
-}
-.btn.primary{
-    background:linear-gradient(135deg,#0ea5e9,#6366f1);
-    border-color:rgba(125,211,252,.75);
-    box-shadow:0 14px 34px rgba(14,165,233,.2);
-}
-.main{
-    display:grid;
-    grid-template-columns:minmax(0,1.45fr) minmax(430px,.88fr);
-    gap:16px;
-    min-height:0;
-    flex:1;
-}
-.left{
-    display:grid;
-    grid-template-rows:minmax(430px,1fr) minmax(260px,.55fr);
-    gap:16px;
-    min-width:0;
-}
-.sceneCard{
-    border-radius:32px;
-    overflow:hidden;
-    position:relative;
-    min-height:430px;
-}
-.canvasWrap{
-    position:relative;
-    height:100%;
-    min-height:0;
-    border-radius:26px;
-    overflow:hidden;
-    background:rgba(2,6,23,.32);
-    border:1px solid rgba(148,163,184,.18);
-}
-canvas{
-    display:block;
-    width:100%;
-    height:100%;
-}
-.badges{
-    position:absolute;
-    left:20px;
-    top:20px;
-    display:flex;
-    flex-wrap:wrap;
-    gap:8px;
-    z-index:3;
-}
-.badge{
-    border:1px solid rgba(148,163,184,.24);
-    background:rgba(2,6,23,.44);
-    color:#cbd5e1;
-    border-radius:999px;
-    padding:8px 11px;
-    font-size:12px;
-    font-weight:900;
-    backdrop-filter:blur(12px);
-}
-.status{
-    position:absolute;
-    right:20px;
-    top:20px;
-    width:min(380px,calc(100% - 40px));
-    border-radius:24px;
-    padding:15px 17px;
-    z-index:3;
-}
-.statusTitle{
-    margin:0;
-    color:white;
-    font-weight:900;
-    letter-spacing:-.02em;
-}
-.statusText{
-    margin:7px 0 0;
-    color:#cbd5e1;
-    font-size:13px;
-    line-height:1.45;
-}
-.charts{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:16px;
-    min-height:0;
-}
-.chartCard{
-    border-radius:32px;
-    padding:18px;
-    min-height:260px;
-    display:flex;
-    flex-direction:column;
-    min-width:0;
-}
-.cardTop{
-    display:flex;
-    justify-content:space-between;
-    align-items:flex-start;
-    gap:12px;
-    margin-bottom:12px;
-}
-.cardTitle{
-    margin:0;
-    color:white;
-    font-size:18px;
-    font-weight:900;
-    letter-spacing:-.02em;
-}
-.cardHint{
-    margin:4px 0 0;
-    color:#94a3b8;
-    font-size:12px;
-}
-.miniBtn{
-    border-radius:999px;
-    border:1px solid rgba(148,163,184,.24);
-    background:rgba(30,41,59,.68);
-    color:#e2e8f0;
-    padding:8px 11px;
-    font-size:12px;
-    font-weight:900;
-    cursor:pointer;
-}
-.graphBox{
-    flex:1;
-    min-height:0;
-    border-radius:22px;
-    overflow:hidden;
-    background:rgba(2,6,23,.42);
-    border:1px solid rgba(148,163,184,.17);
-}
-.grab{cursor:grab}
-.grab:active{cursor:grabbing}
-.panel{
-    border-radius:32px;
-    padding:18px;
-    overflow:hidden;
-    display:flex;
-    flex-direction:column;
-    gap:14px;
-    min-height:0;
-}
-.metrics{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:12px;
-}
-.metric{
-    border-radius:26px;
-    padding:17px;
-    position:relative;
-    overflow:hidden;
-    background:linear-gradient(160deg,rgba(30,41,59,.72),rgba(15,23,42,.5));
-    border:1px solid rgba(148,163,184,.18);
-}
-.metric:before{
-    content:"";
-    position:absolute;
-    inset:0;
-    background:linear-gradient(135deg,rgba(255,255,255,.08),transparent 44%);
-    pointer-events:none;
-}
-.label{
-    margin:0;
-    text-transform:uppercase;
-    letter-spacing:.14em;
-    color:#94a3b8;
-    font-size:11px;
-    font-weight:900;
-}
-.valueRow{
-    margin-top:8px;
-    display:flex;
-    align-items:flex-end;
-    gap:7px;
-}
-.big{
-    font-size:clamp(30px,3.3vw,48px);
-    line-height:.9;
-    font-weight:900;
-    letter-spacing:-.06em;
-}
-.medium{
-    font-size:clamp(25px,2.2vw,35px);
-    line-height:.95;
-    font-weight:900;
-    letter-spacing:-.05em;
-}
-.unit{
-    color:#94a3b8;
-    font-size:13px;
-    font-weight:900;
-    margin-bottom:2px;
-}
-.box{
-    border-radius:26px;
-    padding:18px;
-    border:1px solid rgba(148,163,184,.18);
-    background:rgba(2,6,23,.34);
-}
-.controls{
-    display:flex;
-    flex-direction:column;
-    gap:21px;
-}
-.controlHead{
-    display:flex;
-    justify-content:space-between;
-    gap:12px;
-    align-items:center;
-    margin-bottom:9px;
-}
-.controlHead label{
-    color:#e2e8f0;
-    font-weight:850;
-    font-size:14px;
-}
-.readout{
-    font-size:13px;
-    font-weight:900;
-    white-space:nowrap;
-}
-.slider{
-    width:100%;
-    appearance:none;
-    height:10px;
-    border-radius:999px;
-    outline:none;
-    background:#334155;
-}
-.slider::-webkit-slider-thumb{
-    appearance:none;
-    width:24px;
-    height:24px;
-    border-radius:50%;
-    background:white;
-    border:4px solid var(--sky);
-    box-shadow:0 0 0 8px rgba(56,189,248,.14);
-    cursor:pointer;
-}
-.slider::-moz-range-thumb{
-    width:24px;
-    height:24px;
-    border-radius:50%;
-    background:white;
-    border:4px solid var(--sky);
-    box-shadow:0 0 0 8px rgba(56,189,248,.14);
-    cursor:pointer;
-}
-#powerSlider{background:linear-gradient(90deg,#059669,#34d399,#a3e635)}
-#loadSlider{background:linear-gradient(90deg,#a78bfa,#334155 50%,#f59e0b)}
-#correctionSlider{background:linear-gradient(90deg,#38bdf8,#334155 50%,#f97316)}
-.scale{
-    display:flex;
-    justify-content:space-between;
-    color:#64748b;
-    text-transform:uppercase;
-    letter-spacing:.1em;
-    font-size:10px;
-    font-weight:900;
-    margin-top:8px;
-}
-.eqGrid{
-    display:grid;
-    gap:9px;
-    color:#e2e8f0;
-    font-size:14px;
-    line-height:1.45;
-}
-.eq{
-    border-radius:16px;
-    border:1px solid rgba(148,163,184,.14);
-    background:rgba(15,23,42,.55);
-    padding:11px 13px;
-    overflow:auto;
-    white-space:nowrap;
-}
-.notes{
-    display:grid;
-    gap:10px;
-    color:#cbd5e1;
-    line-height:1.45;
-    font-size:14px;
-}
-.note{
-    display:grid;
-    grid-template-columns:10px 1fr;
-    gap:10px;
-}
-.note span{
-    width:8px;
-    height:8px;
-    border-radius:50%;
-    margin-top:6px;
-    background:var(--sky);
-    box-shadow:0 0 16px rgba(56,189,248,.8);
-}
-@media(max-width:1250px){
-    .main{grid-template-columns:1fr}
-    .panel{overflow:visible}
-}
-@media(max-width:780px){
-    .header{align-items:flex-start;flex-direction:column}
-    .actions{justify-content:flex-start}
-    .charts{grid-template-columns:1fr}
-    .metrics{grid-template-columns:1fr 1fr}
-    .status{position:absolute;left:20px;right:auto;top:auto;bottom:20px}
-}
-@media(max-width:520px){
-    .metrics{grid-template-columns:1fr}
-    .badges{display:none}
-    .sceneCard{min-height:520px}
-}
-</style>
-</head>
-<body>
-<div class="shell">
-    <header class="glass header">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Reactive Power & Power Factor Correction Lab</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <style>
+      :root {
+        --bg0: #020617;
+        --bg1: #07111f;
+        --card: rgba(15, 23, 42, 0.74);
+        --card2: rgba(15, 23, 42, 0.52);
+        --line: rgba(148, 163, 184, 0.22);
+        --text: #e5e7eb;
+        --muted: #94a3b8;
+        --green: #34d399;
+        --sky: #38bdf8;
+        --blue: #60a5fa;
+        --amber: #f59e0b;
+        --purple: #a78bfa;
+        --red: #fb7185;
+        --white: #f8fafc;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        min-height: 100%;
+      }
+      body {
+        margin: 0;
+        font-family:
+          Inter,
+          system-ui,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          sans-serif;
+        color: var(--text);
+        background: radial-gradient(circle at 10% -10%, rgba(56, 189, 248, 0.28), transparent 34rem),
+          radial-gradient(circle at 88% 8%, rgba(167, 139, 250, 0.24), transparent 30rem),
+          radial-gradient(circle at 55% 105%, rgba(52, 211, 153, 0.14), transparent 34rem), linear-gradient(135deg, var(--bg0), var(--bg1));
+        overflow-x: hidden;
+      }
+      button,
+      input {
+        font: inherit;
+      }
+      .shell {
+        width: min(1800px, 100%);
+        min-height: 100vh;
+        margin: 0 auto;
+        padding: clamp(14px, 2vw, 28px);
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+      .glass {
+        background: linear-gradient(180deg, var(--card), var(--card2));
+        border: 1px solid var(--line);
+        box-shadow:
+          0 26px 90px rgba(0, 0, 0, 0.34),
+          inset 0 1px 0 rgba(255, 255, 255, 0.04);
+        backdrop-filter: blur(18px);
+      }
+      .header {
+        border-radius: 32px;
+        padding: 22px clamp(20px, 3vw, 34px);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 22px;
+      }
+      .eyebrow {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: #bae6fd;
+        text-transform: uppercase;
+        letter-spacing: 0.26em;
+        font-size: 12px;
+        font-weight: 900;
+        margin-bottom: 9px;
+      }
+      .dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: var(--green);
+        box-shadow: 0 0 28px rgba(52, 211, 153, 0.9);
+      }
+      h1 {
+        margin: 0;
+        font-size: clamp(28px, 4vw, 58px);
+        line-height: 0.98;
+        letter-spacing: -0.055em;
+        color: white;
+        font-weight: 900;
+      }
+      .subtitle {
+        max-width: 820px;
+        margin: 12px 0 0;
+        color: #cbd5e1;
+        line-height: 1.55;
+        font-size: clamp(14px, 1.4vw, 17px);
+      }
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        justify-content: flex-end;
+      }
+      .btn {
+        border: 1px solid rgba(148, 163, 184, 0.28);
+        background: rgba(30, 41, 59, 0.7);
+        color: #e2e8f0;
+        border-radius: 999px;
+        padding: 11px 15px;
+        font-size: 13px;
+        font-weight: 800;
+        cursor: pointer;
+        transition:
+          transform 0.18s ease,
+          background 0.18s ease,
+          border-color 0.18s ease,
+          box-shadow 0.18s ease;
+      }
+      .btn:hover {
+        transform: translateY(-1px);
+        background: rgba(51, 65, 85, 0.9);
+        border-color: rgba(125, 211, 252, 0.55);
+      }
+      .btn.primary {
+        background: linear-gradient(135deg, #0ea5e9, #6366f1);
+        border-color: rgba(125, 211, 252, 0.75);
+        box-shadow: 0 14px 34px rgba(14, 165, 233, 0.2);
+      }
+      .main {
+        display: grid;
+        grid-template-columns: minmax(0, 1.45fr) minmax(430px, 0.88fr);
+        gap: 16px;
+        min-height: 0;
+        flex: 1;
+      }
+      .left {
+        display: grid;
+        grid-template-rows: minmax(430px, 1fr) minmax(260px, 0.55fr);
+        gap: 16px;
+        min-width: 0;
+      }
+      .sceneCard {
+        border-radius: 32px;
+        overflow: hidden;
+        position: relative;
+        min-height: 430px;
+      }
+      .canvasWrap {
+        position: relative;
+        height: 100%;
+        min-height: 0;
+        border-radius: 26px;
+        overflow: hidden;
+        background: rgba(2, 6, 23, 0.32);
+        border: 1px solid rgba(148, 163, 184, 0.18);
+      }
+      canvas {
+        display: block;
+        width: 100%;
+        height: 100%;
+      }
+      .badges {
+        position: absolute;
+        left: 20px;
+        top: 20px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        z-index: 3;
+      }
+      .badge {
+        border: 1px solid rgba(148, 163, 184, 0.24);
+        background: rgba(2, 6, 23, 0.44);
+        color: #cbd5e1;
+        border-radius: 999px;
+        padding: 8px 11px;
+        font-size: 12px;
+        font-weight: 900;
+        backdrop-filter: blur(12px);
+      }
+      .status {
+        position: absolute;
+        right: 20px;
+        top: 20px;
+        width: min(380px, calc(100% - 40px));
+        border-radius: 24px;
+        padding: 15px 17px;
+        z-index: 3;
+      }
+      .statusTitle {
+        margin: 0;
+        color: white;
+        font-weight: 900;
+        letter-spacing: -0.02em;
+      }
+      .statusText {
+        margin: 7px 0 0;
+        color: #cbd5e1;
+        font-size: 13px;
+        line-height: 1.45;
+      }
+      .charts {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+        min-height: 0;
+      }
+      .chartCard {
+        border-radius: 32px;
+        padding: 18px;
+        min-height: 260px;
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+      }
+      .cardTop {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 12px;
+        margin-bottom: 12px;
+      }
+      .cardTitle {
+        margin: 0;
+        color: white;
+        font-size: 18px;
+        font-weight: 900;
+        letter-spacing: -0.02em;
+      }
+      .cardHint {
+        margin: 4px 0 0;
+        color: #94a3b8;
+        font-size: 12px;
+      }
+      .miniBtn {
+        border-radius: 999px;
+        border: 1px solid rgba(148, 163, 184, 0.24);
+        background: rgba(30, 41, 59, 0.68);
+        color: #e2e8f0;
+        padding: 8px 11px;
+        font-size: 12px;
+        font-weight: 900;
+        cursor: pointer;
+      }
+      .graphBox {
+        flex: 1;
+        min-height: 0;
+        border-radius: 22px;
+        overflow: hidden;
+        background: rgba(2, 6, 23, 0.42);
+        border: 1px solid rgba(148, 163, 184, 0.17);
+      }
+      .grab {
+        cursor: grab;
+      }
+      .grab:active {
+        cursor: grabbing;
+      }
+      .panel {
+        border-radius: 32px;
+        padding: 18px;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        min-height: 0;
+      }
+      .metrics {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+      .metric {
+        border-radius: 26px;
+        padding: 17px;
+        position: relative;
+        overflow: hidden;
+        background: linear-gradient(160deg, rgba(30, 41, 59, 0.72), rgba(15, 23, 42, 0.5));
+        border: 1px solid rgba(148, 163, 184, 0.18);
+      }
+      .metric:before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), transparent 44%);
+        pointer-events: none;
+      }
+      .label {
+        margin: 0;
+        text-transform: uppercase;
+        letter-spacing: 0.14em;
+        color: #94a3b8;
+        font-size: 11px;
+        font-weight: 900;
+      }
+      .valueRow {
+        margin-top: 8px;
+        display: flex;
+        align-items: flex-end;
+        gap: 7px;
+      }
+      .big {
+        font-size: clamp(30px, 3.3vw, 48px);
+        line-height: 0.9;
+        font-weight: 900;
+        letter-spacing: -0.06em;
+      }
+      .medium {
+        font-size: clamp(25px, 2.2vw, 35px);
+        line-height: 0.95;
+        font-weight: 900;
+        letter-spacing: -0.05em;
+      }
+      .unit {
+        color: #94a3b8;
+        font-size: 13px;
+        font-weight: 900;
+        margin-bottom: 2px;
+      }
+      .box {
+        border-radius: 26px;
+        padding: 18px;
+        border: 1px solid rgba(148, 163, 184, 0.18);
+        background: rgba(2, 6, 23, 0.34);
+      }
+      .controls {
+        display: flex;
+        flex-direction: column;
+        gap: 21px;
+      }
+      .controlHead {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        align-items: center;
+        margin-bottom: 9px;
+      }
+      .controlHead label {
+        color: #e2e8f0;
+        font-weight: 850;
+        font-size: 14px;
+      }
+      .readout {
+        font-size: 13px;
+        font-weight: 900;
+        white-space: nowrap;
+      }
+      .slider {
+        width: 100%;
+        appearance: none;
+        height: 10px;
+        border-radius: 999px;
+        outline: none;
+        background: #334155;
+      }
+      .slider::-webkit-slider-thumb {
+        appearance: none;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background: white;
+        border: 4px solid var(--sky);
+        box-shadow: 0 0 0 8px rgba(56, 189, 248, 0.14);
+        cursor: pointer;
+      }
+      .slider::-moz-range-thumb {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background: white;
+        border: 4px solid var(--sky);
+        box-shadow: 0 0 0 8px rgba(56, 189, 248, 0.14);
+        cursor: pointer;
+      }
+      #powerSlider {
+        background: linear-gradient(90deg, #059669, #34d399, #a3e635);
+      }
+      #loadSlider {
+        background: linear-gradient(90deg, #a78bfa, #334155 50%, #f59e0b);
+      }
+      #correctionSlider {
+        background: linear-gradient(90deg, #38bdf8, #334155 50%, #f97316);
+      }
+      .scale {
+        display: flex;
+        justify-content: space-between;
+        color: #64748b;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        font-size: 10px;
+        font-weight: 900;
+        margin-top: 8px;
+      }
+      .eqGrid {
+        display: grid;
+        gap: 9px;
+        color: #e2e8f0;
+        font-size: 14px;
+        line-height: 1.45;
+      }
+      .eq {
+        border-radius: 16px;
+        border: 1px solid rgba(148, 163, 184, 0.14);
+        background: rgba(15, 23, 42, 0.55);
+        padding: 11px 13px;
+        overflow: auto;
+        white-space: nowrap;
+      }
+      .notes {
+        display: grid;
+        gap: 10px;
+        color: #cbd5e1;
+        line-height: 1.45;
+        font-size: 14px;
+      }
+      .note {
+        display: grid;
+        grid-template-columns: 10px 1fr;
+        gap: 10px;
+      }
+      .note span {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        margin-top: 6px;
+        background: var(--sky);
+        box-shadow: 0 0 16px rgba(56, 189, 248, 0.8);
+      }
+      @media (max-width: 1250px) {
+        .main {
+          grid-template-columns: 1fr;
+        }
+        .panel {
+          overflow: visible;
+        }
+      }
+      @media (max-width: 780px) {
+        .header {
+          align-items: flex-start;
+          flex-direction: column;
+        }
+        .actions {
+          justify-content: flex-start;
+        }
+        .charts {
+          grid-template-columns: 1fr;
+        }
+        .metrics {
+          grid-template-columns: 1fr 1fr;
+        }
+        .status {
+          position: absolute;
+          left: 20px;
+          right: auto;
+          top: auto;
+          bottom: 20px;
+        }
+      }
+      @media (max-width: 520px) {
+        .metrics {
+          grid-template-columns: 1fr;
+        }
+        .badges {
+          display: none;
+        }
+        .sceneCard {
+          min-height: 520px;
+        }
+      }
+      .backLink {
+        color: #bae6fd;
+        font-size: 14px;
+        text-decoration: none;
+        align-self: flex-start;
+      }
+      .backLink:hover {
+        text-decoration: underline;
+      }
+      :focus-visible {
+        outline: 3px solid #7dd3fc;
+        outline-offset: 4px;
+      }
+      .main {
+        grid-template-areas: "scene panel" "charts panel";
+        grid-template-rows: minmax(430px, 1fr) 340px;
+      }
+      .sceneCard {
+        grid-area: scene;
+      }
+      .charts {
+        grid-area: charts;
+      }
+      .panel {
+        grid-area: panel;
+        min-width: 0;
+      }
+      .controlsBox {
+        order: -1;
+      }
+      .modelDetails {
+        order: 2;
+      }
+      .modelDetails summary {
+        cursor: pointer;
+      }
+      .modelDetails[open] summary {
+        margin-bottom: 12px;
+      }
+      .eq {
+        white-space: normal;
+        overflow-wrap: anywhere;
+      }
+      .sceneCard > canvas,
+      .graphBox > canvas {
+        position: absolute;
+        inset: 0;
+      }
+      .graphBox {
+        position: relative;
+        min-height: 210px;
+      }
+      .status {
+        left: 20px;
+        right: auto;
+        top: auto;
+        bottom: 20px;
+      }
+      .cardHint {
+        line-height: 1.55;
+      }
+      @media (max-width: 1250px) {
+        .main {
+          grid-template-areas: "scene" "panel" "charts";
+          grid-template-rows: 440px auto auto;
+        }
+        .charts {
+          min-height: 320px;
+        }
+      }
+      @media (max-width: 780px) {
+        .charts {
+          grid-template-columns: 1fr;
+        }
+        .chartCard {
+          min-height: 320px;
+        }
+        .main {
+          grid-template-rows: 400px auto auto;
+        }
+        .sceneCard {
+          min-height: 0;
+        }
+        .metrics {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+        .metric,
+        .box {
+          padding: 14px;
+        }
+        .controlHead {
+          flex-wrap: wrap;
+          gap: 5px;
+        }
+        .big {
+          font-size: 30px;
+        }
+        .unit {
+          font-size: 11px;
+        }
+        .valueRow {
+          flex-wrap: wrap;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="shell">
+      <a class="backLink" href="/projects/">← All demos</a>
+      <header class="glass header">
         <div>
-            <div class="eyebrow"><span class="dot"></span><span>Interactive power systems lab</span></div>
-            <h1>Reactive Power & Power Factor Correction</h1>
-            <p class="subtitle">Real power stays fixed. The correction device changes net reactive power, so apparent power, line current, phase angle, and power factor update together.</p>
+          <div class="eyebrow"><span class="dot"></span><span>Interactive power systems lab</span></div>
+          <h1>Reactive Power & Power Factor Correction</h1>
+          <p class="subtitle">
+            The load still needs the same useful power. Add reactive compensation and see how much less current the supply has to carry.
+          </p>
+          <p class="cardHint">
+            Try this: press <strong>Corrected</strong>, then add more capacitance. Current falls toward unity power factor and rises again when you go
+            too far.
+          </p>
         </div>
         <div class="actions">
-            <button class="btn" id="presetInductive">Inductive load</button>
-            <button class="btn primary" id="presetCorrected">Corrected</button>
-            <button class="btn" id="presetLeading">Leading load</button>
-            <button class="btn" id="resetAll">Reset</button>
+          <button class="btn" id="presetInductive">Inductive load</button>
+          <button class="btn primary" id="presetCorrected">Corrected</button>
+          <button class="btn" id="presetLeading">Leading load</button>
+          <button class="btn" id="resetAll">Reset</button>
+          <button class="btn" id="pauseAnimation" aria-pressed="false">Pause animation</button>
         </div>
-    </header>
+      </header>
 
-    <main class="main">
-        <section class="left">
-            <div class="glass sceneCard">
-                <canvas id="sceneCanvas"></canvas>
-                <div class="badges">
-                    <div class="badge"><span style="color:var(--green)">P</span> useful kW</div>
-                    <div class="badge"><span id="qBadge" style="color:var(--amber)">Q</span> reactive exchange</div>
-                    <div class="badge"><span style="color:var(--white)">S</span> total kVA</div>
-                </div>
-                <div class="glass status">
-                    <p class="statusTitle" id="statusTitle"></p>
-                    <p class="statusText" id="statusText"></p>
-                </div>
-            </div>
+      <main class="main">
+        <div class="glass sceneCard">
+          <canvas
+            id="sceneCanvas"
+            role="img"
+            aria-label="Truck analogy: useful delivery stays constant while reactive compensation changes the supply current."
+          ></canvas>
+          <div class="badges">
+            <div class="badge"><span style="color: var(--green)">P</span> useful kW</div>
+            <div class="badge"><span id="qBadge" style="color: var(--amber)">Q</span> reactive exchange</div>
+            <div class="badge"><span style="color: var(--white)">S</span> total kVA</div>
+          </div>
+          <div class="glass status">
+            <p class="statusTitle" id="statusTitle"></p>
+            <p class="statusText" id="statusText"></p>
+          </div>
+        </div>
 
-            <div class="charts">
-                <div class="glass chartCard">
-                    <div class="cardTop">
-                        <div>
-                            <p class="cardTitle">Power Triangle</p>
-                            <p class="cardHint">Drag to pan, wheel to zoom</p>
-                        </div>
-                        <button class="miniBtn" id="resetTriangle">View</button>
-                    </div>
-                    <div class="graphBox"><canvas class="grab" id="triangleCanvas"></canvas></div>
-                </div>
-                <div class="glass chartCard">
-                    <div class="cardTop">
-                        <div>
-                            <p class="cardTitle">Voltage, Current & Power</p>
-                            <p class="cardHint">Current follows the corrected net angle</p>
-                        </div>
-                        <button class="miniBtn" id="resetWave">View</button>
-                    </div>
-                    <div class="graphBox"><canvas class="grab" id="waveCanvas"></canvas></div>
-                </div>
+        <div class="charts">
+          <div class="glass chartCard">
+            <div class="cardTop">
+              <div>
+                <p class="cardTitle">Power Triangle</p>
+                <p class="cardHint">Drag to pan, wheel to zoom</p>
+              </div>
+              <button class="miniBtn" id="resetTriangle">View</button>
             </div>
-        </section>
+            <div class="graphBox">
+              <canvas
+                class="grab"
+                id="triangleCanvas"
+                role="img"
+                aria-label="Power triangle showing real, net reactive, and apparent power. Values appear in the adjacent panel."
+              ></canvas>
+            </div>
+          </div>
+          <div class="glass chartCard">
+            <div class="cardTop">
+              <div>
+                <p class="cardTitle">Voltage, Current & Power</p>
+                <p class="cardHint">One phase; amplitudes use separate scales</p>
+              </div>
+              <button class="miniBtn" id="resetWave">View</button>
+            </div>
+            <div class="graphBox">
+              <canvas
+                class="grab"
+                id="waveCanvas"
+                role="img"
+                aria-label="One-phase voltage, current, instantaneous power, and reactive exchange component. The dashed line marks average real power."
+              ></canvas>
+            </div>
+          </div>
+        </div>
 
         <aside class="glass panel">
-            <div class="metrics">
-                <div class="metric">
-                    <p class="label">Power Factor</p>
-                    <div class="valueRow"><span class="big" id="pfValue"></span><span class="unit" id="pfType"></span></div>
-                </div>
-                <div class="metric">
-                    <p class="label">Line Current</p>
-                    <div class="valueRow"><span class="big" id="currentValue"></span><span class="unit">A</span></div>
-                </div>
-                <div class="metric">
-                    <p class="label">Apparent Power</p>
-                    <div class="valueRow"><span class="medium" id="sValue"></span><span class="unit">kVA</span></div>
-                </div>
-                <div class="metric">
-                    <p class="label">Net Reactive</p>
-                    <div class="valueRow"><span class="medium" id="qValue"></span><span class="unit">kVAr</span></div>
-                </div>
+          <div class="metrics">
+            <div class="metric">
+              <p class="label">Power Factor</p>
+              <div class="valueRow"><span class="big" id="pfValue"></span><span class="unit" id="pfType"></span></div>
             </div>
-
-            <div class="metrics">
-                <div class="box">
-                    <p class="label">Useful Load</p>
-                    <div class="valueRow"><span class="medium" style="color:var(--green)" id="pValue"></span><span class="unit">kW</span></div>
-                </div>
-                <div class="box">
-                    <p class="label">Current Change</p>
-                    <div class="valueRow"><span class="medium" style="color:var(--sky)" id="currentChange"></span><span class="unit">%</span></div>
-                </div>
+            <div class="metric">
+              <p class="label">Line Current</p>
+              <div class="valueRow"><span class="big" id="currentValue"></span><span class="unit">A</span></div>
             </div>
+            <div class="metric">
+              <p class="label">Apparent Power</p>
+              <div class="valueRow"><span class="medium" id="sValue"></span><span class="unit">kVA</span></div>
+            </div>
+            <div class="metric">
+              <p class="label">Net Reactive</p>
+              <div class="valueRow"><span class="medium" id="qValue"></span><span class="unit">kVAr</span></div>
+            </div>
+          </div>
 
+          <div class="metrics">
             <div class="box">
-                <div class="cardTop" style="margin-bottom:16px">
-                    <div>
-                        <p class="cardTitle">Controls</p>
-                        <p class="cardHint" id="angleBadge"></p>
-                    </div>
-                </div>
-                <div class="controls">
-                    <div>
-                        <div class="controlHead"><label for="powerSlider">Real power demand</label><span class="readout" id="powerReadout"></span></div>
-                        <input class="slider" id="powerSlider" type="range" min="20" max="120" step="1" value="80">
-                    </div>
-                    <div>
-                        <div class="controlHead"><label for="loadSlider">Load angle</label><span class="readout" id="loadReadout"></span></div>
-                        <input class="slider" id="loadSlider" type="range" min="-60" max="60" step="1" value="38">
-                        <div class="scale"><span>leading</span><span>unity</span><span>lagging</span></div>
-                    </div>
-                    <div>
-                        <div class="controlHead"><label for="correctionSlider">Correction device</label><span class="readout" id="correctionReadout"></span></div>
-                        <input class="slider" id="correctionSlider" type="range" min="-180" max="180" step="1" value="0">
-                        <div class="scale"><span>capacitive</span><span>off</span><span>inductive</span></div>
-                    </div>
-                </div>
+              <p class="label">Useful Load</p>
+              <div class="valueRow"><span class="medium" style="color: var(--green)" id="pValue"></span><span class="unit">kW</span></div>
             </div>
-
             <div class="box">
-                <p class="cardTitle" style="margin-bottom:12px">Electrical Model</p>
-                <div class="eqGrid">
-                    <div class="eq">Q<sub>load</sub> = P tan(φ<sub>load</sub>)</div>
-                    <div class="eq">Q<sub>net</sub> = Q<sub>load</sub> + Q<sub>correction</sub></div>
-                    <div class="eq">S<sub>net</sub> = √(P² + Q<sub>net</sub>²), &nbsp; PF = P / S<sub>net</sub></div>
-                    <div class="eq">I = S<sub>net</sub> × 1000 / (√3 × V<sub>LL</sub>)</div>
-                </div>
+              <p class="label">Current Change</p>
+              <div class="valueRow"><span class="medium" style="color: var(--sky)" id="currentChange"></span><span class="unit">%</span></div>
             </div>
+          </div>
 
-            <div class="box" style="flex:1;min-height:170px">
-                <p class="cardTitle" style="margin-bottom:12px">What changed?</p>
-                <div class="notes" id="notes"></div>
+          <div class="box controlsBox">
+            <div class="cardTop" style="margin-bottom: 16px">
+              <div>
+                <p class="cardTitle">Controls</p>
+                <p class="cardHint" id="angleBadge"></p>
+              </div>
             </div>
+            <div class="controls">
+              <div>
+                <div class="controlHead"><label for="powerSlider">Real power demand</label><span class="readout" id="powerReadout"></span></div>
+                <input class="slider" id="powerSlider" type="range" min="20" max="120" step="1" value="80" />
+              </div>
+              <div>
+                <div class="controlHead"><label for="loadSlider">Load angle</label><span class="readout" id="loadReadout"></span></div>
+                <input class="slider" id="loadSlider" type="range" min="-60" max="60" step="1" value="38" />
+                <div class="scale"><span>leading</span><span>unity</span><span>lagging</span></div>
+              </div>
+              <div>
+                <div class="controlHead">
+                  <label for="correctionSlider">Correction device</label><span class="readout" id="correctionReadout"></span>
+                </div>
+                <input class="slider" id="correctionSlider" type="range" min="-180" max="180" step="1" value="0" />
+                <div class="scale"><span>capacitive</span><span>off</span><span>inductive</span></div>
+              </div>
+            </div>
+          </div>
+
+          <details class="box modelDetails">
+            <summary class="cardTitle">Equations and assumptions</summary>
+            <p class="cardHint" style="margin-bottom: 12px">
+              Balanced, sinusoidal three-phase load at 480 V line-to-line. P, Q, and S are three-phase totals; line losses are omitted.
+            </p>
+            <div class="eqGrid">
+              <div class="eq">Q<sub>load</sub> = P tan(φ<sub>load</sub>)</div>
+              <div class="eq">Q<sub>net</sub> = Q<sub>load</sub> + Q<sub>correction</sub></div>
+              <div class="eq">S<sub>net</sub> = √(P² + Q<sub>net</sub>²), &nbsp; PF = P / S<sub>net</sub></div>
+              <div class="eq">I = S<sub>net</sub> × 1000 / (√3 × V<sub>LL</sub>)</div>
+            </div>
+          </details>
+
+          <div class="box" style="flex: 1; min-height: 170px">
+            <p class="cardTitle" style="margin-bottom: 12px">What changed?</p>
+            <div class="notes" id="notes"></div>
+          </div>
         </aside>
-    </main>
-</div>
+      </main>
+    </div>
 
-<script>
-const App={
-    config:{
-        voltageLL:480,
-        colors:{
-            active:'#34d399',sky:'#38bdf8',blue:'#60a5fa',lag:'#f59e0b',lead:'#a78bfa',current:'#fb7185',white:'#e5e7eb',grid:'rgba(148,163,184,.14)',axis:'rgba(203,213,225,.55)'
+    <script>
+      const App = {
+        config: {
+          voltageLL: 480,
+          colors: {
+            active: "#34d399",
+            sky: "#38bdf8",
+            blue: "#60a5fa",
+            lag: "#f59e0b",
+            lead: "#a78bfa",
+            current: "#fb7185",
+            white: "#e5e7eb",
+            grid: "rgba(148,163,184,.14)",
+            axis: "rgba(203,213,225,.55)",
+          },
+          zoom: { min: 0.55, max: 4.5, sensitivity: 0.0012 },
         },
-        zoom:{min:.55,max:4.5,sensitivity:.0012}
-    },
-    dom:{},
-    state:{
-        last:0,time:0,truckX:-100,truckMode:'deliver',unload:.5,
-        scene:{startX:0,finishX:0,startY:0,finishY:0},
-        clouds:[],particles:[],power:{},
-        view:{triangle:{x:0,y:0,z:1,drag:false,id:null,lx:0,ly:0},wave:{x:0,y:0,z:1,drag:false,id:null,lx:0,ly:0}}
-    },
-    init(){
-        this.ids(['sceneCanvas','triangleCanvas','waveCanvas','powerSlider','loadSlider','correctionSlider','pfValue','pfType','currentValue','sValue','qValue','pValue','currentChange','powerReadout','loadReadout','correctionReadout','angleBadge','statusTitle','statusText','qBadge','notes','presetInductive','presetCorrected','presetLeading','resetAll','resetTriangle','resetWave']);
-        this.dom.sceneCtx=this.dom.sceneCanvas.getContext('2d');
-        this.dom.triangleCtx=this.dom.triangleCanvas.getContext('2d');
-        this.dom.waveCtx=this.dom.waveCanvas.getContext('2d');
-        this.seed();
-        this.events();
-        this.resize();
-        requestAnimationFrame(this.loop.bind(this));
-    },
-    ids(list){list.forEach(id=>this.dom[id]=document.getElementById(id))},
-    seed(){
-        for(let i=0;i<6;i++)this.state.clouds.push({x:Math.random(),y:.08+Math.random()*.2,s:.7+Math.random()*.8,v:.012+Math.random()*.016});
-        for(let i=0;i<32;i++)this.state.particles.push({t:Math.random(),phase:Math.random()*Math.PI*2,v:.1+Math.random()*.22,l:Math.random()});
-    },
-    events(){
-        ['powerSlider','loadSlider','correctionSlider'].forEach(id=>this.dom[id].addEventListener('input',()=>this.update()));
-        window.addEventListener('resize',()=>this.resize());
-        this.dom.resetAll.addEventListener('click',()=>this.preset(80,38,0));
-        this.dom.presetInductive.addEventListener('click',()=>this.preset(80,42,0));
-        this.dom.presetLeading.addEventListener('click',()=>this.preset(80,-32,0));
-        this.dom.presetCorrected.addEventListener('click',()=>{const p=+this.dom.powerSlider.value,a=+this.dom.loadSlider.value,q=-p*Math.tan(this.deg(a));this.preset(p,a,q)});
-        this.dom.resetTriangle.addEventListener('click',()=>this.resetView('triangle'));
-        this.dom.resetWave.addEventListener('click',()=>this.resetView('wave'));
-        this.bindCanvas('triangle',this.dom.triangleCanvas,()=>this.drawTriangle());
-        this.bindCanvas('wave',this.dom.waveCanvas,()=>this.drawWave());
-    },
-    bindCanvas(name,canvas,draw){
-        const v=this.state.view[name];
-        canvas.addEventListener('pointerdown',e=>{v.drag=true;v.id=e.pointerId;v.lx=e.clientX;v.ly=e.clientY;canvas.setPointerCapture(e.pointerId)});
-        canvas.addEventListener('pointermove',e=>{if(!v.drag||v.id!==e.pointerId)return;v.x+=e.clientX-v.lx;v.y+=e.clientY-v.ly;v.lx=e.clientX;v.ly=e.clientY;draw()});
-        const end=e=>{if(v.id===e.pointerId){v.drag=false;v.id=null}};
-        canvas.addEventListener('pointerup',end);
-        canvas.addEventListener('pointercancel',end);
-        canvas.addEventListener('wheel',e=>{e.preventDefault();const old=v.z,next=this.clamp(old+e.deltaY*-this.config.zoom.sensitivity,this.config.zoom.min,this.config.zoom.max),r=canvas.getBoundingClientRect(),px=e.clientX-r.left,py=e.clientY-r.top,k=next/old;v.x=px-(px-v.x)*k;v.y=py-(py-v.y)*k;v.z=next;draw()},{passive:false});
-    },
-    preset(p,a,q){
-        this.animateInput(this.dom.powerSlider,p);
-        this.animateInput(this.dom.loadSlider,a);
-        this.animateInput(this.dom.correctionSlider,this.clamp(q,+this.dom.correctionSlider.min,+this.dom.correctionSlider.max));
-    },
-    animateInput(input,target){
-        const start=+input.value,dur=520,t0=performance.now(),step=now=>{const t=this.ease(this.clamp((now-t0)/dur,0,1));input.value=start+(target-start)*t;this.update();if(t<1)requestAnimationFrame(step)};requestAnimationFrame(step);
-    },
-    ease(t){return 1-Math.pow(1-t,3)},
-    resize(){
-        [this.dom.sceneCanvas,this.dom.triangleCanvas,this.dom.waveCanvas].forEach(c=>{const r=c.getBoundingClientRect(),d=Math.max(1,Math.min(2.5,window.devicePixelRatio||1));c.width=Math.max(1,Math.round(r.width*d));c.height=Math.max(1,Math.round(r.height*d));c.dataset.dpr=d});
-        this.update();
-    },
-    setup(canvas,ctx){
-        const d=+canvas.dataset.dpr||1,w=canvas.width/d,h=canvas.height/d;ctx.setTransform(d,0,0,d,0,0);ctx.clearRect(0,0,w,h);return{w,h};
-    },
-    calc(){
-        const P=+this.dom.powerSlider.value,ang=+this.dom.loadSlider.value,Qc=+this.dom.correctionSlider.value,Ql=P*Math.tan(this.deg(ang)),Q=Ql+Qc,Sl=Math.hypot(P,Ql),S=Math.hypot(P,Q),PF=P/S,phi=Math.atan2(Q,P),A=S*1000/(Math.sqrt(3)*this.config.voltageLL),Al=Sl*1000/(Math.sqrt(3)*this.config.voltageLL),change=Al?((A-Al)/Al)*100:0;
-        const kind=Q>.75?'lagging':Q<-.75?'leading':'unity',loadKind=ang>.75?'lagging':ang<-.75?'leading':'unity',corrKind=Qc>.75?'inductive':Qc<-.75?'capacitive':'off';
-        return{P,ang,Qc,Ql,Q,Sl,S,PF,phi,deg:this.rad(phi),A,Al,change,kind,loadKind,corrKind,ideal:-Ql};
-    },
-    update(){
-        this.state.power=this.calc();
-        this.ui();
-        this.drawTriangle();
-        this.drawWave();
-        this.drawScene();
-    },
-    ui(){
-        const p=this.state.power,c=this.config.colors,qc=p.Q>=0?c.lag:c.lead;
-        this.dom.pfValue.textContent=p.PF.toFixed(3);
-        this.dom.pfType.textContent=p.kind;
-        this.dom.pfType.style.color=p.kind==='lagging'?c.lag:p.kind==='leading'?c.lead:c.active;
-        this.dom.currentValue.textContent=p.A.toFixed(0);
-        this.dom.sValue.textContent=p.S.toFixed(1);
-        this.dom.qValue.textContent=this.signed(p.Q,1);
-        this.dom.qValue.style.color=qc;
-        this.dom.pValue.textContent=p.P.toFixed(0);
-        this.dom.currentChange.textContent=this.signed(p.change,1);
-        this.dom.powerReadout.textContent=`${p.P.toFixed(0)} kW`;
-        this.dom.loadReadout.textContent=`${this.signed(p.ang,0)}° ${p.loadKind}`;
-        this.dom.loadReadout.style.color=p.loadKind==='lagging'?c.lag:p.loadKind==='leading'?c.lead:c.active;
-        this.dom.correctionReadout.textContent=`${this.signed(p.Qc,0)} kVAr ${p.corrKind}`;
-        this.dom.correctionReadout.style.color=p.corrKind==='capacitive'?c.sky:p.corrKind==='inductive'?c.lag:c.active;
-        this.dom.angleBadge.textContent=`Net angle ${this.signed(p.deg,1)}°`;
-        this.dom.qBadge.style.color=qc;
-        if(Math.abs(p.Q)<1){
-            this.dom.statusTitle.textContent='Near-unity power factor';
-            this.dom.statusText.textContent='Reactive demand is closely compensated, so the same kW needs the lowest practical kVA and line current.';
-        }else if(p.Q>0){
-            this.dom.statusTitle.textContent='Net lagging operation';
-            this.dom.statusText.textContent=`Add about ${Math.abs(p.Q).toFixed(1)} kVAr of capacitive correction to approach unity power factor.`;
-        }else{
-            this.dom.statusTitle.textContent='Net leading operation';
-            this.dom.statusText.textContent=`Reduce capacitive support or add about ${Math.abs(p.Q).toFixed(1)} kVAr of inductive correction to approach unity power factor.`;
-        }
-        const lines=[
-            `Load reactive demand is ${this.signed(p.Ql,1)} kVAr and the correction device contributes ${this.signed(p.Qc,1)} kVAr.`,
+        dom: {},
+        state: {
+          paused: window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+          last: 0,
+          time: 0,
+          truckX: -100,
+          truckMode: "deliver",
+          unload: 0.5,
+          scene: { startX: 0, finishX: 0, startY: 0, finishY: 0 },
+          clouds: [],
+          particles: [],
+          power: {},
+          view: {
+            triangle: { x: 0, y: 0, z: 1, drag: false, id: null, lx: 0, ly: 0 },
+            wave: { x: 0, y: 0, z: 1, drag: false, id: null, lx: 0, ly: 0 },
+          },
+        },
+        init() {
+          this.ids([
+            "sceneCanvas",
+            "triangleCanvas",
+            "waveCanvas",
+            "powerSlider",
+            "loadSlider",
+            "correctionSlider",
+            "pfValue",
+            "pfType",
+            "currentValue",
+            "sValue",
+            "qValue",
+            "pValue",
+            "currentChange",
+            "powerReadout",
+            "loadReadout",
+            "correctionReadout",
+            "angleBadge",
+            "statusTitle",
+            "statusText",
+            "qBadge",
+            "notes",
+            "presetInductive",
+            "presetCorrected",
+            "presetLeading",
+            "resetAll",
+            "resetTriangle",
+            "resetWave",
+            "pauseAnimation",
+          ]);
+          this.dom.sceneCtx = this.dom.sceneCanvas.getContext("2d");
+          this.dom.triangleCtx = this.dom.triangleCanvas.getContext("2d");
+          this.dom.waveCtx = this.dom.waveCanvas.getContext("2d");
+          this.seed();
+          this.events();
+          this.resize();
+          requestAnimationFrame(this.loop.bind(this));
+        },
+        ids(list) {
+          list.forEach((id) => (this.dom[id] = document.getElementById(id)));
+        },
+        seed() {
+          for (let i = 0; i < 6; i++)
+            this.state.clouds.push({
+              x: Math.random(),
+              y: 0.08 + Math.random() * 0.2,
+              s: 0.7 + Math.random() * 0.8,
+              v: 0.012 + Math.random() * 0.016,
+            });
+          for (let i = 0; i < 32; i++)
+            this.state.particles.push({ t: Math.random(), phase: Math.random() * Math.PI * 2, v: 0.1 + Math.random() * 0.22, l: Math.random() });
+        },
+        events() {
+          ["powerSlider", "loadSlider", "correctionSlider"].forEach((id) =>
+            this.dom[id].addEventListener("input", () => {
+              cancelAnimationFrame(this.dom[id]._frame);
+              this.update();
+            })
+          );
+          window.addEventListener("resize", () => this.resize());
+          const pause = this.dom.pauseAnimation;
+          const syncPause = () => {
+            pause.textContent = this.state.paused ? "Resume animation" : "Pause animation";
+            pause.setAttribute("aria-pressed", String(this.state.paused));
+          };
+          syncPause();
+          pause.addEventListener("click", () => {
+            this.state.paused = !this.state.paused;
+            syncPause();
+          });
+          this.dom.resetAll.addEventListener("click", () => this.preset(80, 38, 0));
+          this.dom.presetInductive.addEventListener("click", () => this.preset(80, 42, 0));
+          this.dom.presetLeading.addEventListener("click", () => this.preset(80, -32, 0));
+          this.dom.presetCorrected.addEventListener("click", () => {
+            const p = +this.dom.powerSlider.value,
+              a = +this.dom.loadSlider.value,
+              q = -p * Math.tan(this.deg(a));
+            this.preset(p, a, q);
+          });
+          this.dom.resetTriangle.addEventListener("click", () => this.resetView("triangle"));
+          this.dom.resetWave.addEventListener("click", () => this.resetView("wave"));
+          this.bindCanvas("triangle", this.dom.triangleCanvas, () => this.drawTriangle());
+          this.bindCanvas("wave", this.dom.waveCanvas, () => this.drawWave());
+        },
+        bindCanvas(name, canvas, draw) {
+          const v = this.state.view[name];
+          canvas.addEventListener("pointerdown", (e) => {
+            v.drag = true;
+            v.id = e.pointerId;
+            v.lx = e.clientX;
+            v.ly = e.clientY;
+            canvas.setPointerCapture(e.pointerId);
+          });
+          canvas.addEventListener("pointermove", (e) => {
+            if (!v.drag || v.id !== e.pointerId) return;
+            v.x += e.clientX - v.lx;
+            v.y += e.clientY - v.ly;
+            v.lx = e.clientX;
+            v.ly = e.clientY;
+            draw();
+          });
+          const end = (e) => {
+            if (v.id === e.pointerId) {
+              v.drag = false;
+              v.id = null;
+            }
+          };
+          canvas.addEventListener("pointerup", end);
+          canvas.addEventListener("pointercancel", end);
+          canvas.addEventListener(
+            "wheel",
+            (e) => {
+              e.preventDefault();
+              const old = v.z,
+                next = this.clamp(old + e.deltaY * -this.config.zoom.sensitivity, this.config.zoom.min, this.config.zoom.max),
+                r = canvas.getBoundingClientRect(),
+                px = e.clientX - r.left,
+                py = e.clientY - r.top,
+                k = next / old;
+              v.x = px - (px - v.x) * k;
+              v.y = py - (py - v.y) * k;
+              v.z = next;
+              draw();
+            },
+            { passive: false }
+          );
+        },
+        preset(p, a, q) {
+          this.animateInput(this.dom.powerSlider, p);
+          this.animateInput(this.dom.loadSlider, a);
+          this.animateInput(this.dom.correctionSlider, this.clamp(q, +this.dom.correctionSlider.min, +this.dom.correctionSlider.max));
+        },
+        animateInput(input, target) {
+          cancelAnimationFrame(input._frame);
+          if (this.state.paused) {
+            input.value = target;
+            this.update();
+            return;
+          }
+          const start = +input.value,
+            dur = 520,
+            t0 = performance.now(),
+            step = (now) => {
+              const t = this.ease(this.clamp((now - t0) / dur, 0, 1));
+              input.value = start + (target - start) * t;
+              this.update();
+              if (t < 1) input._frame = requestAnimationFrame(step);
+            };
+          input._frame = requestAnimationFrame(step);
+        },
+        ease(t) {
+          return 1 - Math.pow(1 - t, 3);
+        },
+        resize() {
+          [this.dom.sceneCanvas, this.dom.triangleCanvas, this.dom.waveCanvas].forEach((c) => {
+            const r = c.getBoundingClientRect(),
+              d = Math.max(1, Math.min(2.5, window.devicePixelRatio || 1));
+            c.width = Math.max(1, Math.round(r.width * d));
+            c.height = Math.max(1, Math.round(r.height * d));
+            c.dataset.dpr = d;
+          });
+          this.update();
+        },
+        setup(canvas, ctx) {
+          const d = +canvas.dataset.dpr || 1,
+            w = canvas.width / d,
+            h = canvas.height / d;
+          ctx.setTransform(d, 0, 0, d, 0, 0);
+          ctx.clearRect(0, 0, w, h);
+          return { w, h };
+        },
+        calc() {
+          const P = +this.dom.powerSlider.value,
+            ang = +this.dom.loadSlider.value,
+            Qc = +this.dom.correctionSlider.value,
+            Ql = P * Math.tan(this.deg(ang)),
+            Q = Ql + Qc,
+            Sl = Math.hypot(P, Ql),
+            S = Math.hypot(P, Q),
+            PF = P / S,
+            phi = Math.atan2(Q, P),
+            A = (S * 1000) / (Math.sqrt(3) * this.config.voltageLL),
+            Al = (Sl * 1000) / (Math.sqrt(3) * this.config.voltageLL),
+            change = Al ? ((A - Al) / Al) * 100 : 0;
+          const kind = Q > 0.75 ? "lagging" : Q < -0.75 ? "leading" : "unity",
+            loadKind = ang > 0.75 ? "lagging" : ang < -0.75 ? "leading" : "unity",
+            corrKind = Qc > 0.75 ? "inductive" : Qc < -0.75 ? "capacitive" : "off";
+          return { P, ang, Qc, Ql, Q, Sl, S, PF, phi, deg: this.rad(phi), A, Al, change, kind, loadKind, corrKind, ideal: -Ql };
+        },
+        update() {
+          this.state.power = this.calc();
+          this.ui();
+          this.drawTriangle();
+          this.drawWave();
+          this.drawScene();
+        },
+        ui() {
+          const p = this.state.power,
+            c = this.config.colors,
+            qc = p.Q >= 0 ? c.lag : c.lead;
+          this.dom.pfValue.textContent = p.PF.toFixed(3);
+          this.dom.pfType.textContent = p.kind;
+          this.dom.pfType.style.color = p.kind === "lagging" ? c.lag : p.kind === "leading" ? c.lead : c.active;
+          this.dom.currentValue.textContent = p.A.toFixed(0);
+          this.dom.sValue.textContent = p.S.toFixed(1);
+          this.dom.qValue.textContent = this.signed(p.Q, 1);
+          this.dom.qValue.style.color = qc;
+          this.dom.pValue.textContent = p.P.toFixed(0);
+          this.dom.currentChange.textContent = this.signed(p.change, 1);
+          this.dom.powerReadout.textContent = `${p.P.toFixed(0)} kW`;
+          this.dom.loadReadout.textContent = `${this.signed(p.ang, 0)}° ${p.loadKind}`;
+          this.dom.loadReadout.style.color = p.loadKind === "lagging" ? c.lag : p.loadKind === "leading" ? c.lead : c.active;
+          this.dom.correctionReadout.textContent = `${this.signed(p.Qc, 0)} kVAr ${p.corrKind}`;
+          this.dom.correctionReadout.style.color = p.corrKind === "capacitive" ? c.sky : p.corrKind === "inductive" ? c.lag : c.active;
+          this.dom.angleBadge.textContent = `Net angle ${this.signed(p.deg, 1)}°`;
+          this.dom.qBadge.style.color = qc;
+          if (Math.abs(p.Q) < 1) {
+            this.dom.statusTitle.textContent = "Near-unity power factor";
+            this.dom.statusText.textContent =
+              "The supply carries almost no net reactive power. Useful demand is unchanged, and line current is close to its minimum for this load.";
+          } else if (p.Q > 0) {
+            this.dom.statusTitle.textContent = "Net lagging operation";
+            this.dom.statusText.textContent = `Add about ${Math.abs(p.Q).toFixed(1)} kVAr of capacitive correction to approach unity power factor.`;
+          } else {
+            this.dom.statusTitle.textContent = "Net leading operation";
+            this.dom.statusText.textContent = `Reduce capacitive support or add about ${Math.abs(p.Q).toFixed(
+              1
+            )} kVAr of inductive correction to approach unity power factor.`;
+          }
+          const lines = [
+            `Load reactive demand is ${this.signed(p.Ql, 1)} kVAr and the correction device contributes ${this.signed(p.Qc, 1)} kVAr.`,
             `For the same ${p.P.toFixed(0)} kW, apparent power is ${p.S.toFixed(1)} kVA instead of the uncompensated ${p.Sl.toFixed(1)} kVA.`,
             `At ${this.config.voltageLL} V three-phase, line current is ${p.A.toFixed(0)} A instead of ${p.Al.toFixed(0)} A.`,
-            `The ideal correction for this load is ${this.signed(p.ideal,1)} kVAr.`
-        ];
-        this.dom.notes.innerHTML=lines.map(x=>`<div class="note"><span></span><div>${x}</div></div>`).join('');
-    },
-    loop(t){
-        const dt=Math.min(.05,(t-this.state.last)/1000||0);this.state.last=t;this.state.time+=dt;this.motion(dt);this.drawScene();requestAnimationFrame(this.loop.bind(this));
-    },
-    motion(dt){
-        const s=this.state.scene,p=this.state.power;if(!s.finishX)return;
-        const speed=80+180*p.PF;
-        if(this.state.truckMode==='deliver'){this.state.truckX+=speed*dt;if(this.state.truckX>=s.finishX){this.state.truckX=s.finishX;this.state.truckMode='unload';this.state.unload=.55}}
-        else if(this.state.truckMode==='unload'){this.state.unload-=dt;if(this.state.unload<=0)this.state.truckMode='return'}
-        else{this.state.truckX-=260*dt;if(this.state.truckX<=s.startX){this.state.truckX=s.startX;this.state.truckMode='deliver'}}
-        this.state.clouds.forEach(o=>{o.x-=o.v*dt;if(o.x<-.2)o.x=1.2});
-        this.state.particles.forEach(o=>{const dir=p.Q>=0?1:-1;o.t=(o.t+o.v*dt*dir+1)%1});
-    },
+            `The ideal correction is ${this.signed(p.ideal, 1)} kVAr.${
+              Math.abs(p.ideal) > 180 ? " That exceeds this device’s 180 kVAr range." : ""
+            } The truck keeps delivering the same useful load; the ramp is a phase-angle analogy.`,
+          ];
+          this.dom.notes.innerHTML = lines.map((x) => `<div class="note"><span></span><div>${x}</div></div>`).join("");
+        },
+        loop(t) {
+          const dt = Math.min(0.05, (t - this.state.last) / 1000 || 0);
+          this.state.last = t;
+          if (!this.state.paused) {
+            this.state.time += dt;
+            this.motion(dt);
+          }
+          this.drawScene();
+          requestAnimationFrame(this.loop.bind(this));
+        },
+        motion(dt) {
+          const s = this.state.scene,
+            p = this.state.power;
+          if (!s.finishX) return;
+          // Useful delivery rate depends on real power, not power factor.
+          const speed = (140 * p.P) / 80;
+          if (this.state.truckMode === "deliver") {
+            this.state.truckX += speed * dt;
+            if (this.state.truckX >= s.finishX) {
+              this.state.truckX = s.finishX;
+              this.state.truckMode = "unload";
+              this.state.unload = 0.55;
+            }
+          } else if (this.state.truckMode === "unload") {
+            this.state.unload -= dt;
+            if (this.state.unload <= 0) this.state.truckMode = "return";
+          } else {
+            this.state.truckX -= 260 * dt;
+            if (this.state.truckX <= s.startX) {
+              this.state.truckX = s.startX;
+              this.state.truckMode = "deliver";
+            }
+          }
+          this.state.clouds.forEach((o) => {
+            o.x -= o.v * dt;
+            if (o.x < -0.2) o.x = 1.2;
+          });
+          this.state.particles.forEach((o) => {
+            const dir = p.Q >= 0 ? 1 : -1;
+            o.t = (o.t + o.v * dt * dir + 1) % 1;
+          });
+        },
 
-    drawScene(){
-        const ctx=this.dom.sceneCtx,{w,h}=this.setup(this.dom.sceneCanvas,ctx),p=this.state.power;
-        // sky and far background
-        this.sky(ctx,w,h);this.sun(ctx,w,h);this.hills(ctx,w,h);this.clouds(ctx,w,h);
-        const sx=w*.17,fx=w*.79,baseY=h*.74,grade=this.clamp(p.phi,-.92,.92)*.4,rise=(fx-sx)*Math.tan(grade),fy=baseY-rise;
-        // ground and the phase-angle ramp
-        this.ground(ctx,w,h,sx,baseY,fx,fy);
-        this.angleArc(ctx,sx,baseY,grade,p);
-        // transmission corridor
-        this.corridor(ctx,w,h,sx,baseY,fx,fy,p);
-        // generation and load
-        this.source(ctx,sx-w*.05,baseY+2,p);
-        this.load(ctx,fx+w*.05,fy+2,p);
-        // useful delivery
-        const tk=this.truck(sx+32,baseY-9,fx-34,fy-9);
-        this.drawTruck(ctx,tk.x,tk.y,tk.a,p);
-        // overlay
-        this.gauge(ctx,w,h,p);
-        this.state.scene={startX:sx+32,finishX:fx-34,startY:baseY-9,finishY:fy-9};
-    },
-    sky(ctx,w,h){
-        const g=ctx.createLinearGradient(0,0,0,h);
-        g.addColorStop(0,'#0a3157');g.addColorStop(.4,'#236ca6');g.addColorStop(.72,'#7fb6de');g.addColorStop(1,'#cfe6f4');
-        ctx.fillStyle=g;ctx.fillRect(0,0,w,h);
-    },
-    sun(ctx,w,h){
-        const x=w*.83,y=h*.2,g=ctx.createRadialGradient(x,y,0,x,y,170);
-        g.addColorStop(0,'rgba(255,248,222,.92)');g.addColorStop(.2,'rgba(255,231,158,.5)');g.addColorStop(1,'rgba(255,231,158,0)');
-        ctx.fillStyle=g;ctx.fillRect(x-170,y-170,340,340);
-        ctx.fillStyle='rgba(255,251,236,.95)';ctx.beginPath();ctx.arc(x,y,24,0,Math.PI*2);ctx.fill();
-    },
-    hills(ctx,w,h){
-        const hor=h*.66;
-        ctx.fillStyle='rgba(96,150,126,.38)';ctx.beginPath();ctx.moveTo(0,hor);
-        for(let x=0;x<=w;x+=34)ctx.lineTo(x,hor-32*Math.sin(x*.0042+1)-14);
-        ctx.lineTo(w,h);ctx.lineTo(0,h);ctx.closePath();ctx.fill();
-        ctx.fillStyle='rgba(50,102,84,.5)';ctx.beginPath();ctx.moveTo(0,hor+26);
-        for(let x=0;x<=w;x+=34)ctx.lineTo(x,hor+26-24*Math.sin(x*.0061+3.4));
-        ctx.lineTo(w,h);ctx.lineTo(0,h);ctx.closePath();ctx.fill();
-    },
-    clouds(ctx,w,h){
-        ctx.save();
-        this.state.clouds.forEach(o=>{const x=o.x*w,y=o.y*h,s=o.s;ctx.fillStyle='rgba(255,255,255,.82)';ctx.beginPath();ctx.ellipse(x,y,58*s,18*s,0,0,Math.PI*2);ctx.ellipse(x+34*s,y-8*s,34*s,14*s,0,0,Math.PI*2);ctx.ellipse(x-32*s,y+5*s,38*s,15*s,0,0,Math.PI*2);ctx.fill()});
-        ctx.restore();
-    },
-    ground(ctx,w,h,sx,sy,fx,fy){
-        const g=ctx.createLinearGradient(0,Math.min(sy,fy)-30,0,h);
-        g.addColorStop(0,'#3fae5e');g.addColorStop(.5,'#1f8a3e');g.addColorStop(1,'#0f4f29');
-        ctx.fillStyle=g;ctx.beginPath();ctx.moveTo(0,sy);ctx.lineTo(sx,sy);ctx.lineTo(fx,fy);ctx.lineTo(w,fy);ctx.lineTo(w,h);ctx.lineTo(0,h);ctx.closePath();ctx.fill();
-        ctx.strokeStyle='rgba(255,255,255,.18)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(0,sy);ctx.lineTo(sx,sy);ctx.lineTo(fx,fy);ctx.lineTo(w,fy);ctx.stroke();
-        // road
-        const pts=[[sx-w*.17,sy],[sx,sy],[fx,fy],[fx+w*.17,fy]];
-        const road=ext=>{ctx.beginPath();ctx.moveTo(pts[0][0],pts[0][1]+ext);for(let i=1;i<pts.length;i++)ctx.lineTo(pts[i][0],pts[i][1]+ext);ctx.stroke()};
-        ctx.lineCap='round';ctx.lineJoin='round';
-        ctx.strokeStyle='rgba(15,23,42,.28)';ctx.lineWidth=15;road(4);
-        ctx.strokeStyle='#cbd5e1';ctx.lineWidth=13;road(0);
-        ctx.strokeStyle='#475569';ctx.lineWidth=9;road(0);
-        ctx.strokeStyle='rgba(250,204,21,.85)';ctx.lineWidth=2;ctx.setLineDash([15,15]);road(0);ctx.setLineDash([]);
-    },
-    angleArc(ctx,px,py,grade,p){
-        if(Math.abs(p.deg)<1)return;
-        const R=46,a=-grade;
-        ctx.save();ctx.strokeStyle='rgba(248,250,252,.6)';ctx.lineWidth=1.6;
-        ctx.setLineDash([5,5]);ctx.beginPath();ctx.moveTo(px,py);ctx.lineTo(px+R+26,py);ctx.stroke();ctx.setLineDash([]);
-        ctx.beginPath();ctx.arc(px,py,R,0,a,grade>0);ctx.stroke();
-        ctx.fillStyle='#f8fafc';ctx.font='800 12px Inter';ctx.textAlign='left';ctx.textBaseline='middle';
-        ctx.fillText(`φ ${this.signed(p.deg,0)}°`,px+Math.cos(a/2)*(R+14),py+Math.sin(a/2)*(R+14));
-        ctx.restore();
-    },
-    pylon(ctx,x,groundY,H){
-        const top=groundY-H,bw=H*.15,tw=H*.05;
-        ctx.save();ctx.lineCap='round';
-        ctx.strokeStyle='#8492a8';ctx.lineWidth=2.4;
-        ctx.beginPath();ctx.moveTo(x-bw,groundY);ctx.lineTo(x-tw,top);ctx.lineTo(x+tw,top);ctx.lineTo(x+bw,groundY);ctx.stroke();
-        ctx.strokeStyle='rgba(132,146,168,.75)';ctx.lineWidth=1;
-        const N=5;for(let i=0;i<N;i++){const t0=i/N,t1=(i+1)/N,wl0=bw+(tw-bw)*t0,wl1=bw+(tw-bw)*t1,y0=groundY-H*t0,y1=groundY-H*t1;ctx.beginPath();ctx.moveTo(x-wl0,y0);ctx.lineTo(x+wl1,y1);ctx.moveTo(x+wl0,y0);ctx.lineTo(x-wl1,y1);ctx.stroke()}
-        ctx.strokeStyle='#8492a8';ctx.lineWidth=2.2;
-        ctx.beginPath();ctx.moveTo(x-H*.2,top+9);ctx.lineTo(x+H*.2,top+9);ctx.moveTo(x-H*.15,top+20);ctx.lineTo(x+H*.15,top+20);ctx.stroke();
-        ctx.fillStyle='#cbd5e1';[[-H*.2,top+9],[H*.2,top+9],[0,top]].forEach(pt=>{ctx.beginPath();ctx.arc(x+pt[0],pt[1],2.3,0,Math.PI*2);ctx.fill()});
-        ctx.restore();
-    },
-    corridor(ctx,w,h,sx,sy,fx,fy,p){
-        const H=Math.min(140,h*.32),yL=sy-H,yR=fy-H,sag=Math.min(28,(fx-sx)*.05),offs=[4,12,20];
-        this.pylon(ctx,sx,sy,H);this.pylon(ctx,fx,fy,H);
-        const cat=(t,off)=>[sx+(fx-sx)*t,yL+(yR-yL)*t+off+sag*Math.sin(Math.PI*t)];
-        const wire=(off,fn)=>{ctx.beginPath();for(let t=0;t<=1.0001;t+=.02){const q=cat(t,off);t===0?ctx.moveTo(q[0],q[1]):ctx.lineTo(q[0],q[1])}fn()};
-        ctx.save();ctx.lineCap='round';
-        offs.forEach(o=>{ctx.strokeStyle='rgba(203,213,225,.5)';ctx.lineWidth=1.5;wire(o,()=>ctx.stroke())});
-        // energised wire glows with current
-        const cur=this.clamp(p.S/64,.12,1);
-        ctx.shadowColor='rgba(56,189,248,.85)';ctx.shadowBlur=11*cur;
-        ctx.strokeStyle=`rgba(125,211,252,${.28+.5*cur})`;ctx.lineWidth=1.6+3.4*cur;wire(12,()=>ctx.stroke());
-        ctx.shadowBlur=0;
-        // current packets flowing source -> load
-        const pkN=10,sp=.05+.16*cur;
-        for(let i=0;i<pkN;i++){const t=((this.state.time*sp)+i/pkN)%1,q=cat(t,12);ctx.fillStyle=`rgba(186,230,253,${.45+.5*cur})`;ctx.beginPath();ctx.arc(q[0],q[1],2+2.2*cur,0,Math.PI*2);ctx.fill()}
-        // reactive slosh
-        const amt=this.clamp(Math.abs(p.Q)/Math.max(28,p.P),0,1.2),col=p.Q>=0?this.config.colors.lag:this.config.colors.lead;
-        if(amt>=.04){this.state.particles.forEach(o=>{const q=cat(o.t,12),jit=Math.sin(this.state.time*3+o.phase)*(3+7*Math.min(1,amt));ctx.globalAlpha=.2+.6*Math.min(1,amt);ctx.fillStyle=col;ctx.beginPath();ctx.arc(q[0],q[1]-jit,1.8+2.4*Math.min(1,amt),0,Math.PI*2);ctx.fill()});ctx.globalAlpha=1}
-        ctx.restore();
-    },
-    source(ctx,x,groundY,p){
-        ctx.save();ctx.translate(x,groundY);
-        ctx.fillStyle='rgba(2,6,23,.22)';ctx.beginPath();ctx.ellipse(0,2,40,10,0,0,Math.PI*2);ctx.fill();
-        ctx.fillStyle='#1f7a3a';ctx.beginPath();ctx.ellipse(0,0,38,11,0,0,Math.PI*2);ctx.fill();
-        const H=118,top=-H;
-        const g=ctx.createLinearGradient(-7,0,7,0);g.addColorStop(0,'#cbd5e1');g.addColorStop(.5,'#f1f5f9');g.addColorStop(1,'#93a3b8');
-        ctx.fillStyle=g;ctx.beginPath();ctx.moveTo(-7,0);ctx.lineTo(-3,top);ctx.lineTo(3,top);ctx.lineTo(7,0);ctx.closePath();ctx.fill();
-        ctx.fillStyle='#e2e8f0';this.round(ctx,-8,top-6,20,11,4);ctx.fill();
-        ctx.save();ctx.translate(-1,top);const spin=this.state.time*(.6+1.8*p.PF);ctx.rotate(spin);
-        ctx.fillStyle='#f8fafc';for(let i=0;i<3;i++){ctx.rotate(Math.PI*2/3);ctx.beginPath();ctx.moveTo(0,0);ctx.quadraticCurveTo(7,-30,2,-62);ctx.quadraticCurveTo(-3,-30,0,0);ctx.fill()}
-        ctx.fillStyle='#cbd5e1';ctx.beginPath();ctx.arc(0,0,4,0,Math.PI*2);ctx.fill();ctx.restore();
-        ctx.fillStyle='#0f172a';ctx.globalAlpha=.55;this.round(ctx,-26,17,52,16,8);ctx.fill();ctx.globalAlpha=1;
-        ctx.fillStyle='#e2e8f0';ctx.font='800 11px Inter';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('Source',0,25);
-        ctx.restore();
-    },
-    load(ctx,x,groundY,p){
-        ctx.save();ctx.translate(x,groundY);
-        const glow=this.clamp(p.P/120,.18,1);
-        ctx.fillStyle='rgba(2,6,23,.25)';ctx.beginPath();ctx.ellipse(-4,2,72,11,0,0,Math.PI*2);ctx.fill();
-        ctx.fillStyle='#64748b';ctx.fillRect(40,-118,16,44);
-        ctx.fillStyle='rgba(226,232,240,.5)';for(let i=0;i<3;i++){const t=(this.state.time*.4+i/3)%1;ctx.globalAlpha=.5*(1-t);ctx.beginPath();ctx.arc(48,-122-t*38,8+t*11,0,Math.PI*2);ctx.fill()}ctx.globalAlpha=1;
-        const g=ctx.createLinearGradient(0,-80,0,0);g.addColorStop(0,'#4a596d');g.addColorStop(1,'#2f3c4f');
-        ctx.fillStyle=g;this.round(ctx,-66,-80,120,80,6);ctx.fill();
-        ctx.fillStyle='#5b6b82';ctx.beginPath();ctx.moveTo(-66,-80);for(let i=0;i<4;i++){const x0=-66+i*30;ctx.lineTo(x0+14,-98);ctx.lineTo(x0+30,-80)}ctx.closePath();ctx.fill();
-        for(let r=0;r<2;r++)for(let ci=0;ci<5;ci++){const wx=-57+ci*24,wy=-60+r*30;ctx.fillStyle=`rgba(250,204,21,${.22+.62*glow})`;this.round(ctx,wx,wy,16,18,3);ctx.fill();ctx.strokeStyle='rgba(15,23,42,.5)';ctx.lineWidth=1;this.round(ctx,wx,wy,16,18,3);ctx.stroke()}
-        ctx.fillStyle='#e2e8f0';ctx.font='800 11px Inter';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('Load',0,16);
-        ctx.restore();
-    },
-    truck(x1,y1,x2,y2){
-        if(this.state.truckX<x1)this.state.truckX=x1;const t=this.clamp((this.state.truckX-x1)/Math.max(1,x2-x1),0,1);return{x:this.state.truckX,y:y1+(y2-y1)*t,a:Math.atan2(y2-y1,x2-x1)};
-    },
-    drawTruck(ctx,x,y,a,p){
-        ctx.save();ctx.translate(x,y);ctx.rotate(a);
-        ctx.fillStyle='rgba(2,6,23,.3)';ctx.beginPath();ctx.ellipse(-16,15,52,7,0,0,Math.PI*2);ctx.fill();
-        const glow=ctx.createRadialGradient(-12,-20,4,-12,-20,70);glow.addColorStop(0,'rgba(52,211,153,.26)');glow.addColorStop(1,'rgba(52,211,153,0)');ctx.fillStyle=glow;ctx.beginPath();ctx.arc(-12,-20,70,0,Math.PI*2);ctx.fill();
-        const tg=ctx.createLinearGradient(0,-46,0,0);tg.addColorStop(0,'#f1f5f9');tg.addColorStop(1,'#cbd5e1');
-        ctx.fillStyle=tg;ctx.strokeStyle='rgba(100,116,139,.85)';ctx.lineWidth=1.5;this.round(ctx,-66,-46,80,44,6);ctx.fill();ctx.stroke();
-        const boxes=this.clamp(Math.round(p.P/14),1,9);for(let i=0;i<boxes;i++){const r=Math.floor(i/3),ci=i%3;ctx.fillStyle='#86efac';ctx.strokeStyle='#166534';ctx.lineWidth=1;ctx.fillRect(-60+ci*18,-42+r*14,15,12);ctx.strokeRect(-60+ci*18,-42+r*14,15,12)}
-        ctx.fillStyle='#ef4444';this.round(ctx,12,-40,40,38,7);ctx.fill();ctx.fillStyle='#dc2626';this.round(ctx,12,-22,40,20,5);ctx.fill();
-        ctx.fillStyle='#bae6fd';this.round(ctx,20,-34,19,13,4);ctx.fill();
-        ctx.fillStyle='rgba(254,240,138,.92)';ctx.beginPath();ctx.arc(50,-9,3,0,Math.PI*2);ctx.fill();
-        ctx.fillStyle='#0f172a';[-46,-30,24,40].forEach(wx=>{ctx.beginPath();ctx.arc(wx,4,9,0,Math.PI*2);ctx.fill()});
-        ctx.fillStyle='#94a3b8';[-46,-30,24,40].forEach(wx=>{ctx.beginPath();ctx.arc(wx,4,4,0,Math.PI*2);ctx.fill()});
-        ctx.restore();
-    },
-    gauge(ctx,w,h,p){
-        const cx=w-74,cy=h-66,r=39;ctx.save();ctx.lineCap='round';
-        ctx.fillStyle='rgba(2,6,23,.46)';ctx.beginPath();ctx.arc(cx,cy,r+13,0,Math.PI*2);ctx.fill();
-        ctx.lineWidth=9;ctx.strokeStyle='rgba(226,232,240,.16)';ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);ctx.stroke();
-        const col=p.PF>.95?this.config.colors.active:p.PF>.85?this.config.colors.lag:this.config.colors.current;
-        ctx.strokeStyle=col;ctx.shadowColor=col;ctx.shadowBlur=10;ctx.beginPath();ctx.arc(cx,cy,r,-Math.PI/2,-Math.PI/2+Math.PI*2*this.clamp(p.PF,0,1));ctx.stroke();ctx.shadowBlur=0;
-        ctx.fillStyle='#f1f5f9';ctx.font='900 18px Inter';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(`${Math.round(p.PF*100)}%`,cx,cy-2);
-        ctx.fillStyle='#94a3b8';ctx.font='800 9px Inter';ctx.fillText('PF QUALITY',cx,cy+15);
-        ctx.restore();
-    },
+        drawScene() {
+          const ctx = this.dom.sceneCtx,
+            { w, h } = this.setup(this.dom.sceneCanvas, ctx),
+            p = this.state.power;
+          // sky and far background
+          this.sky(ctx, w, h);
+          this.sun(ctx, w, h);
+          this.hills(ctx, w, h);
+          this.clouds(ctx, w, h);
+          const sx = w * 0.17,
+            fx = w * 0.79,
+            baseY = h * 0.74,
+            grade = this.clamp(p.phi, -0.92, 0.92) * 0.4,
+            rise = (fx - sx) * Math.tan(grade),
+            fy = baseY - rise;
+          // ground and the phase-angle ramp
+          this.ground(ctx, w, h, sx, baseY, fx, fy);
+          this.angleArc(ctx, sx, baseY, grade, p);
+          // transmission corridor
+          this.corridor(ctx, w, h, sx, baseY, fx, fy, p);
+          // generation and load
+          this.source(ctx, sx - w * 0.05, baseY + 2, p);
+          this.load(ctx, fx + w * 0.05, fy + 2, p);
+          // useful delivery
+          const tk = this.truck(sx + 32, baseY - 9, fx - 34, fy - 9);
+          this.drawTruck(ctx, tk.x, tk.y, tk.a, p);
+          // overlay
+          if (w > 500) this.gauge(ctx, w, h, p);
+          this.state.scene = { startX: sx + 32, finishX: fx - 34, startY: baseY - 9, finishY: fy - 9 };
+        },
+        sky(ctx, w, h) {
+          const g = ctx.createLinearGradient(0, 0, 0, h);
+          g.addColorStop(0, "#0a3157");
+          g.addColorStop(0.4, "#236ca6");
+          g.addColorStop(0.72, "#7fb6de");
+          g.addColorStop(1, "#cfe6f4");
+          ctx.fillStyle = g;
+          ctx.fillRect(0, 0, w, h);
+        },
+        sun(ctx, w, h) {
+          const x = w * 0.83,
+            y = h * 0.2,
+            g = ctx.createRadialGradient(x, y, 0, x, y, 170);
+          g.addColorStop(0, "rgba(255,248,222,.92)");
+          g.addColorStop(0.2, "rgba(255,231,158,.5)");
+          g.addColorStop(1, "rgba(255,231,158,0)");
+          ctx.fillStyle = g;
+          ctx.fillRect(x - 170, y - 170, 340, 340);
+          ctx.fillStyle = "rgba(255,251,236,.95)";
+          ctx.beginPath();
+          ctx.arc(x, y, 24, 0, Math.PI * 2);
+          ctx.fill();
+        },
+        hills(ctx, w, h) {
+          const hor = h * 0.66;
+          ctx.fillStyle = "rgba(96,150,126,.38)";
+          ctx.beginPath();
+          ctx.moveTo(0, hor);
+          for (let x = 0; x <= w; x += 34) ctx.lineTo(x, hor - 32 * Math.sin(x * 0.0042 + 1) - 14);
+          ctx.lineTo(w, h);
+          ctx.lineTo(0, h);
+          ctx.closePath();
+          ctx.fill();
+          ctx.fillStyle = "rgba(50,102,84,.5)";
+          ctx.beginPath();
+          ctx.moveTo(0, hor + 26);
+          for (let x = 0; x <= w; x += 34) ctx.lineTo(x, hor + 26 - 24 * Math.sin(x * 0.0061 + 3.4));
+          ctx.lineTo(w, h);
+          ctx.lineTo(0, h);
+          ctx.closePath();
+          ctx.fill();
+        },
+        clouds(ctx, w, h) {
+          ctx.save();
+          this.state.clouds.forEach((o) => {
+            const x = o.x * w,
+              y = o.y * h,
+              s = o.s;
+            ctx.fillStyle = "rgba(255,255,255,.82)";
+            ctx.beginPath();
+            ctx.ellipse(x, y, 58 * s, 18 * s, 0, 0, Math.PI * 2);
+            ctx.ellipse(x + 34 * s, y - 8 * s, 34 * s, 14 * s, 0, 0, Math.PI * 2);
+            ctx.ellipse(x - 32 * s, y + 5 * s, 38 * s, 15 * s, 0, 0, Math.PI * 2);
+            ctx.fill();
+          });
+          ctx.restore();
+        },
+        ground(ctx, w, h, sx, sy, fx, fy) {
+          const g = ctx.createLinearGradient(0, Math.min(sy, fy) - 30, 0, h);
+          g.addColorStop(0, "#3fae5e");
+          g.addColorStop(0.5, "#1f8a3e");
+          g.addColorStop(1, "#0f4f29");
+          ctx.fillStyle = g;
+          ctx.beginPath();
+          ctx.moveTo(0, sy);
+          ctx.lineTo(sx, sy);
+          ctx.lineTo(fx, fy);
+          ctx.lineTo(w, fy);
+          ctx.lineTo(w, h);
+          ctx.lineTo(0, h);
+          ctx.closePath();
+          ctx.fill();
+          ctx.strokeStyle = "rgba(255,255,255,.18)";
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.moveTo(0, sy);
+          ctx.lineTo(sx, sy);
+          ctx.lineTo(fx, fy);
+          ctx.lineTo(w, fy);
+          ctx.stroke();
+          // road
+          const pts = [
+            [sx - w * 0.17, sy],
+            [sx, sy],
+            [fx, fy],
+            [fx + w * 0.17, fy],
+          ];
+          const road = (ext) => {
+            ctx.beginPath();
+            ctx.moveTo(pts[0][0], pts[0][1] + ext);
+            for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i][0], pts[i][1] + ext);
+            ctx.stroke();
+          };
+          ctx.lineCap = "round";
+          ctx.lineJoin = "round";
+          ctx.strokeStyle = "rgba(15,23,42,.28)";
+          ctx.lineWidth = 15;
+          road(4);
+          ctx.strokeStyle = "#cbd5e1";
+          ctx.lineWidth = 13;
+          road(0);
+          ctx.strokeStyle = "#475569";
+          ctx.lineWidth = 9;
+          road(0);
+          ctx.strokeStyle = "rgba(250,204,21,.85)";
+          ctx.lineWidth = 2;
+          ctx.setLineDash([15, 15]);
+          road(0);
+          ctx.setLineDash([]);
+        },
+        angleArc(ctx, px, py, grade, p) {
+          if (Math.abs(p.deg) < 1) return;
+          const R = 46,
+            a = -grade;
+          ctx.save();
+          ctx.strokeStyle = "rgba(248,250,252,.6)";
+          ctx.lineWidth = 1.6;
+          ctx.setLineDash([5, 5]);
+          ctx.beginPath();
+          ctx.moveTo(px, py);
+          ctx.lineTo(px + R + 26, py);
+          ctx.stroke();
+          ctx.setLineDash([]);
+          ctx.beginPath();
+          ctx.arc(px, py, R, 0, a, grade > 0);
+          ctx.stroke();
+          ctx.fillStyle = "#f8fafc";
+          ctx.font = "800 12px Inter";
+          ctx.textAlign = "left";
+          ctx.textBaseline = "middle";
+          ctx.fillText(`φ ${this.signed(p.deg, 0)}°`, px + Math.cos(a / 2) * (R + 14), py + Math.sin(a / 2) * (R + 14));
+          ctx.restore();
+        },
+        pylon(ctx, x, groundY, H) {
+          const top = groundY - H,
+            bw = H * 0.15,
+            tw = H * 0.05;
+          ctx.save();
+          ctx.lineCap = "round";
+          ctx.strokeStyle = "#8492a8";
+          ctx.lineWidth = 2.4;
+          ctx.beginPath();
+          ctx.moveTo(x - bw, groundY);
+          ctx.lineTo(x - tw, top);
+          ctx.lineTo(x + tw, top);
+          ctx.lineTo(x + bw, groundY);
+          ctx.stroke();
+          ctx.strokeStyle = "rgba(132,146,168,.75)";
+          ctx.lineWidth = 1;
+          const N = 5;
+          for (let i = 0; i < N; i++) {
+            const t0 = i / N,
+              t1 = (i + 1) / N,
+              wl0 = bw + (tw - bw) * t0,
+              wl1 = bw + (tw - bw) * t1,
+              y0 = groundY - H * t0,
+              y1 = groundY - H * t1;
+            ctx.beginPath();
+            ctx.moveTo(x - wl0, y0);
+            ctx.lineTo(x + wl1, y1);
+            ctx.moveTo(x + wl0, y0);
+            ctx.lineTo(x - wl1, y1);
+            ctx.stroke();
+          }
+          ctx.strokeStyle = "#8492a8";
+          ctx.lineWidth = 2.2;
+          ctx.beginPath();
+          ctx.moveTo(x - H * 0.2, top + 9);
+          ctx.lineTo(x + H * 0.2, top + 9);
+          ctx.moveTo(x - H * 0.15, top + 20);
+          ctx.lineTo(x + H * 0.15, top + 20);
+          ctx.stroke();
+          ctx.fillStyle = "#cbd5e1";
+          [
+            [-H * 0.2, top + 9],
+            [H * 0.2, top + 9],
+            [0, top],
+          ].forEach((pt) => {
+            ctx.beginPath();
+            ctx.arc(x + pt[0], pt[1], 2.3, 0, Math.PI * 2);
+            ctx.fill();
+          });
+          ctx.restore();
+        },
+        corridor(ctx, w, h, sx, sy, fx, fy, p) {
+          const H = Math.min(140, h * 0.32),
+            yL = sy - H,
+            yR = fy - H,
+            sag = Math.min(28, (fx - sx) * 0.05),
+            offs = [4, 12, 20];
+          this.pylon(ctx, sx, sy, H);
+          this.pylon(ctx, fx, fy, H);
+          const cat = (t, off) => [sx + (fx - sx) * t, yL + (yR - yL) * t + off + sag * Math.sin(Math.PI * t)];
+          const wire = (off, fn) => {
+            ctx.beginPath();
+            for (let t = 0; t <= 1.0001; t += 0.02) {
+              const q = cat(t, off);
+              t === 0 ? ctx.moveTo(q[0], q[1]) : ctx.lineTo(q[0], q[1]);
+            }
+            fn();
+          };
+          ctx.save();
+          ctx.lineCap = "round";
+          offs.forEach((o) => {
+            ctx.strokeStyle = "rgba(203,213,225,.5)";
+            ctx.lineWidth = 1.5;
+            wire(o, () => ctx.stroke());
+          });
+          // energised wire glows with current
+          const cur = this.clamp(p.S / 64, 0.12, 1);
+          ctx.shadowColor = "rgba(56,189,248,.85)";
+          ctx.shadowBlur = 11 * cur;
+          ctx.strokeStyle = `rgba(125,211,252,${0.28 + 0.5 * cur})`;
+          ctx.lineWidth = 1.6 + 3.4 * cur;
+          wire(12, () => ctx.stroke());
+          ctx.shadowBlur = 0;
+          // current packets flowing source -> load
+          const pkN = 10,
+            sp = 0.05 + 0.16 * cur;
+          for (let i = 0; i < pkN; i++) {
+            const t = (this.state.time * sp + i / pkN) % 1,
+              q = cat(t, 12);
+            ctx.fillStyle = `rgba(186,230,253,${0.45 + 0.5 * cur})`;
+            ctx.beginPath();
+            ctx.arc(q[0], q[1], 2 + 2.2 * cur, 0, Math.PI * 2);
+            ctx.fill();
+          }
+          // reactive slosh
+          const amt = this.clamp(Math.abs(p.Q) / Math.max(28, p.P), 0, 1.2),
+            col = p.Q >= 0 ? this.config.colors.lag : this.config.colors.lead;
+          if (amt >= 0.04) {
+            this.state.particles.forEach((o) => {
+              const q = cat(o.t, 12),
+                jit = Math.sin(this.state.time * 3 + o.phase) * (3 + 7 * Math.min(1, amt));
+              ctx.globalAlpha = 0.2 + 0.6 * Math.min(1, amt);
+              ctx.fillStyle = col;
+              ctx.beginPath();
+              ctx.arc(q[0], q[1] - jit, 1.8 + 2.4 * Math.min(1, amt), 0, Math.PI * 2);
+              ctx.fill();
+            });
+            ctx.globalAlpha = 1;
+          }
+          ctx.restore();
+        },
+        source(ctx, x, groundY, p) {
+          ctx.save();
+          ctx.translate(x, groundY);
+          ctx.fillStyle = "rgba(2,6,23,.22)";
+          ctx.beginPath();
+          ctx.ellipse(0, 2, 40, 10, 0, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.fillStyle = "#1f7a3a";
+          ctx.beginPath();
+          ctx.ellipse(0, 0, 38, 11, 0, 0, Math.PI * 2);
+          ctx.fill();
+          const H = 118,
+            top = -H;
+          const g = ctx.createLinearGradient(-7, 0, 7, 0);
+          g.addColorStop(0, "#cbd5e1");
+          g.addColorStop(0.5, "#f1f5f9");
+          g.addColorStop(1, "#93a3b8");
+          ctx.fillStyle = g;
+          ctx.beginPath();
+          ctx.moveTo(-7, 0);
+          ctx.lineTo(-3, top);
+          ctx.lineTo(3, top);
+          ctx.lineTo(7, 0);
+          ctx.closePath();
+          ctx.fill();
+          ctx.fillStyle = "#e2e8f0";
+          this.round(ctx, -8, top - 6, 20, 11, 4);
+          ctx.fill();
+          ctx.save();
+          ctx.translate(-1, top);
+          const spin = this.state.time * (0.6 + 1.8 * p.PF);
+          ctx.rotate(spin);
+          ctx.fillStyle = "#f8fafc";
+          for (let i = 0; i < 3; i++) {
+            ctx.rotate((Math.PI * 2) / 3);
+            ctx.beginPath();
+            ctx.moveTo(0, 0);
+            ctx.quadraticCurveTo(7, -30, 2, -62);
+            ctx.quadraticCurveTo(-3, -30, 0, 0);
+            ctx.fill();
+          }
+          ctx.fillStyle = "#cbd5e1";
+          ctx.beginPath();
+          ctx.arc(0, 0, 4, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+          ctx.fillStyle = "#0f172a";
+          ctx.globalAlpha = 0.55;
+          this.round(ctx, -26, 17, 52, 16, 8);
+          ctx.fill();
+          ctx.globalAlpha = 1;
+          ctx.fillStyle = "#e2e8f0";
+          ctx.font = "800 11px Inter";
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          ctx.fillText("Source", 0, 25);
+          ctx.restore();
+        },
+        load(ctx, x, groundY, p) {
+          ctx.save();
+          ctx.translate(x, groundY);
+          const glow = this.clamp(p.P / 120, 0.18, 1);
+          ctx.fillStyle = "rgba(2,6,23,.25)";
+          ctx.beginPath();
+          ctx.ellipse(-4, 2, 72, 11, 0, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.fillStyle = "#64748b";
+          ctx.fillRect(40, -118, 16, 44);
+          ctx.fillStyle = "rgba(226,232,240,.5)";
+          for (let i = 0; i < 3; i++) {
+            const t = (this.state.time * 0.4 + i / 3) % 1;
+            ctx.globalAlpha = 0.5 * (1 - t);
+            ctx.beginPath();
+            ctx.arc(48, -122 - t * 38, 8 + t * 11, 0, Math.PI * 2);
+            ctx.fill();
+          }
+          ctx.globalAlpha = 1;
+          const g = ctx.createLinearGradient(0, -80, 0, 0);
+          g.addColorStop(0, "#4a596d");
+          g.addColorStop(1, "#2f3c4f");
+          ctx.fillStyle = g;
+          this.round(ctx, -66, -80, 120, 80, 6);
+          ctx.fill();
+          ctx.fillStyle = "#5b6b82";
+          ctx.beginPath();
+          ctx.moveTo(-66, -80);
+          for (let i = 0; i < 4; i++) {
+            const x0 = -66 + i * 30;
+            ctx.lineTo(x0 + 14, -98);
+            ctx.lineTo(x0 + 30, -80);
+          }
+          ctx.closePath();
+          ctx.fill();
+          for (let r = 0; r < 2; r++)
+            for (let ci = 0; ci < 5; ci++) {
+              const wx = -57 + ci * 24,
+                wy = -60 + r * 30;
+              ctx.fillStyle = `rgba(250,204,21,${0.22 + 0.62 * glow})`;
+              this.round(ctx, wx, wy, 16, 18, 3);
+              ctx.fill();
+              ctx.strokeStyle = "rgba(15,23,42,.5)";
+              ctx.lineWidth = 1;
+              this.round(ctx, wx, wy, 16, 18, 3);
+              ctx.stroke();
+            }
+          ctx.fillStyle = "#e2e8f0";
+          ctx.font = "800 11px Inter";
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          ctx.fillText("Load", 0, 16);
+          ctx.restore();
+        },
+        truck(x1, y1, x2, y2) {
+          if (this.state.truckX < x1) this.state.truckX = x1;
+          const t = this.clamp((this.state.truckX - x1) / Math.max(1, x2 - x1), 0, 1);
+          return { x: this.state.truckX, y: y1 + (y2 - y1) * t, a: Math.atan2(y2 - y1, x2 - x1) };
+        },
+        drawTruck(ctx, x, y, a, p) {
+          ctx.save();
+          ctx.translate(x, y);
+          ctx.rotate(a);
+          ctx.fillStyle = "rgba(2,6,23,.3)";
+          ctx.beginPath();
+          ctx.ellipse(-16, 15, 52, 7, 0, 0, Math.PI * 2);
+          ctx.fill();
+          const glow = ctx.createRadialGradient(-12, -20, 4, -12, -20, 70);
+          glow.addColorStop(0, "rgba(52,211,153,.26)");
+          glow.addColorStop(1, "rgba(52,211,153,0)");
+          ctx.fillStyle = glow;
+          ctx.beginPath();
+          ctx.arc(-12, -20, 70, 0, Math.PI * 2);
+          ctx.fill();
+          const tg = ctx.createLinearGradient(0, -46, 0, 0);
+          tg.addColorStop(0, "#f1f5f9");
+          tg.addColorStop(1, "#cbd5e1");
+          ctx.fillStyle = tg;
+          ctx.strokeStyle = "rgba(100,116,139,.85)";
+          ctx.lineWidth = 1.5;
+          this.round(ctx, -66, -46, 80, 44, 6);
+          ctx.fill();
+          ctx.stroke();
+          const boxes = this.clamp(Math.round(p.P / 14), 1, 9);
+          for (let i = 0; i < boxes; i++) {
+            const r = Math.floor(i / 3),
+              ci = i % 3;
+            ctx.fillStyle = "#86efac";
+            ctx.strokeStyle = "#166534";
+            ctx.lineWidth = 1;
+            ctx.fillRect(-60 + ci * 18, -42 + r * 14, 15, 12);
+            ctx.strokeRect(-60 + ci * 18, -42 + r * 14, 15, 12);
+          }
+          ctx.fillStyle = "#ef4444";
+          this.round(ctx, 12, -40, 40, 38, 7);
+          ctx.fill();
+          ctx.fillStyle = "#dc2626";
+          this.round(ctx, 12, -22, 40, 20, 5);
+          ctx.fill();
+          ctx.fillStyle = "#bae6fd";
+          this.round(ctx, 20, -34, 19, 13, 4);
+          ctx.fill();
+          ctx.fillStyle = "rgba(254,240,138,.92)";
+          ctx.beginPath();
+          ctx.arc(50, -9, 3, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.fillStyle = "#0f172a";
+          [-46, -30, 24, 40].forEach((wx) => {
+            ctx.beginPath();
+            ctx.arc(wx, 4, 9, 0, Math.PI * 2);
+            ctx.fill();
+          });
+          ctx.fillStyle = "#94a3b8";
+          [-46, -30, 24, 40].forEach((wx) => {
+            ctx.beginPath();
+            ctx.arc(wx, 4, 4, 0, Math.PI * 2);
+            ctx.fill();
+          });
+          ctx.restore();
+        },
+        gauge(ctx, w, h, p) {
+          const cx = w - 74,
+            cy = h - 66,
+            r = 39;
+          ctx.save();
+          ctx.lineCap = "round";
+          ctx.fillStyle = "rgba(2,6,23,.46)";
+          ctx.beginPath();
+          ctx.arc(cx, cy, r + 13, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.lineWidth = 9;
+          ctx.strokeStyle = "rgba(226,232,240,.16)";
+          ctx.beginPath();
+          ctx.arc(cx, cy, r, 0, Math.PI * 2);
+          ctx.stroke();
+          const col = p.PF > 0.95 ? this.config.colors.active : p.PF > 0.85 ? this.config.colors.lag : this.config.colors.current;
+          ctx.strokeStyle = col;
+          ctx.shadowColor = col;
+          ctx.shadowBlur = 10;
+          ctx.beginPath();
+          ctx.arc(cx, cy, r, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * this.clamp(p.PF, 0, 1));
+          ctx.stroke();
+          ctx.shadowBlur = 0;
+          ctx.fillStyle = "#f1f5f9";
+          ctx.font = "900 18px Inter";
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          ctx.fillText(`${Math.round(p.PF * 100)}%`, cx, cy - 2);
+          ctx.fillStyle = "#94a3b8";
+          ctx.font = "800 9px Inter";
+          ctx.fillText("POWER FACTOR", cx, cy + 15);
+          ctx.restore();
+        },
 
-    drawTriangle(){
-        const ctx=this.dom.triangleCtx,{w,h}=this.setup(this.dom.triangleCanvas,ctx),p=this.state.power,v=this.state.view.triangle,c=this.config.colors;ctx.save();ctx.translate(v.x,v.y);ctx.scale(v.z,v.z);
-        const L=58,R=25,T=28,B=50,PW=w-L-R,PH=h-T-B,ox=L,oy=T+PH/2,maxQ=Math.max(40,Math.abs(p.Ql),Math.abs(p.Q),Math.abs(p.Qc),p.P*.8)*1.35,maxP=Math.max(65,p.P,p.S)*1.12,sx=PW/maxP,sy=(PH/2)/maxQ;
-        this.grid(ctx,L,T,PW,PH,v.z);ctx.strokeStyle=c.axis;ctx.lineWidth=1.2/v.z;ctx.beginPath();ctx.moveTo(ox,T);ctx.lineTo(ox,T+PH);ctx.moveTo(ox-5/v.z,oy);ctx.lineTo(ox+PW,oy);ctx.stroke();ctx.fillStyle='#94a3b8';ctx.font=`${12/v.z}px Inter`;ctx.textAlign='center';ctx.fillText('P (kW)',ox+PW/2,h-18/v.z);ctx.save();ctx.translate(18/v.z,oy);ctx.rotate(-Math.PI/2);ctx.fillText('Q (kVAr)',0,0);ctx.restore();
-        const px=ox+p.P*sx,qy=oy-p.Q*sy,qly=oy-p.Ql*sy;ctx.lineCap='round';ctx.lineWidth=5/v.z;ctx.strokeStyle=c.active;ctx.beginPath();ctx.moveTo(ox,oy);ctx.lineTo(px,oy);ctx.stroke();ctx.strokeStyle=p.Q>=0?c.lag:c.lead;ctx.beginPath();ctx.moveTo(px,oy);ctx.lineTo(px,qy);ctx.stroke();ctx.strokeStyle=c.white;ctx.beginPath();ctx.moveTo(ox,oy);ctx.lineTo(px,qy);ctx.stroke();ctx.setLineDash([6/v.z,6/v.z]);ctx.lineWidth=2/v.z;ctx.strokeStyle='rgba(251,191,36,.48)';ctx.beginPath();ctx.moveTo(px+13/v.z,oy);ctx.lineTo(px+13/v.z,qly);ctx.stroke();ctx.setLineDash([]);
-        ctx.font=`${13/v.z}px Inter`;ctx.fillStyle=c.active;ctx.textAlign='center';ctx.fillText('P',ox+(px-ox)/2,oy+20/v.z);ctx.fillStyle=p.Q>=0?c.lag:c.lead;ctx.textAlign='left';ctx.fillText('Q net',px+10/v.z,qy+(oy-qy)/2);ctx.fillStyle=c.white;ctx.save();ctx.translate(ox+(px-ox)/2,oy+(qy-oy)/2);ctx.rotate(Math.atan2(qy-oy,px-ox));ctx.textAlign='center';ctx.fillText('S net',0,-10/v.z);ctx.restore();ctx.restore();
-    },
-    drawWave(){
-        const ctx=this.dom.waveCtx,{w,h}=this.setup(this.dom.waveCanvas,ctx),p=this.state.power,v=this.state.view.wave,c=this.config.colors;ctx.save();ctx.translate(v.x,v.y);ctx.scale(v.z,v.z);
-        const L=48,T=18,B=38,PW=w-L-16,PH=h-T-B,mid=T+PH/2;this.grid(ctx,L,T,PW,PH,v.z);ctx.strokeStyle=c.axis;ctx.lineWidth=1.1/v.z;ctx.beginPath();ctx.moveTo(L,T);ctx.lineTo(L,T+PH);ctx.moveTo(L,mid);ctx.lineTo(L+PW,mid);ctx.stroke();
-        const amp=PH*.25,iam=amp*this.clamp(p.S/Math.max(1,p.Sl),.35,1.7),scale=PH*.32/Math.max(1,p.Sl*1.25),vp=new Path2D(),ip=new Path2D(),pp=new Path2D(),qp=new Path2D(),steps=Math.max(220,Math.round(PW));
-        for(let i=0;i<=steps;i++){const x=L+PW*i/steps,a=i/steps*Math.PI*4,vol=Math.sin(a),cur=Math.sin(a-p.phi),inst=p.S*(Math.cos(p.phi)-Math.cos(2*a-p.phi)),react=-p.Q*Math.sin(2*a);const yv=mid-vol*amp,yi=mid-cur*iam,yp=mid-inst*scale,yq=mid-react*scale;if(i===0){vp.moveTo(x,yv);ip.moveTo(x,yi);pp.moveTo(x,yp);qp.moveTo(x,yq)}else{vp.lineTo(x,yv);ip.lineTo(x,yi);pp.lineTo(x,yp);qp.lineTo(x,yq)}}
-        ctx.lineCap='round';ctx.lineJoin='round';ctx.lineWidth=2.2/v.z;ctx.strokeStyle=c.sky;ctx.stroke(vp);ctx.strokeStyle=c.current;ctx.stroke(ip);ctx.lineWidth=2.6/v.z;ctx.strokeStyle=c.active;ctx.stroke(pp);ctx.strokeStyle=p.Q>=0?c.lag:c.lead;ctx.stroke(qp);ctx.setLineDash([6/v.z,6/v.z]);ctx.strokeStyle='rgba(52,211,153,.72)';ctx.lineWidth=1.5/v.z;ctx.beginPath();ctx.moveTo(L,mid-p.P*scale);ctx.lineTo(L+PW,mid-p.P*scale);ctx.stroke();ctx.setLineDash([]);
-        ctx.font=`${12/v.z}px Inter`;ctx.textAlign='left';ctx.fillStyle=c.sky;ctx.fillText('V',L+10,T+18/v.z);ctx.fillStyle=c.current;ctx.fillText('I',L+32,T+18/v.z);ctx.fillStyle=c.active;ctx.fillText('p(t)',L+54,T+18/v.z);ctx.fillStyle=p.Q>=0?c.lag:c.lead;ctx.fillText('q(t)',L+100,T+18/v.z);ctx.restore();
-    },
-    grid(ctx,x,y,w,h,z){
-        ctx.save();ctx.strokeStyle=this.config.colors.grid;ctx.lineWidth=1/z;ctx.beginPath();for(let i=0;i<=6;i++){const xx=x+w*i/6;ctx.moveTo(xx,y);ctx.lineTo(xx,y+h)}for(let i=0;i<=4;i++){const yy=y+h*i/4;ctx.moveTo(x,yy);ctx.lineTo(x+w,yy)}ctx.stroke();ctx.restore();
-    },
-    resetView(name){this.state.view[name]={x:0,y:0,z:1,drag:false,id:null,lx:0,ly:0};name==='triangle'?this.drawTriangle():this.drawWave()},
-    round(ctx,x,y,w,h,r){const rr=Math.min(r,w/2,h/2);ctx.beginPath();ctx.moveTo(x+rr,y);ctx.arcTo(x+w,y,x+w,y+h,rr);ctx.arcTo(x+w,y+h,x,y+h,rr);ctx.arcTo(x,y+h,x,y,rr);ctx.arcTo(x,y,x+w,y,rr);ctx.closePath()},
-    clamp(n,a,b){return Math.max(a,Math.min(b,n))},
-    deg(n){return n*Math.PI/180},
-    rad(n){return n*180/Math.PI},
-    signed(n,d){const v=Number(n).toFixed(d);return n>0?`+${v}`:v}
-};
-App.init();
-</script>
-</body>
+        drawTriangle() {
+          const ctx = this.dom.triangleCtx,
+            { w, h } = this.setup(this.dom.triangleCanvas, ctx),
+            p = this.state.power,
+            v = this.state.view.triangle,
+            c = this.config.colors;
+          ctx.save();
+          ctx.translate(v.x, v.y);
+          ctx.scale(v.z, v.z);
+          const L = 58,
+            R = 25,
+            T = 28,
+            B = 50,
+            PW = w - L - R,
+            PH = h - T - B,
+            ox = L,
+            oy = T + PH / 2,
+            maxQ = Math.max(40, Math.abs(p.Ql), Math.abs(p.Q), Math.abs(p.Qc), p.P * 0.8) * 1.35,
+            maxP = Math.max(65, p.P, p.S) * 1.12,
+            sx = Math.min((PW - 55) / maxP, PH / 2 / maxQ),
+            sy = sx;
+          this.grid(ctx, L, T, PW, PH, v.z);
+          ctx.strokeStyle = c.axis;
+          ctx.lineWidth = 1.2 / v.z;
+          ctx.beginPath();
+          ctx.moveTo(ox, T);
+          ctx.lineTo(ox, T + PH);
+          ctx.moveTo(ox - 5 / v.z, oy);
+          ctx.lineTo(ox + PW, oy);
+          ctx.stroke();
+          ctx.fillStyle = "#94a3b8";
+          ctx.font = `${12 / v.z}px Inter`;
+          ctx.textAlign = "center";
+          ctx.fillText("P (kW)", ox + PW / 2, h - 18 / v.z);
+          ctx.save();
+          ctx.translate(18 / v.z, oy);
+          ctx.rotate(-Math.PI / 2);
+          ctx.fillText("Q (kVAr)", 0, 0);
+          ctx.restore();
+          const px = ox + p.P * sx,
+            qy = oy - p.Q * sy,
+            qly = oy - p.Ql * sy;
+          ctx.lineCap = "round";
+          ctx.lineWidth = 5 / v.z;
+          ctx.strokeStyle = c.active;
+          ctx.beginPath();
+          ctx.moveTo(ox, oy);
+          ctx.lineTo(px, oy);
+          ctx.stroke();
+          ctx.strokeStyle = p.Q >= 0 ? c.lag : c.lead;
+          ctx.beginPath();
+          ctx.moveTo(px, oy);
+          ctx.lineTo(px, qy);
+          ctx.stroke();
+          ctx.strokeStyle = c.white;
+          ctx.beginPath();
+          ctx.moveTo(ox, oy);
+          ctx.lineTo(px, qy);
+          ctx.stroke();
+          ctx.setLineDash([6 / v.z, 6 / v.z]);
+          ctx.lineWidth = 2 / v.z;
+          ctx.strokeStyle = "rgba(251,191,36,.48)";
+          ctx.beginPath();
+          ctx.moveTo(px + 13 / v.z, oy);
+          ctx.lineTo(px + 13 / v.z, qly);
+          ctx.stroke();
+          ctx.setLineDash([]);
+          ctx.font = `${13 / v.z}px Inter`;
+          ctx.fillStyle = c.active;
+          ctx.textAlign = "center";
+          ctx.fillText("P", ox + (px - ox) / 2, oy + 20 / v.z);
+          ctx.fillStyle = p.Q >= 0 ? c.lag : c.lead;
+          ctx.textAlign = "left";
+          ctx.fillText("Q net", px + 10 / v.z, qy + (oy - qy) / 2);
+          ctx.fillStyle = c.white;
+          ctx.save();
+          ctx.translate(ox + (px - ox) / 2, oy + (qy - oy) / 2);
+          ctx.rotate(Math.atan2(qy - oy, px - ox));
+          ctx.textAlign = "center";
+          ctx.fillText("S net", 0, -10 / v.z);
+          ctx.restore();
+          ctx.restore();
+        },
+        drawWave() {
+          const ctx = this.dom.waveCtx,
+            { w, h } = this.setup(this.dom.waveCanvas, ctx),
+            p = this.state.power,
+            v = this.state.view.wave,
+            c = this.config.colors;
+          ctx.save();
+          ctx.translate(v.x, v.y);
+          ctx.scale(v.z, v.z);
+          const L = 48,
+            T = 18,
+            B = 38,
+            PW = w - L - 16,
+            PH = h - T - B,
+            mid = T + PH / 2;
+          this.grid(ctx, L, T, PW, PH, v.z);
+          ctx.strokeStyle = c.axis;
+          ctx.lineWidth = 1.1 / v.z;
+          ctx.beginPath();
+          ctx.moveTo(L, T);
+          ctx.lineTo(L, T + PH);
+          ctx.moveTo(L, mid);
+          ctx.lineTo(L + PW, mid);
+          ctx.stroke();
+          const amp = PH * 0.25,
+            iam = amp * this.clamp(p.S / Math.max(1, p.Sl), 0.35, 1.7),
+            scale = (PH * 0.32) / Math.max(1, (p.Sl / 3) * 1.25),
+            vp = new Path2D(),
+            ip = new Path2D(),
+            pp = new Path2D(),
+            qp = new Path2D(),
+            steps = Math.max(220, Math.round(PW));
+          for (let i = 0; i <= steps; i++) {
+            const x = L + (PW * i) / steps,
+              a = (i / steps) * Math.PI * 4,
+              vol = Math.sin(a),
+              cur = Math.sin(a - p.phi),
+              inst = (p.S / 3) * (Math.cos(p.phi) - Math.cos(2 * a - p.phi)),
+              react = (-p.Q / 3) * Math.sin(2 * a);
+            const yv = mid - vol * amp,
+              yi = mid - cur * iam,
+              yp = mid - inst * scale,
+              yq = mid - react * scale;
+            if (i === 0) {
+              vp.moveTo(x, yv);
+              ip.moveTo(x, yi);
+              pp.moveTo(x, yp);
+              qp.moveTo(x, yq);
+            } else {
+              vp.lineTo(x, yv);
+              ip.lineTo(x, yi);
+              pp.lineTo(x, yp);
+              qp.lineTo(x, yq);
+            }
+          }
+          ctx.lineCap = "round";
+          ctx.lineJoin = "round";
+          ctx.lineWidth = 2.2 / v.z;
+          ctx.strokeStyle = c.sky;
+          ctx.stroke(vp);
+          ctx.strokeStyle = c.current;
+          ctx.stroke(ip);
+          ctx.lineWidth = 2.6 / v.z;
+          ctx.strokeStyle = c.active;
+          ctx.stroke(pp);
+          ctx.strokeStyle = p.Q >= 0 ? c.lag : c.lead;
+          ctx.stroke(qp);
+          ctx.setLineDash([6 / v.z, 6 / v.z]);
+          ctx.strokeStyle = "rgba(52,211,153,.72)";
+          ctx.lineWidth = 1.5 / v.z;
+          ctx.beginPath();
+          ctx.moveTo(L, mid - (p.P / 3) * scale);
+          ctx.lineTo(L + PW, mid - (p.P / 3) * scale);
+          ctx.stroke();
+          ctx.setLineDash([]);
+          ctx.font = `${12 / v.z}px Inter`;
+          ctx.textAlign = "left";
+          ctx.fillStyle = c.sky;
+          ctx.fillText("V", L + 10, T + 18 / v.z);
+          ctx.fillStyle = c.current;
+          ctx.fillText("I", L + 32, T + 18 / v.z);
+          ctx.fillStyle = c.active;
+          ctx.fillText("p(t)", L + 54, T + 18 / v.z);
+          ctx.fillStyle = p.Q >= 0 ? c.lag : c.lead;
+          ctx.fillText("q(t)", L + 100, T + 18 / v.z);
+          ctx.restore();
+        },
+        grid(ctx, x, y, w, h, z) {
+          ctx.save();
+          ctx.strokeStyle = this.config.colors.grid;
+          ctx.lineWidth = 1 / z;
+          ctx.beginPath();
+          for (let i = 0; i <= 6; i++) {
+            const xx = x + (w * i) / 6;
+            ctx.moveTo(xx, y);
+            ctx.lineTo(xx, y + h);
+          }
+          for (let i = 0; i <= 4; i++) {
+            const yy = y + (h * i) / 4;
+            ctx.moveTo(x, yy);
+            ctx.lineTo(x + w, yy);
+          }
+          ctx.stroke();
+          ctx.restore();
+        },
+        resetView(name) {
+          this.state.view[name] = { x: 0, y: 0, z: 1, drag: false, id: null, lx: 0, ly: 0 };
+          name === "triangle" ? this.drawTriangle() : this.drawWave();
+        },
+        round(ctx, x, y, w, h, r) {
+          const rr = Math.min(r, w / 2, h / 2);
+          ctx.beginPath();
+          ctx.moveTo(x + rr, y);
+          ctx.arcTo(x + w, y, x + w, y + h, rr);
+          ctx.arcTo(x + w, y + h, x, y + h, rr);
+          ctx.arcTo(x, y + h, x, y, rr);
+          ctx.arcTo(x, y, x + w, y, rr);
+          ctx.closePath();
+        },
+        clamp(n, a, b) {
+          return Math.max(a, Math.min(b, n));
+        },
+        deg(n) {
+          return (n * Math.PI) / 180;
+        },
+        rad(n) {
+          return (n * 180) / Math.PI;
+        },
+        signed(n, d) {
+          const v = Number(n).toFixed(d);
+          return n > 0 ? `+${v}` : v;
+        },
+      };
+      App.init();
+    </script>
+  </body>
 </html>

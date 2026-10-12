@@ -51,6 +51,35 @@ Violations fail the check; `reports/accessibility.json` also records findings th
 need manual review. GitHub Actions runs these checks on pushes and pull requests.
 Automated checks do not replace keyboard and screen-reader review.
 
+## Power system demos
+
+Run `npm run check:demos` to check the power models without browser dependencies.
+The grid checks compare 18,225 operating points against an independent analytical
+bound. They cover feasible dispatch, infeasibility, and the default Braess cost
+comparison. The correction checks cover fixed useful demand, unity power factor,
+and overcompensation. The publishing workflow runs these checks before building.
+
+The truck demo holds useful power fixed during correction; the particle demo
+holds apparent power fixed at 100 VA. Keep that distinction in the descriptions.
+The grid demo uses a lossless DC model and reports no cost comparison when either
+topology is infeasible. Its diagnostic flows are not an operating schedule.
+
+The three power-system card previews in `assets/img/demos/` are screenshots of
+the demos. Update them when the main visuals change.
+
+The main stylesheet is compressed by Sass and excluded from the second CSS
+compression pass in `jekyll-minifier`. That redundant pass is very slow on the
+stylesheet's Unicode icon rules.
+
+Validation for the demo update:
+
+- Production Jekyll build and generated-page checks passed.
+- The three demos passed automated accessibility checks at 1440, 768, 390, and
+  320 px. Presets, correction, infeasible dispatch, and the WebGL fallback worked.
+- The five main pages passed checks in light and dark themes at desktop and
+  phone widths. Preview images loaded and the grid card opened the power tab.
+- Reduced-motion controls and particle camera framing passed on the built pages.
+
 ## Measured script savings
 
 Run `npm run measure:scripts` after a build (or set `CHROME_CHANNEL=chrome`).
