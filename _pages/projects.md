@@ -1,7 +1,7 @@
 ---
 layout: page
 math: true
-title: Interactive Demos
+title: interactive demos
 permalink: /projects/
 description: Interactive experiments in power systems and mathematics.
 nav: true
