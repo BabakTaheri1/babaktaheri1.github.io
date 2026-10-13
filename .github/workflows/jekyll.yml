@@ -21,7 +21,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup-site
       - name: Validate power system demos
-        run: node scripts/check-power-models.cjs
+        run: npm run check:demos
       - name: Build site
         run: bundle exec jekyll build --trace
         env:

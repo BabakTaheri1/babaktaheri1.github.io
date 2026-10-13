@@ -15,7 +15,7 @@ The repository's **Settings → Pages → Source** must be **GitHub Actions**.
 
 ## Published content
 
-About, Publications, Projects, CV, News, and the six standalone demos remain
+About, Publications, Projects, CV, News, and the seven standalone demos remain
 published. The Demos index at `/code/` has been removed; the individual demonstrations
 remain accessible through Projects. Theme sample posts, books, teaching, people, repository listings, and the
 sample dropdown page are excluded in `_config.yml`. Their source is retained.
@@ -64,8 +64,24 @@ holds apparent power fixed at 100 VA. Keep that distinction in the descriptions.
 The grid demo uses a lossless DC model and reports no cost comparison when either
 topology is infeasible. Its diagnostic flows are not an operating schedule.
 
-The three power-system card previews in `assets/img/demos/` are screenshots of
+The power-system card previews in `assets/img/demos/` are screenshots of
 the demos. Update them when the main visuals change.
+
+The Grid Operations & Dispatch guide adds a fourth power-system card. Its
+commitment and state-estimation sections are illustrations; its dispatch lab
+solves a lossless DC LP with a selected South–East outage. Prices come from LP
+duals, and infeasible solves expose no prices, flows, or accepted output. The
+illustrative prior-hour base point uses the intact grid and stays fixed when
+the current-interval outage check changes.
+
+`npm run check:demos` also checks 2,400 grid-operations cases for balance,
+resource bounds, base/outage branch limits, Kirchhoff's laws, and infeasibility.
+Nodal prices are checked against numerical objective sensitivities.
+Run `CHROME_CHANNEL=chrome npm run check:grid-ops` locally, or omit the channel
+to use Playwright Chromium. Set `SITE_DIR=_site` to test the built page and
+`GRID_OPS_ARTIFACT_DIR=/tmp/grid-ops-checks` to save screenshots and scan results.
+The browser check covers both themes, four widths, all process stages on mobile,
+keyboard controls, saved theme preference, and both playback modes.
 
 The main stylesheet is compressed by Sass and excluded from the second CSS
 compression pass in `jekyll-minifier`. That redundant pass is very slow on the

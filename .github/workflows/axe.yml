@@ -34,9 +34,16 @@ jobs:
         run: bundle exec ruby scripts/check-site.rb
       - name: Check desktop and mobile accessibility
         run: npm run check:a11y
+      - name: Check grid operations controls and themes
+        run: npm run check:grid-ops
+        env:
+          SITE_DIR: _site
+          GRID_OPS_ARTIFACT_DIR: reports/grid-ops
       - name: Upload accessibility report
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: accessibility-report
-          path: reports/accessibility.json
+          path: |
+            reports/accessibility.json
+            reports/grid-ops/

@@ -1,1390 +1,2319 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Grid Operations &amp; Market Clearing Architecture</title>
-<meta name="description" content="Interactive single-file HTML explainer for ISO/RTO grid operations, SCUC, IRUC, AC state estimation, SCED, LMPs, and N-1 congestion.">
-<style>
-:root{
-  --bg:#020617;
-  --bg2:#06111f;
-  --panel:rgba(15,23,42,.78);
-  --panel2:rgba(15,23,42,.56);
-  --ink:#e5edf7;
-  --muted:#93a4b8;
-  --muted2:#64748b;
-  --line:rgba(148,163,184,.18);
-  --line2:rgba(148,163,184,.28);
-  --cyan:#22d3ee;
-  --sky:#38bdf8;
-  --blue:#60a5fa;
-  --violet:#8b5cf6;
-  --pink:#f472b6;
-  --green:#34d399;
-  --lime:#a3e635;
-  --amber:#f59e0b;
-  --orange:#fb923c;
-  --red:#fb7185;
-  --white:#f8fafc;
-  --shadow:0 30px 110px rgba(0,0,0,.42), inset 0 1px 0 rgba(255,255,255,.045);
-  --mono:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
-  --sans:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-}
-*{box-sizing:border-box}
-html{min-height:100%;background:var(--bg)}
-body{
-  min-height:100%;
-  margin:0;
-  color:var(--ink);
-  font-family:var(--sans);
-  background:
-    radial-gradient(circle at 10% -4%,rgba(34,211,238,.20),transparent 31rem),
-    radial-gradient(circle at 86% 4%,rgba(139,92,246,.20),transparent 35rem),
-    radial-gradient(circle at 42% 112%,rgba(52,211,153,.12),transparent 40rem),
-    linear-gradient(135deg,#020617,#071426 45%,#020617);
-  overflow-x:hidden;
-}
-body:before{
-  content:"";
-  position:fixed;
-  inset:0;
-  pointer-events:none;
-  background-image:
-    linear-gradient(rgba(148,163,184,.035) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(148,163,184,.035) 1px, transparent 1px);
-  background-size:42px 42px;
-  mask-image:radial-gradient(circle at 50% 12%,black,transparent 75%);
-}
-button,input{font:inherit;color:inherit}
-button{cursor:pointer}
-
-.skip-link{
-  position:absolute;
-  left:14px;top:10px;
-  transform:translateY(-140%);
-  z-index:50;
-  border:1px solid rgba(125,211,252,.55);
-  background:#020617;
-  color:#e0f2fe;
-  border-radius:999px;
-  padding:10px 14px;
-  font-size:12px;
-  font-weight:950;
-  text-decoration:none;
-  box-shadow:0 18px 60px rgba(0,0,0,.42);
-}
-.skip-link:focus{transform:translateY(0)}
-.sr-only{
-  position:absolute!important;
-  width:1px;height:1px;
-  padding:0;margin:-1px;
-  overflow:hidden;
-  clip:rect(0,0,0,0);
-  white-space:nowrap;
-  border:0;
-}
-button:focus-visible,input:focus-visible,.stage-button:focus-visible,.skip-link:focus-visible{
-  outline:2px solid var(--cyan);
-  outline-offset:3px;
-}
-.app{
-  width:min(1840px,100%);
-  margin:0 auto;
-  min-height:100vh;
-  padding:clamp(14px,2vw,30px);
-  display:grid;
-  gap:16px;
-}
-.glass{
-  background:linear-gradient(180deg,var(--panel),var(--panel2));
-  border:1px solid var(--line);
-  box-shadow:var(--shadow);
-  backdrop-filter:blur(18px);
-}
-.hero{
-  display:grid;
-  grid-template-columns:minmax(0,1fr) minmax(340px,.55fr);
-  gap:22px;
-  align-items:center;
-  border-radius:34px;
-  padding:clamp(22px,3.1vw,42px);
-  position:relative;
-  overflow:hidden;
-}
-.hero:after{
-  content:"";
-  position:absolute;
-  width:520px;height:520px;
-  right:-180px;top:-250px;
-  background:radial-gradient(circle,rgba(56,189,248,.18),transparent 63%);
-}
-.eyebrow{
-  display:flex;align-items:center;gap:10px;
-  color:#b6f3ff;
-  text-transform:uppercase;
-  letter-spacing:.23em;
-  font-size:12px;
-  font-weight:900;
-  margin-bottom:12px;
-}
-.live-dot{
-  width:10px;height:10px;border-radius:50%;background:var(--green);
-  box-shadow:0 0 20px rgba(52,211,153,.9),0 0 50px rgba(52,211,153,.4);
-  animation:pulse 1.7s ease-in-out infinite;
-}
-@keyframes pulse{0%,100%{transform:scale(.9);opacity:.8}50%{transform:scale(1.2);opacity:1}}
-h1{
-  margin:0;
-  color:var(--white);
-  font-size:clamp(34px,4.9vw,76px);
-  line-height:.94;
-  letter-spacing:-.065em;
-  font-weight:950;
-}
-.subtitle{
-  margin:16px 0 0;
-  max-width:1040px;
-  color:#cbd5e1;
-  line-height:1.56;
-  font-size:clamp(15px,1.2vw,18px);
-}
-
-.quickstart{
-  display:grid;
-  grid-template-columns:repeat(4,minmax(0,1fr));
-  gap:10px;
-  margin-top:20px;
-  position:relative;
-  z-index:1;
-}
-.quickstep{
-  border:1px solid rgba(148,163,184,.16);
-  background:rgba(2,6,23,.28);
-  border-radius:18px;
-  padding:12px;
-  min-height:76px;
-}
-.quickstep b{
-  display:block;
-  color:#e0f2fe;
-  font-size:11px;
-  letter-spacing:.13em;
-  text-transform:uppercase;
-  margin-bottom:6px;
-}
-.quickstep span{
-  display:block;
-  color:#aebdd0;
-  font-size:12px;
-  line-height:1.36;
-  font-weight:750;
-}
-.command-strip{
-  display:grid;
-  grid-template-columns:repeat(2,minmax(0,1fr));
-  gap:12px;
-  position:relative;
-  z-index:1;
-}
-.command-tile{
-  border:1px solid rgba(148,163,184,.17);
-  border-radius:24px;
-  background:rgba(2,6,23,.36);
-  padding:17px;
-  overflow:hidden;
-  min-height:104px;
-}
-.command-tile p{margin:0;color:var(--muted);font-size:10px;font-weight:950;text-transform:uppercase;letter-spacing:.14em}
-.command-tile strong{display:block;margin-top:10px;color:#fff;font-size:clamp(24px,2.2vw,38px);line-height:.93;letter-spacing:-.055em}
-.command-tile span{display:block;margin-top:8px;color:#9fb0c7;font-size:12px;font-weight:800}
-.timeline-card{border-radius:32px;padding:16px;overflow:hidden}
-.timeline-head{display:flex;align-items:end;justify-content:space-between;gap:16px;margin-bottom:13px;padding:0 4px}
-.timeline-head h2{margin:0;color:#fff;font-size:18px;letter-spacing:-.02em}
-.timeline-head p{margin:4px 0 0;color:var(--muted);font-size:12px;line-height:1.45}
-.time-readout{font-family:var(--mono);font-size:12px;color:#bae6fd;border:1px solid rgba(125,211,252,.22);background:rgba(8,47,73,.22);border-radius:999px;padding:8px 11px;white-space:nowrap}
-.timeline{
-  position:relative;
-  display:grid;
-  grid-template-columns:repeat(4,minmax(0,1fr));
-  gap:12px;
-}
-.timeline:before{
-  content:"";
-  position:absolute;
-  left:7%;right:7%;top:43px;height:3px;
-  background:linear-gradient(90deg,rgba(34,211,238,.6),rgba(139,92,246,.55),rgba(251,113,133,.42));
-  border-radius:99px;
-  box-shadow:0 0 20px rgba(56,189,248,.25);
-}
-.stage-button{
-  position:relative;
-  min-height:126px;
-  border:1px solid rgba(148,163,184,.18);
-  border-radius:24px;
-  background:linear-gradient(180deg,rgba(15,23,42,.88),rgba(15,23,42,.50));
-  padding:15px;
-  text-align:left;
-  overflow:hidden;
-  transition:transform .22s ease,border-color .22s ease,background .22s ease,box-shadow .22s ease;
-}
-.stage-button:hover{transform:translateY(-2px);border-color:rgba(125,211,252,.48)}
-.stage-button.active{
-  border-color:rgba(34,211,238,.75);
-  background:linear-gradient(135deg,rgba(14,165,233,.32),rgba(99,102,241,.20) 55%,rgba(2,6,23,.54));
-  box-shadow:0 0 0 1px rgba(34,211,238,.16),0 22px 70px rgba(14,165,233,.15);
-}
-.stage-button.completed{border-color:rgba(52,211,153,.42)}
-.stage-button:after{
-  content:"";
-  position:absolute;inset:auto 14px 12px 14px;height:3px;
-  border-radius:999px;background:rgba(148,163,184,.18);
-}
-.stage-button.active:after{background:linear-gradient(90deg,var(--cyan),var(--violet));box-shadow:0 0 20px rgba(34,211,238,.8)}
-.stage-kicker{display:flex;align-items:center;justify-content:space-between;gap:10px;position:relative;z-index:1}
-.stage-num{
-  width:34px;height:34px;border-radius:999px;display:grid;place-items:center;
-  color:#ecfeff;background:rgba(8,47,73,.55);border:1px solid rgba(125,211,252,.35);
-  font-size:12px;font-weight:950;font-family:var(--mono)
-}
-.stage-time{font-size:10px;color:var(--muted);font-weight:950;text-transform:uppercase;letter-spacing:.1em}
-.stage-name{display:block;margin-top:13px;color:#fff;font-size:17px;font-weight:950;line-height:1.08;letter-spacing:-.035em;position:relative;z-index:1}
-.stage-meta{display:block;margin-top:8px;color:#aebdd0;font-size:12px;line-height:1.35;font-weight:750;position:relative;z-index:1}
-.dashboard{
-  display:grid;
-  grid-template-columns:minmax(0,1.44fr) minmax(420px,.62fr);
-  gap:16px;
-  align-items:start;
-}
-.engine-card{border-radius:34px;padding:18px;min-width:0;overflow:hidden}
-.engine-top{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;margin-bottom:14px;padding:2px 2px 0}
-.engine-title h2{margin:0;color:#fff;font-size:23px;letter-spacing:-.04em}
-.engine-title p{margin:5px 0 0;color:var(--muted);line-height:1.45;font-size:13px;max-width:840px}
-.badge-row{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
-.badge{
-  border:1px solid rgba(148,163,184,.18);background:rgba(2,6,23,.35);
-  border-radius:999px;padding:8px 10px;color:#cbd5e1;font-size:11px;font-weight:950;white-space:nowrap;
-}
-.badge.good{border-color:rgba(52,211,153,.30);color:#bbf7d0;background:rgba(20,83,45,.20)}
-.badge.warn{border-color:rgba(245,158,11,.34);color:#fde68a;background:rgba(120,53,15,.18)}
-.badge.hot{border-color:rgba(251,113,133,.36);color:#fecdd3;background:rgba(127,29,29,.20)}
-.stage-visual{
-  position:relative;
-  min-height:510px;
-  border-radius:28px;
-  overflow:hidden;
-  background:radial-gradient(circle at 50% 40%,rgba(30,41,59,.85),rgba(2,6,23,.94));
-  border:1px solid rgba(148,163,184,.14);
-}
-#engineCanvas{width:100%;height:100%;display:block;min-height:510px}
-.visual-hud{
-  position:absolute;left:16px;top:16px;right:16px;display:flex;justify-content:space-between;gap:10px;pointer-events:none;align-items:flex-start
-}
-.hud-left,.hud-right{display:flex;gap:8px;flex-wrap:wrap}
-.hud-pill{
-  border:1px solid rgba(148,163,184,.20);background:rgba(2,6,23,.58);backdrop-filter:blur(12px);
-  border-radius:999px;padding:8px 10px;color:#cbd5e1;font-size:11px;font-weight:900;
-}
-.hud-pill b{color:#fff;font-family:var(--mono);font-weight:950}
-.stage-drawer{
-  margin-top:14px;
-  display:grid;
-  grid-template-columns:repeat(4,minmax(0,1fr));
-  gap:10px;
-  animation:rise .36s ease both;
-}
-@keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-.micro-card{
-  border:1px solid rgba(148,163,184,.16);
-  border-radius:22px;
-  background:rgba(2,6,23,.33);
-  padding:14px;
-  min-height:132px;
-}
-.micro-card .micro-label{margin:0;color:#93c5fd;font-size:10px;font-weight:950;letter-spacing:.14em;text-transform:uppercase}
-.micro-card h3{margin:8px 0 6px;color:#fff;font-size:15px;line-height:1.15;letter-spacing:-.025em}
-.micro-card p{margin:0;color:#b6c4d5;font-size:12px;line-height:1.45}
-.aside{border-radius:34px;padding:18px;display:grid;gap:14px;min-width:0}
-.stage-narrative{
-  border:1px solid rgba(125,211,252,.22);
-  background:linear-gradient(135deg,rgba(14,165,233,.17),rgba(99,102,241,.14) 55%,rgba(2,6,23,.20));
-  border-radius:28px;
-  padding:18px;
-}
-.stage-narrative h2{margin:0;color:#fff;font-size:22px;line-height:1.08;letter-spacing:-.035em}
-.stage-narrative p{margin:10px 0 0;color:#cbd5e1;font-size:14px;line-height:1.58}
-.kpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.kpi{
-  border:1px solid rgba(148,163,184,.16);background:rgba(2,6,23,.33);border-radius:22px;padding:14px;overflow:hidden;
-}
-.kpi p{margin:0;color:var(--muted);font-size:10px;font-weight:950;text-transform:uppercase;letter-spacing:.13em}
-.kpi strong{display:block;margin-top:7px;color:#fff;font-size:24px;line-height:.96;letter-spacing:-.045em}
-.kpi span{display:block;margin-top:6px;color:#9fb0c7;font-size:12px;font-weight:800;line-height:1.25}
-
-.decision-card{
-  border:1px solid rgba(125,211,252,.20);
-  background:linear-gradient(135deg,rgba(8,47,73,.28),rgba(15,23,42,.34));
-  border-radius:26px;
-  padding:15px;
-}
-.decision-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.decision-line{
-  border:1px solid rgba(148,163,184,.14);
-  background:rgba(2,6,23,.30);
-  border-radius:18px;
-  padding:11px;
-}
-.decision-line p{margin:0;color:var(--muted);font-size:10px;font-weight:950;text-transform:uppercase;letter-spacing:.13em}
-.decision-line strong{display:block;margin-top:7px;color:#fff;font-size:14px;line-height:1.2;letter-spacing:-.02em}
-.decision-card .decision-action{
-  margin:11px 0 0;
-  color:#cbd5e1;
-  font-size:13px;
-  line-height:1.45;
-}
-.model-note{
-  margin-top:12px;
-  border:1px solid rgba(245,158,11,.24);
-  background:rgba(120,53,15,.14);
-  color:#fde68a;
-  border-radius:18px;
-  padding:11px 12px;
-  font-size:12px;
-  line-height:1.45;
-}
-.model-note b{color:#fff}
-.control-box,.model-box,.log-box{
-  border:1px solid rgba(148,163,184,.16);background:rgba(2,6,23,.33);border-radius:26px;padding:15px;
-}
-.box-title{margin:0 0 12px;color:#fff;font-size:16px;font-weight:950;letter-spacing:-.02em;display:flex;justify-content:space-between;gap:10px;align-items:center}
-.controls{display:flex;gap:9px;flex-wrap:wrap}
-.btn{
-  border:1px solid rgba(148,163,184,.24);background:rgba(30,41,59,.72);border-radius:999px;padding:10px 13px;
-  color:#e2e8f0;font-size:12px;font-weight:950;transition:transform .18s ease,border-color .18s ease,background .18s ease;
-}
-.btn:hover{transform:translateY(-1px);border-color:rgba(125,211,252,.65)}
-.btn.primary{background:linear-gradient(135deg,#0ea5e9,#6366f1);border-color:rgba(125,211,252,.72)}
-.slider-row{display:grid;grid-template-columns:58px 1fr 44px;gap:10px;align-items:center;margin-top:13px;color:var(--muted);font-size:11px;font-weight:900}
-input[type=range]{width:100%;accent-color:var(--cyan)}
-.progress-shell{height:10px;border:1px solid rgba(148,163,184,.13);background:rgba(15,23,42,.78);border-radius:999px;overflow:hidden;margin-top:12px}
-.progress-bar{height:100%;width:0;background:linear-gradient(90deg,var(--cyan),var(--violet),var(--pink));box-shadow:0 0 18px rgba(34,211,238,.75);border-radius:999px}
-.constraint-list,.event-list{display:grid;gap:9px}
-.bullet{display:grid;grid-template-columns:9px 1fr;gap:10px;color:#cbd5e1;font-size:13px;line-height:1.45}
-.bullet:before{content:"";width:8px;height:8px;border-radius:50%;margin-top:6px;background:var(--sky);box-shadow:0 0 16px rgba(56,189,248,.85)}
-.bullet.warn:before{background:var(--amber);box-shadow:0 0 16px rgba(245,158,11,.85)}
-.bullet.hot:before{background:var(--red);box-shadow:0 0 16px rgba(251,113,133,.85)}
-.bullet.good:before{background:var(--green);box-shadow:0 0 16px rgba(52,211,153,.85)}
-.viz-grid{
-  display:grid;
-  grid-template-columns:minmax(0,1.25fr) minmax(360px,.85fr) minmax(330px,.72fr);
-  gap:16px;
-}
-.viz-card{border-radius:30px;padding:16px;min-width:0;overflow:hidden}
-.viz-card h2{margin:0;color:#fff;font-size:18px;letter-spacing:-.025em}
-.viz-card .sub{margin:5px 0 12px;color:var(--muted);font-size:12px;line-height:1.42}
-.heatmap-scroll{overflow:auto;padding-bottom:4px}
-.heatmap{
-  min-width:940px;
-  display:grid;
-  grid-template-columns:138px repeat(24,1fr);
-  gap:4px;
-}
-.heat-head,.unit-name,.heat-cell{
-  min-height:24px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:950;
-}
-.heat-head{color:#64748b;background:rgba(15,23,42,.52)}
-.heat-head.now{background:rgba(34,211,238,.88);color:#02131b;box-shadow:0 0 18px rgba(34,211,238,.36)}
-.unit-name{justify-content:flex-start;padding-left:9px;color:#dbeafe;background:rgba(15,23,42,.74);white-space:nowrap;position:sticky;left:0;z-index:2}
-.heat-cell{position:relative;border:1px solid rgba(148,163,184,.06);background:rgba(51,65,85,.58);color:#64748b;overflow:hidden}
-.heat-cell.on{background:linear-gradient(180deg,rgba(52,211,153,.90),rgba(22,163,74,.72));color:#052e16}
-.heat-cell.start{background:linear-gradient(180deg,rgba(59,130,246,.96),rgba(37,99,235,.75));color:#fff;box-shadow:0 0 15px rgba(59,130,246,.42)}
-.heat-cell.recommit{background:linear-gradient(180deg,rgba(245,158,11,.96),rgba(217,119,6,.74));color:#111827;box-shadow:0 0 14px rgba(245,158,11,.42)}
-.heat-cell.fast{background:linear-gradient(180deg,rgba(244,114,182,.96),rgba(190,24,93,.78));color:#fff}
-.heat-cell.locked:after{content:"";position:absolute;inset:2px;border:1px solid rgba(250,204,21,.92);border-radius:5px;pointer-events:none}
-.heat-cell.future{outline:1px solid rgba(34,211,238,.17)}
-.heat-cell.now{box-shadow:0 0 0 2px rgba(34,211,238,.85);z-index:1}
-.canvas-wrap{position:relative;height:292px;border-radius:23px;background:rgba(2,6,23,.42);border:1px solid rgba(148,163,184,.13);overflow:hidden}
-#stackCanvas,#networkCanvas{width:100%;height:100%;display:block}
-#stackCanvas{touch-action:none;cursor:ew-resize}
-#stackCanvas:focus-visible{outline:2px solid var(--cyan);outline-offset:-2px}
-.tooltip{
-  position:absolute;
-  pointer-events:none;
-  display:none;
-  max-width:250px;
-  padding:9px 10px;
-  border:1px solid rgba(125,211,252,.24);
-  background:rgba(2,6,23,.84);
-  border-radius:13px;
-  color:#dbeafe;
-  font-size:12px;
-  line-height:1.35;
-  box-shadow:0 20px 60px rgba(0,0,0,.35);
-  backdrop-filter:blur(12px);
-  z-index:6;
-}
-.legend{display:flex;gap:8px;flex-wrap:wrap;margin-top:11px}
-.legend-item{display:inline-flex;gap:7px;align-items:center;color:#9fb0c7;font-size:11px;font-weight:900;border:1px solid rgba(148,163,184,.14);background:rgba(15,23,42,.47);border-radius:999px;padding:7px 9px}
-.swatch{width:9px;height:9px;border-radius:50%}
-.footer-note{color:#8091a7;font-size:11px;line-height:1.45;text-align:right;margin-top:-5px;padding-right:4px}
-@media(max-width:1420px){
-  .hero{grid-template-columns:1fr}
-  .quickstart{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .dashboard{grid-template-columns:1fr}
-  .aside{grid-template-columns:1fr 1fr}
-  .stage-narrative,.control-box{grid-column:span 2}
-  .viz-grid{grid-template-columns:1fr 1fr}.viz-card:first-child{grid-column:span 2}
-}
-@media(max-width:980px){
-  .timeline{grid-template-columns:1fr 1fr}.timeline:before{display:none}
-  .stage-drawer{grid-template-columns:1fr 1fr}
-  .aside{grid-template-columns:1fr}.stage-narrative,.control-box{grid-column:auto}
-  .viz-grid{grid-template-columns:1fr}.viz-card:first-child{grid-column:auto}
-  .command-strip,.kpi-grid{grid-template-columns:1fr 1fr}
-}
-@media(max-width:640px){
-  .app{padding:10px}
-  .quickstart,.decision-grid{grid-template-columns:1fr}
-  .timeline,.command-strip,.kpi-grid,.stage-drawer{grid-template-columns:1fr}
-  .engine-top,.timeline-head{display:grid}
-  .badge-row{justify-content:flex-start}
-  .stage-visual,#engineCanvas{min-height:580px}
-  .visual-hud{position:absolute;display:grid;align-items:start}
-}
-@media(prefers-reduced-motion:reduce){
-  *{animation-duration:.001ms!important;transition-duration:.001ms!important;scroll-behavior:auto!important}
-}
-</style>
-</head>
-<body>
-<a class="skip-link" href="#mainDashboard">Skip to simulation dashboard</a>
-<div class="app">
-  <p class="sr-only" id="statusSummary" aria-live="polite"></p>
-  <header class="hero glass">
-    <div>
-      <div class="eyebrow"><span class="live-dot"></span><span>ISO/RTO control room · market-to-operations stack</span></div>
-      <h1>Grid Operations &amp; Market Clearing Architecture</h1>
-      <p class="subtitle">A single-page, macro-to-micro walkthrough of the operating day: day-ahead SCUC, intraday reliability repair, AC state estimation, and 5-minute SCED with LMP separation under N-1 congestion.</p>
-      <div class="quickstart" aria-label="How to use this interactive demo">
-        <div class="quickstep"><b>1 · Pick a stage</b><span>Use the timeline to move from market clearing to real-time operations.</span></div>
-        <div class="quickstep"><b>2 · Read the summary</b><span>The right rail explains what the operator or market engine is deciding.</span></div>
-        <div class="quickstep"><b>3 · Stress demand</b><span>Drag the dispatch stack line to see marginal units and congestion react.</span></div>
-        <div class="quickstep"><b>4 · Inspect constraints</b><span>Hover the heatmap or network to connect commitment, flow, and LMPs.</span></div>
-      </div>
-    </div>
-    <div class="command-strip" aria-label="Live operating metrics">
-      <div class="command-tile"><p>Active process</p><strong id="heroStage">DA SCUC</strong><span id="heroStageSub">24-hour commitment horizon</span></div>
-      <div class="command-tile"><p>Operating hour</p><strong id="heroHour">HE 14</strong><span id="heroClock">14:00 market interval</span></div>
-      <div class="command-tile"><p>Security status</p><strong id="heroSecurity">N-1 Secure</strong><span id="heroSecuritySub">base + contingency limits checked</span></div>
-      <div class="command-tile"><p>Clearing price</p><strong id="heroPrice">$54</strong><span id="heroPriceSub">/MWh at system reference bus</span></div>
-    </div>
-  </header>
-
-  <section class="timeline-card glass" aria-label="Chronological power system operations timeline">
-    <div class="timeline-head">
-      <div>
-        <h2>Macro View: chronological operations pipeline</h2>
-        <p>Click a stage to drill into the engine room. Press Play to animate the operating day; use the hour slider or arrow keys for precise review.</p>
-      </div>
-      <div class="time-readout" id="timeReadout">T+14:00 · Market day animation</div>
-    </div>
-    <div class="timeline" id="timeline"></div>
-  </section>
-
-  <main class="dashboard" id="mainDashboard">
-    <section class="engine-card glass">
-      <div class="engine-top">
-        <div class="engine-title">
-          <h2 id="engineTitle">Day-Ahead SCUC engine room</h2>
-          <p id="engineSub">Mixed-integer commitment over a linearized network produces a feasible 24-hour plan, with AC feasibility validated downstream by EMS.</p>
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>From Day-Ahead Plans to Real-Time Dispatch | Babak Taheri</title>
+    <meta
+      name="description"
+      content="An interactive guide to grid operations, with a lossless DC dispatch lab, nodal prices, and a selected line-outage study."
+    />
+    <script>
+      try {
+        const saved = localStorage.getItem("gridOpsTheme") || localStorage.getItem("theme");
+        document.documentElement.dataset.theme =
+          saved === "light" || saved === "dark" ? saved : matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+      } catch (_) {}
+    </script>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #08111f;
+        --surface: #111e30;
+        --surface-raised: #17283e;
+        --ink: #eaf1fb;
+        --muted: #b0bfd2;
+        --faint: #8196b0;
+        --line: #2c405b;
+        --accent: #64dcf3;
+        --accent-soft: #143d50;
+        --green: #6ee7b7;
+        --amber: #fcd34d;
+        --violet: #c4b5fd;
+        --red: #fda4af;
+        --blue: #7dbbff;
+        --shadow: 0 18px 50px rgba(0, 0, 0, 0.16);
+        --wash: rgba(56, 189, 248, 0.1);
+        --stage: #64dcf3;
+        --chart-grid: #273b53;
+        --mono: ui-monospace, SFMono-Regular, Consolas, monospace;
+      }
+      :root[data-theme="light"] {
+        color-scheme: light;
+        --bg: #eef3f9;
+        --surface: #fff;
+        --surface-raised: #f3f7fc;
+        --ink: #142841;
+        --muted: #4a607a;
+        --faint: #566f8c;
+        --line: #d0dcec;
+        --accent: #006e87;
+        --accent-soft: #e0f2f7;
+        --green: #047857;
+        --amber: #8c5800;
+        --violet: #6d28d9;
+        --red: #be123c;
+        --blue: #1d5ca4;
+        --shadow: 0 16px 45px rgba(29, 55, 90, 0.07);
+        --wash: rgba(14, 116, 144, 0.06);
+        --chart-grid: #d9e3f0;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html {
+        background: var(--bg);
+        scroll-behavior: smooth;
+      }
+      body {
+        margin: 0;
+        font:
+          15px/1.55 system-ui,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          sans-serif;
+        color: var(--ink);
+        background: radial-gradient(ellipse at 90% 0, var(--wash), transparent 40%), var(--bg);
+      }
+      a {
+        color: var(--accent);
+        text-underline-offset: 3px;
+      }
+      button,
+      input,
+      select {
+        font: inherit;
+      }
+      button {
+        cursor: pointer;
+      }
+      button,
+      input,
+      select {
+        color: var(--ink);
+      }
+      :focus-visible {
+        outline: 3px solid var(--accent);
+        outline-offset: 4px;
+      }
+      button:disabled {
+        opacity: 0.55;
+        cursor: default;
+      }
+      .skip-link {
+        position: absolute;
+        left: 18px;
+        top: -80px;
+        background: var(--surface);
+        padding: 12px;
+        z-index: 30;
+      }
+      .skip-link:focus {
+        top: 12px;
+      }
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+      }
+      .shell {
+        max-width: 1440px;
+        margin: auto;
+        padding: 24px clamp(16px, 3vw, 44px) 36px;
+      }
+      .topbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 32px;
+      }
+      .back-link {
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 600;
+      }
+      .top-tools {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+      }
+      .guide-label {
+        font: 11px var(--mono);
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        border: 1px solid var(--line);
+        background: var(--surface);
+        color: var(--ink);
+        border-radius: 10px;
+        min-height: 42px;
+        padding: 9px 14px;
+        font-size: 13px;
+        font-weight: 650;
+        transition:
+          background 0.15s,
+          border-color 0.15s;
+      }
+      .btn:hover {
+        background: var(--surface-raised);
+        border-color: var(--accent);
+      }
+      .btn.primary {
+        background: var(--accent-soft);
+        border-color: var(--accent);
+        color: var(--accent);
+      }
+      .btn[aria-pressed="true"] {
+        border-color: var(--accent);
+        color: var(--accent);
+        background: var(--accent-soft);
+      }
+      .hero {
+        display: grid;
+        grid-template-columns: minmax(0, 1.5fr) minmax(280px, 0.7fr);
+        gap: 40px;
+        align-items: center;
+        margin-bottom: 30px;
+      }
+      .eyebrow {
+        font: 11px var(--mono);
+        text-transform: uppercase;
+        letter-spacing: 0.16em;
+        color: var(--accent);
+        margin: 0 0 14px;
+      }
+      h1 {
+        font-size: clamp(32px, 4.1vw, 58px);
+        line-height: 1.08;
+        letter-spacing: -0.045em;
+        font-weight: 750;
+        max-width: 850px;
+        margin: 0 0 18px;
+      }
+      .lede {
+        font-size: 16px;
+        line-height: 1.7;
+        color: var(--muted);
+        max-width: 780px;
+        margin: 0;
+      }
+      .hero-note {
+        border-left: 2px solid var(--accent);
+        padding: 4px 0 4px 22px;
+      }
+      .hero-note p {
+        margin: 0 0 12px;
+        color: var(--muted);
+        font-size: 13px;
+      }
+      .hero-note p:last-child {
+        margin: 0;
+      }
+      .chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        padding: 4px 9px;
+        font-size: 11px;
+        font-weight: 650;
+        white-space: nowrap;
+        color: var(--muted);
+      }
+      .chip.calculated {
+        color: var(--green);
+      }
+      .chip.illustrated {
+        color: var(--violet);
+      }
+      .steps {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 12px;
+        margin-bottom: 22px;
+      }
+      .step {
+        position: relative;
+        text-align: left;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        background: var(--surface);
+        padding: 16px;
+        min-width: 0;
+        color: var(--muted);
+        transition:
+          border-color 0.15s,
+          background 0.15s;
+      }
+      .step[aria-pressed="true"] {
+        border-color: var(--stage);
+        background: var(--surface-raised);
+        box-shadow: inset 0 -3px var(--stage);
+      }
+      .step-number {
+        display: flex;
+        justify-content: space-between;
+        gap: 8px;
+        font: 11px var(--mono);
+        margin-bottom: 12px;
+        color: var(--faint);
+      }
+      .step strong {
+        display: block;
+        color: var(--ink);
+        font-size: 15px;
+        line-height: 1.35;
+      }
+      .step small {
+        display: block;
+        margin-top: 5px;
+        font-size: 12px;
+      }
+      .panel {
+        border: 1px solid var(--line);
+        background: var(--surface);
+        border-radius: 20px;
+        box-shadow: var(--shadow);
+        min-width: 0;
+      }
+      .stage-panel {
+        padding: 24px;
+        margin-bottom: 24px;
+      }
+      .section-heading {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 16px;
+        margin-bottom: 12px;
+      }
+      h2 {
+        font-size: 21px;
+        line-height: 1.3;
+        letter-spacing: -0.025em;
+        margin: 0;
+        font-weight: 700;
+      }
+      h3 {
+        font-size: 15px;
+        margin: 0 0 6px;
+      }
+      .description {
+        color: var(--muted);
+        max-width: 960px;
+        margin: 0 0 20px;
+        font-size: 14px;
+      }
+      .process {
+        display: grid;
+        grid-template-columns: 1fr auto 1fr auto 1fr;
+        gap: 12px;
+        align-items: center;
+      }
+      .process-node {
+        background: var(--surface-raised);
+        border: 1px solid var(--line);
+        border-radius: 13px;
+        padding: 14px 16px;
+        min-width: 0;
+      }
+      .process-node.center {
+        border-color: var(--stage);
+      }
+      .process-node strong {
+        display: block;
+        color: var(--ink);
+        font-size: 14px;
+      }
+      .process-node span {
+        display: block;
+        color: var(--muted);
+        font-size: 12px;
+        margin-top: 5px;
+      }
+      .process-arrow {
+        color: var(--stage);
+        font-size: 23px;
+      }
+      .stage-footnote {
+        margin: 16px 0 0;
+        color: var(--muted);
+        font-size: 12px;
+      }
+      .stage-footnote b {
+        color: var(--stage);
+      }
+      .lab-heading {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 14px;
+      }
+      .lab-heading p {
+        margin: 5px 0 0;
+        color: var(--muted);
+        font-size: 13px;
+      }
+      .controls-panel {
+        padding: 22px;
+        margin-bottom: 16px;
+      }
+      .controls-top {
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        align-items: center;
+        flex-wrap: wrap;
+        padding-bottom: 18px;
+        border-bottom: 1px solid var(--line);
+      }
+      .controls-top .scenario-title {
+        color: var(--muted);
+        font-size: 12px;
+        margin: 0 0 8px;
+      }
+      .presets,
+      .playback {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+      .control-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1.1fr;
+        gap: 28px;
+        margin-top: 20px;
+        align-items: start;
+      }
+      .control-label {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        align-items: center;
+        font-size: 13px;
+        font-weight: 650;
+        margin-bottom: 12px;
+      }
+      .control-label output {
+        font-family: var(--mono);
+        color: var(--accent);
+        white-space: nowrap;
+      }
+      input[type="range"] {
+        display: block;
+        width: 100%;
+        accent-color: var(--accent);
+        margin: 14px 0;
+        cursor: pointer;
+      }
+      .scale {
+        display: flex;
+        justify-content: space-between;
+        color: var(--faint);
+        font: 11px var(--mono);
+      }
+      .control-hint {
+        font-size: 12px;
+        color: var(--muted);
+        margin: 12px 0 0;
+      }
+      .switches {
+        display: grid;
+        gap: 10px;
+      }
+      .switch {
+        display: flex;
+        gap: 10px;
+        align-items: flex-start;
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .switch input {
+        accent-color: var(--accent);
+        width: 17px;
+        height: 17px;
+        flex-shrink: 0;
+        margin: 2px 0 0;
+      }
+      .status-banner {
+        display: flex;
+        gap: 14px;
+        align-items: flex-start;
+        background: var(--surface-raised);
+        border: 1px solid var(--line);
+        border-left: 3px solid var(--green);
+        border-radius: 14px;
+        padding: 16px 18px;
+        margin-bottom: 16px;
+      }
+      .status-banner[data-state="infeasible"] {
+        border-left-color: var(--red);
+      }
+      .status-banner[data-state="curtailed"] {
+        border-left-color: var(--amber);
+      }
+      .status-symbol {
+        color: var(--green);
+        font-size: 20px;
+        line-height: 1.2;
+      }
+      .status-banner[data-state="infeasible"] .status-symbol {
+        color: var(--red);
+      }
+      .status-banner[data-state="curtailed"] .status-symbol {
+        color: var(--amber);
+      }
+      .status-banner h3 {
+        margin: 0 0 4px;
+        font-size: 15px;
+      }
+      .status-banner p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 13px;
+      }
+      .metrics {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 12px;
+        margin-bottom: 18px;
+      }
+      .metric {
+        padding: 16px 18px;
+        border: 1px solid var(--line);
+        border-radius: 15px;
+        background: var(--surface);
+      }
+      .metric dt {
+        font-size: 11px;
+        color: var(--muted);
+        margin-bottom: 9px;
+      }
+      .metric dd {
+        font-size: 27px;
+        line-height: 1.2;
+        letter-spacing: -0.035em;
+        font-weight: 700;
+        font-variant-numeric: tabular-nums;
+        margin: 0;
+      }
+      .metric small {
+        display: block;
+        color: var(--faint);
+        font-size: 11px;
+        margin-top: 5px;
+      }
+      .charts {
+        display: grid;
+        grid-template-columns: 1.12fr 1fr;
+        gap: 18px;
+      }
+      .chart-panel {
+        padding: 20px;
+        min-width: 0;
+      }
+      .chart-heading {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 8px;
+      }
+      .chart-heading h2 {
+        font-size: 17px;
+      }
+      .chart-copy {
+        font-size: 12px;
+        color: var(--muted);
+        margin: 0 0 14px;
+        min-height: 36px;
+      }
+      .chart-frame {
+        position: relative;
+        border: 1px solid var(--line);
+        border-radius: 13px;
+        background: var(--surface-raised);
+        height: 300px;
+        overflow: hidden;
+      }
+      .chart-frame canvas {
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+      #stackCanvas {
+        cursor: ew-resize;
+        touch-action: pan-y;
+      }
+      #stackCanvas:focus-visible {
+        outline-offset: -4px;
+      }
+      .chart-legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+        margin: 12px 0;
+        font-size: 11px;
+        color: var(--muted);
+      }
+      .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .swatch {
+        width: 9px;
+        height: 9px;
+        border-radius: 3px;
+        background: var(--blue);
+      }
+      .swatch.green {
+        background: var(--green);
+      }
+      .swatch.red {
+        background: var(--red);
+      }
+      .swatch.amber {
+        background: var(--amber);
+      }
+      .chart-inspect {
+        background: var(--surface-raised);
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 12px;
+        font-size: 12px;
+        color: var(--muted);
+        min-height: 65px;
+        margin: 12px 0 0;
+      }
+      .chart-inspect strong {
+        color: var(--ink);
+      }
+      select {
+        max-width: 100%;
+        font-size: 12px;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 7px;
+      }
+      details {
+        margin-top: 16px;
+        border-top: 1px solid var(--line);
+        padding-top: 12px;
+      }
+      summary {
+        font-size: 12px;
+        color: var(--accent);
+        font-weight: 650;
+        cursor: pointer;
+      }
+      .data-scroll {
+        overflow: auto;
+        max-height: 320px;
+        margin-top: 12px;
+      }
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        font-size: 12px;
+      }
+      th,
+      td {
+        text-align: left;
+        padding: 9px 10px;
+        border-bottom: 1px solid var(--line);
+        white-space: nowrap;
+      }
+      th {
+        color: var(--muted);
+        font-weight: 600;
+      }
+      td {
+        font-variant-numeric: tabular-nums;
+      }
+      .price-breakdown {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 14px;
+      }
+      .price-breakdown span {
+        font: 11px var(--mono);
+        color: var(--muted);
+      }
+      .price-breakdown b {
+        color: var(--ink);
+      }
+      .heat-panel {
+        padding: 20px;
+        margin-top: 18px;
+      }
+      .heatmap-scroll {
+        overflow: auto;
+        margin-top: 14px;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+      }
+      .heatmap-table {
+        min-width: 1050px;
+        border-collapse: separate;
+        border-spacing: 3px;
+        padding: 8px;
+      }
+      .heatmap-table th,
+      .heatmap-table td {
+        border: 0;
+        padding: 0;
+        text-align: center;
+      }
+      .heatmap-table thead th {
+        font: 11px var(--mono);
+        height: 26px;
+      }
+      .heatmap-table tbody th {
+        position: sticky;
+        left: 0;
+        background: var(--surface);
+        text-align: left;
+        min-width: 180px;
+        padding-right: 12px;
+        z-index: 1;
+        font-size: 11px;
+      }
+      .heat-cell {
+        display: block;
+        width: 100%;
+        height: 25px;
+        border: 1px solid var(--line);
+        border-radius: 5px;
+        background: var(--surface-raised);
+        color: var(--muted);
+        font-size: 9px;
+        font-weight: 650;
+      }
+      .heat-cell.on {
+        background: var(--accent-soft);
+        color: var(--accent);
+        border-color: var(--accent);
+      }
+      .heat-cell.start {
+        background: var(--stage);
+        color: var(--bg);
+        border-color: var(--stage);
+      }
+      .heat-cell.added {
+        background: var(--amber);
+        color: var(--bg);
+        border-color: var(--amber);
+      }
+      .heat-cell.current {
+        box-shadow: inset 0 0 0 2px var(--ink);
+      }
+      .heatmap-table thead th.current {
+        color: var(--accent);
+        font-weight: 750;
+      }
+      .heat-info {
+        font-size: 12px;
+        color: var(--muted);
+        margin: 12px 0 0;
+        min-height: 38px;
+      }
+      .notes-panel {
+        padding: 20px;
+        margin-top: 18px;
+      }
+      .notes-panel details {
+        border: 0;
+        margin: 0;
+        padding: 0;
+      }
+      .notes-panel summary {
+        font-size: 14px;
+      }
+      .notes-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
+        margin-top: 18px;
+        color: var(--muted);
+        font-size: 13px;
+      }
+      .notes-grid p {
+        margin: 0 0 12px;
+      }
+      .notes-grid h3 {
+        color: var(--ink);
+      }
+      .equation {
+        font-family: var(--mono);
+        font-size: 12px;
+        color: var(--ink);
+        overflow-wrap: anywhere;
+      }
+      footer {
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        margin-top: 24px;
+        color: var(--faint);
+        font-size: 11px;
+      }
+      @media (max-width: 1000px) {
+        .hero {
+          grid-template-columns: 1fr;
+          gap: 20px;
+        }
+        .hero-note {
+          display: flex;
+          gap: 24px;
+        }
+        .hero-note p {
+          flex: 1;
+          margin: 0;
+        }
+        .control-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+        .switches {
+          grid-column: span 2;
+          grid-template-columns: 1fr 1fr;
+        }
+        .charts {
+          grid-template-columns: 1fr;
+        }
+      }
+      @media (max-width: 600px) {
+        .shell {
+          padding-top: 16px;
+        }
+        .topbar {
+          margin-bottom: 24px;
+        }
+        .guide-label {
+          display: none;
+        }
+        .hero {
+          gap: 18px;
+        }
+        .hero-note {
+          display: block;
+        }
+        .hero-note p + p {
+          margin-top: 10px;
+        }
+        .steps {
+          grid-template-columns: 1fr 1fr;
+          gap: 8px;
+        }
+        .step {
+          padding: 12px;
+        }
+        .step-number {
+          font-size: 9px;
+          margin-bottom: 8px;
+        }
+        .step strong {
+          font-size: 13px;
+        }
+        .step small {
+          font-size: 11px;
+        }
+        .stage-panel,
+        .controls-panel,
+        .chart-panel,
+        .heat-panel,
+        .notes-panel {
+          padding: 16px;
+        }
+        .process {
+          grid-template-columns: 1fr;
+          gap: 8px;
+        }
+        .process-arrow {
+          display: none;
+        }
+        .process-node {
+          padding: 10px 12px;
+        }
+        .control-grid {
+          grid-template-columns: 1fr;
+          gap: 20px;
+        }
+        .switches {
+          grid-column: auto;
+          grid-template-columns: 1fr;
+        }
+        .metrics {
+          grid-template-columns: 1fr 1fr;
+          gap: 8px;
+        }
+        .metric {
+          padding: 14px;
+        }
+        .metric dd {
+          font-size: 24px;
+        }
+        .controls-top {
+          gap: 18px;
+        }
+        .chart-heading {
+          flex-wrap: wrap;
+        }
+        .chart-frame {
+          height: 285px;
+        }
+        .notes-grid {
+          grid-template-columns: 1fr;
+          gap: 10px;
+        }
+        .section-heading {
+          flex-wrap: wrap;
+        }
+        .lab-heading {
+          align-items: flex-start;
+        }
+        footer {
+          flex-direction: column;
+          gap: 6px;
+        }
+        .top-tools .btn {
+          font-size: 12px;
+        }
+        .presets .btn {
+          font-size: 12px;
+          padding: 8px 10px;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
+        * {
+          transition: none !important;
+          animation: none !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <a class="skip-link" href="#dispatchLab">Skip to dispatch lab</a>
+    <div class="shell">
+      <nav class="topbar" aria-label="Page navigation">
+        <a class="back-link" href="/projects/">← All demos</a>
+        <div class="top-tools">
+          <span class="guide-label">Grid operations / interactive guide</span
+          ><button class="btn" id="themeButton" aria-label="Switch to light theme">Light theme</button>
         </div>
-        <div class="badge-row" id="badgeRow"></div>
-      </div>
-      <div class="stage-visual">
-        <canvas id="engineCanvas" aria-label="Stage-specific process visualization"></canvas>
-        <div class="visual-hud">
-          <div class="hud-left">
-            <div class="hud-pill">Load <b id="hudLoad">--</b></div>
-            <div class="hud-pill">VRE <b id="hudVre">--</b></div>
-            <div class="hud-pill">Net Load <b id="hudNet">--</b></div>
+      </nav>
+      <header class="hero">
+        <div>
+          <p class="eyebrow">Plans → measurements → dispatch</p>
+          <h1>From day-ahead plans<br />to real-time dispatch.</h1>
+          <p class="lede">
+            A grid needs a plan, a picture of what is happening, and a way to respond. Follow those decisions, then change the load to see how network
+            limits affect generation and prices.
+          </p>
+        </div>
+        <div class="hero-note">
+          <p><span class="chip illustrated">Illustrated</span><br />Commitment schedules and the state-estimation workflow.</p>
+          <p><span class="chip calculated">Calculated</span><br />Lossless DC dispatch, nodal prices, and a selected line-outage study.</p>
+        </div>
+      </header>
+      <nav class="steps" id="stageNav" aria-label="Operating processes"></nav>
+      <section class="panel stage-panel" aria-labelledby="stageTitle">
+        <div class="section-heading">
+          <h2 id="stageTitle"></h2>
+          <span class="chip illustrated" id="stageTag"></span>
+        </div>
+        <p class="description" id="stageBody"></p>
+        <div class="process" id="processDiagram" aria-label="Selected process"></div>
+        <p class="stage-footnote" id="stageNote"></p>
+      </section>
+      <main id="dispatchLab" tabindex="-1">
+        <div class="lab-heading">
+          <div>
+            <h2>The dispatch lab</h2>
+            <p>A small, fictional grid. All capacities and loads are in GW.</p>
           </div>
-          <div class="hud-right">
-            <div class="hud-pill">Reserve <b id="hudReserve">--</b></div>
-            <div class="hud-pill">Binding <b id="hudBinding">--</b></div>
+          <span class="chip calculated">Lossless DC model</span>
+        </div>
+        <section class="panel controls-panel" aria-label="Dispatch controls">
+          <div class="controls-top">
+            <div>
+              <p class="scenario-title">Start with a case</p>
+              <div class="presets">
+                <button class="btn" data-scenario="normal">Normal operation</button>
+                <button class="btn" data-scenario="evening">Forecast miss</button>
+                <button class="btn" data-scenario="congestion">Congestion</button>
+                <button class="btn" data-scenario="low">Low demand</button>
+              </div>
+            </div>
+            <div class="playback">
+              <button class="btn primary" id="playButton" aria-pressed="false">Play hours</button><button class="btn" id="resetButton">Reset</button>
+            </div>
+          </div>
+          <div class="control-grid">
+            <div>
+              <label class="control-label" for="hourSlider">Delivery hour <output id="hourValue" for="hourSlider"></output></label>
+              <input id="hourSlider" type="range" min="0" max="23" step="1" value="14" aria-describedby="hourHint" />
+              <div class="scale"><span>00:00</span><span>23:00</span></div>
+              <p class="control-hint" id="hourHint">Play steps through delivery hours in the selected process.</p>
+            </div>
+            <div>
+              <label class="control-label" for="demandSlider">System demand <output id="demandValue" for="demandSlider"></output></label>
+              <input id="demandSlider" type="range" min="20" max="75" step="0.5" value="47.5" aria-describedby="demandHint" />
+              <div class="scale"><span>20 GW</span><span>75 GW</span></div>
+              <p class="control-hint" id="demandHint">Drag the slider or the red line in the supply chart.</p>
+            </div>
+            <div class="switches">
+              <label class="switch"
+                ><input id="outageToggle" type="checkbox" checked /><span>Check the South–East line outage as well as the base network.</span></label
+              >
+              <label class="switch"
+                ><input id="fastToggle" type="checkbox" /><span id="fastHint">Release offline fast-start blocks in real-time dispatch.</span></label
+              >
+              <label class="switch"
+                ><input id="curtailmentToggle" type="checkbox" /><span
+                  >Allow emergency load curtailment at an illustrative $600/MWh penalty.</span
+                ></label
+              >
+            </div>
+          </div>
+        </section>
+        <div class="status-banner" id="statusBanner" data-state="optimal" role="status" aria-live="polite" aria-atomic="true">
+          <span class="status-symbol" id="statusSymbol" aria-hidden="true">✓</span>
+          <div>
+            <h3 id="statusTitle"></h3>
+            <p id="statusText"></p>
           </div>
         </div>
-      </div>
-      <div class="stage-drawer" id="microCards"></div>
-    </section>
-
-    <aside class="aside glass">
-      <div class="stage-narrative">
-        <h2 id="stageTitle">Day-Ahead SCUC</h2>
-        <p id="stageBody">The day-ahead market forms a full-horizon network-constrained commitment plan, co-optimizing energy, reserves, ramping, startup/shutdown costs, and minimum up/down logic over a linearized transmission model; AC feasibility is validated downstream by EMS.</p>
-      </div>
-      <div class="kpi-grid">
-        <div class="kpi"><p>Committed resources</p><strong id="kpiUnits">--</strong><span id="kpiUnitsSub">online or available this hour</span></div>
-        <div class="kpi"><p>Net load</p><strong id="kpiNet">--</strong><span>GW after wind and solar</span></div>
-        <div class="kpi"><p>Reserve margin</p><strong id="kpiReserve">--</strong><span>online headroom + qualified reserve</span></div>
-        <div class="kpi"><p>LMP decomposition</p><strong id="kpiLmp">--</strong><span id="kpiLmpSub">energy + loss + congestion</span></div>
-      </div>
-      <div class="decision-card" aria-label="Current operating decision summary">
-        <p class="box-title">Current decision summary</p>
-        <div class="decision-grid">
-          <div class="decision-line"><p>Marginal resource</p><strong id="summaryMarginal">--</strong></div>
-          <div class="decision-line"><p>Binding condition</p><strong id="summaryCongestion">--</strong></div>
+        <dl class="metrics">
+          <div class="metric">
+            <dt>System demand</dt>
+            <dd><span id="metricDemand"></span><small id="metricVre"></small></dd>
+          </div>
+          <div class="metric">
+            <dt>Available headroom</dt>
+            <dd><span id="metricHeadroom"></span><small>Within output bounds; not a reserve award</small></dd>
+          </div>
+          <div class="metric">
+            <dt>West reference price</dt>
+            <dd><span id="metricPrice"></span><small>$/MWh · losses omitted</small></dd>
+          </div>
+          <div class="metric">
+            <dt>Metro price</dt>
+            <dd><span id="metricMetro"></span><small id="metricCongestion"></small></dd>
+          </div>
+        </dl>
+        <div class="charts">
+          <section class="panel chart-panel" aria-labelledby="stackTitle">
+            <div class="chart-heading">
+              <h2 id="stackTitle">Supply and dispatch</h2>
+              <span class="chip" id="dispatchTag"></span>
+            </div>
+            <p class="chart-copy">
+              Offers are ordered by cost. Network constraints can change which blocks are accepted; dispatch is not always a simple cut through the
+              stack.
+            </p>
+            <div class="chart-frame">
+              <canvas
+                id="stackCanvas"
+                tabindex="0"
+                role="img"
+                aria-label="Supply chart. Drag to change demand, or use up and down arrow keys when focused."
+                aria-describedby="stackInspect"
+              ></canvas>
+            </div>
+            <div class="chart-legend">
+              <span class="legend-item"><i class="swatch green"></i>Accepted output</span
+              ><span class="legend-item"><i class="swatch"></i>Available output</span
+              ><span class="legend-item"><i class="swatch red"></i>Demand</span>
+            </div>
+            <p class="chart-inspect" id="stackInspect">Select an offer block to inspect its output bounds, or use the table below.</p>
+            <details>
+              <summary>Generator output and limits</summary>
+              <div class="data-scroll" tabindex="0" role="region" aria-label="Generator output table">
+                <table>
+                  <thead>
+                    <tr>
+                      <th scope="col">Resource</th>
+                      <th scope="col">Offer $/MWh</th>
+                      <th scope="col">Range GW</th>
+                      <th scope="col">Output GW</th>
+                    </tr>
+                  </thead>
+                  <tbody id="resourceRows"></tbody>
+                </table>
+              </div>
+            </details>
+          </section>
+          <section class="panel chart-panel" aria-labelledby="networkTitle">
+            <div class="chart-heading">
+              <h2 id="networkTitle">Flows and nodal prices</h2>
+              <label class="sr-only" for="networkView">Network view</label>
+              <select id="networkView">
+                <option value="0">Base network</option>
+                <option value="1">South–East outage</option>
+              </select>
+            </div>
+            <p class="chart-copy">
+              Compare the intact grid with the selected outage. Select a bus or line to inspect it. The table gives the same values without using the
+              drawing.
+            </p>
+            <div class="chart-frame">
+              <canvas
+                id="networkCanvas"
+                role="img"
+                aria-label="Six-bus DC network. Flow values and nodal prices are available in the tables below."
+              ></canvas>
+            </div>
+            <div class="chart-legend">
+              <span class="legend-item"><i class="swatch"></i>Within limit</span
+              ><span class="legend-item"><i class="swatch amber"></i>Near limit</span
+              ><span class="legend-item"><i class="swatch red"></i>At limit</span>
+            </div>
+            <p class="chart-inspect" id="networkInspect">
+              Prices are the marginal cost of one more MWh at each bus. Outage flows are recomputed on the changed topology.
+            </p>
+            <div class="price-breakdown" id="priceBreakdown"></div>
+            <details>
+              <summary>Bus prices and line flows</summary>
+              <div class="data-scroll" tabindex="0" role="region" aria-label="Nodal price and line-flow tables">
+                <table>
+                  <caption class="sr-only">
+                    Nodal prices
+                  </caption>
+                  <thead>
+                    <tr>
+                      <th scope="col">Bus</th>
+                      <th scope="col">Price $/MWh</th>
+                      <th scope="col">Congestion $/MWh</th>
+                    </tr>
+                  </thead>
+                  <tbody id="priceRows"></tbody>
+                </table>
+                <table>
+                  <caption class="sr-only">
+                    Flows in the selected network view
+                  </caption>
+                  <thead>
+                    <tr>
+                      <th scope="col">Line</th>
+                      <th scope="col">Flow GW</th>
+                      <th scope="col">Limit GW</th>
+                    </tr>
+                  </thead>
+                  <tbody id="flowRows"></tbody>
+                </table>
+              </div>
+            </details>
+          </section>
         </div>
-        <p class="decision-action" id="summaryAction">Select a stage or press Play to review the operating day.</p>
-      </div>
-      <div class="control-box">
-        <p class="box-title">Play / pause operational day</p>
-        <div class="controls">
-          <button class="btn primary" id="playBtn" aria-label="Play or pause the operating-day animation">Play</button>
-          <button class="btn" id="prevStageBtn">Previous stage</button>
-          <button class="btn" id="nextStageBtn">Next stage</button>
-          <button class="btn" id="resetDemandBtn">Reset demand</button>
-        </div>
-        <div class="slider-row"><span>HE 00</span><input id="hourSlider" type="range" min="0" max="23" step="1" value="14" aria-label="Operating hour"><span>HE 23</span></div>
-        <div class="progress-shell"><div class="progress-bar" id="progressBar"></div></div>
-      </div>
-      <div class="model-box">
-        <p class="box-title">Active model layer <span id="modelLayerTag" class="badge">MIP + AC</span></p>
-        <div class="constraint-list" id="constraintList"></div>
-      </div>
-      <div class="log-box">
-        <p class="box-title">Operator event log</p>
-        <div class="event-list" id="eventList"></div>
-      </div>
-    </aside>
-  </main>
-
-  <section class="viz-grid">
-    <div class="viz-card glass">
-      <h2>24-hour commitment heatmap</h2>
-      <p class="sub">Online state, startup/shutdown trajectories, min up/down locks, and intraday frozen intervals. Hover cells for unit-hour details.</p>
-      <div class="heatmap-scroll"><div class="heatmap" id="heatmap"></div></div>
-      <div class="legend">
-        <span class="legend-item"><span class="swatch" style="background:var(--green)"></span>Committed / available</span>
-        <span class="legend-item"><span class="swatch" style="background:var(--blue)"></span>Startup</span>
-        <span class="legend-item"><span class="swatch" style="background:var(--amber)"></span>IRUC recommitment</span>
-        <span class="legend-item"><span class="swatch" style="background:transparent;border:1px solid #facc15"></span>Frozen / min time lock</span>
-      </div>
+        <section class="panel heat-panel" aria-labelledby="heatTitle">
+          <div class="section-heading">
+            <div>
+              <h2 id="heatTitle">The commitment schedule</h2>
+              <p class="control-hint">An illustrated schedule, not the result of a unit-commitment optimization.</p>
+            </div>
+            <span class="chip illustrated">Scripted 24-hour plan</span>
+          </div>
+          <div class="heatmap-scroll" tabindex="0" role="region" aria-label="Commitment schedule, scroll horizontally to inspect all 24 hours">
+            <table class="heatmap-table" id="heatmapTable">
+              <caption class="sr-only">
+                Scripted resource commitment by delivery hour
+              </caption>
+            </table>
+          </div>
+          <div class="chart-legend">
+            <span class="legend-item"><i class="swatch"></i>Online</span
+            ><span class="legend-item"><i class="swatch" style="background: var(--stage)"></i>Start</span
+            ><span class="legend-item"><i class="swatch amber"></i>Illustrated intraday addition</span>
+          </div>
+          <p class="heat-info" id="heatInfo">
+            Select a cell, or use arrow keys within the schedule, for resource and hour details. The outlined column is the selected delivery hour.
+          </p>
+        </section>
+        <section class="panel notes-panel">
+          <details>
+            <summary>What the model includes, and what it leaves out</summary>
+            <div class="notes-grid">
+              <div>
+                <h3>The dispatch calculation</h3>
+                <p>
+                  Minimize energy offer cost subject to generation–load balance, resource output bounds, and linear DC branch limits. Real-time bounds
+                  use ramp bands around an illustrative prior-hour dispatch on the intact grid. Prices come from the final linear-programming duals.
+                </p>
+                <p class="equation">
+                  min Σ cᵢPᵢ<br />Σ Pᵢ + Σ shedᵦ = Σ loadᵦ<br />|PTDFᵏ(P − load)| ≤ branch limits<br />max(Pmin, base − ramp) ≤ P ≤ min(capacity, base
+                  + ramp)
+                </p>
+                <p>
+                  The outage check removes the South–East line and recomputes all remaining flows. It checks that selected contingency, not every
+                  possible N-1 outage. Redispatch after the outage is not modeled.
+                </p>
+              </div>
+              <div>
+                <h3>The illustrations</h3>
+                <p>
+                  Day-ahead and intraday schedules are prescribed examples. There is no mixed-integer commitment solve, no reserve co-optimization,
+                  and no weighted-least-squares state estimator. Minimum run times, startup costs, and AC voltage checks are explained in the guide
+                  but not enforced by this dispatch model.
+                </p>
+                <p>
+                  Losses, reactive power, voltage limits, storage energy balance, and market settlement rules are omitted. Storage is a discharge
+                  block. The fleets, offers, ramp rates, and curtailment penalty are fictional. Actual processes and fast-start rules vary by market.
+                </p>
+                <p>
+                  Further reading: <a href="https://www.pjm.com/markets-and-operations/energy">PJM energy markets</a> and
+                  <a href="https://matpower.org/documentation/ref-manual/legacy/functions/makePTDF.html">MATPOWER’s DC transfer factors</a>.
+                </p>
+              </div>
+            </div>
+          </details>
+        </section>
+      </main>
+      <footer><span>Created by Babak Taheri</span><span>Educational guide · fictional grid · no external libraries</span></footer>
     </div>
-    <div class="viz-card glass">
-      <h2>Interactive supply vs. demand dispatch stack</h2>
-      <p class="sub">Drag the demand line, or focus the chart and use the up and down arrow keys, to stress SCED. The marginal segment updates the energy price; congestion adders appear when the N-1 limit binds.</p>
-      <div class="canvas-wrap"><canvas id="stackCanvas" tabindex="0" aria-label="Interactive supply and demand curve. Drag, or use up and down arrow keys, to change demand"></canvas><div class="tooltip" id="stackTip"></div></div>
-      <div class="legend">
-        <span class="legend-item"><span class="swatch" style="background:var(--green)"></span>Accepted supply</span>
-        <span class="legend-item"><span class="swatch" style="background:var(--muted2)"></span>Available blocks</span>
-        <span class="legend-item"><span class="swatch" style="background:var(--red)"></span>Demand / marginal</span>
-      </div>
-      <div class="model-note"><b>Model boundary:</b> this is an educational SCED/LMP visualization. It preserves the market/reliability split, but simplifies production-grade settlement, losses, reserve zones, and topology processing.</div>
-    </div>
-    <div class="viz-card glass">
-      <h2>Mini nodal network and congestion</h2>
-      <p class="sub">N-1 transfer constraint and LMP separation. Hover buses or branches for voltage, flow, and congestion shadow-price detail.</p>
-      <div class="canvas-wrap"><canvas id="networkCanvas" aria-label="Mini nodal network graph"></canvas><div class="tooltip" id="networkTip"></div></div>
-      <div class="legend">
-        <span class="legend-item"><span class="swatch" style="background:var(--sky)"></span>Normal flow</span>
-        <span class="legend-item"><span class="swatch" style="background:var(--amber)"></span>Near limit</span>
-        <span class="legend-item"><span class="swatch" style="background:var(--red)"></span>Binding constraint</span>
-      </div>
-    </div>
-  </section>
-  <p class="footer-note">Self-contained vanilla HTML/CSS/JS · educational model · no external libraries, fonts, or network dependencies.</p>
-</div>
-
-<script>
-(function(){
-'use strict';
-const TAU=Math.PI*2;
-const C={cyan:'#22d3ee',sky:'#38bdf8',blue:'#60a5fa',violet:'#8b5cf6',pink:'#f472b6',green:'#34d399',lime:'#a3e635',amber:'#f59e0b',orange:'#fb923c',red:'#fb7185',white:'#f8fafc',muted:'#94a3b8',muted2:'#64748b',panel:'#0f172a'};
-const el={};
-const reduceMotion=!!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
-const state={stage:0,hour:14,playing:false,last:0,phase:0,acc:0,demandOverride:null,dragDemand:false,raf:0};
-
-const stages=[
-  {
-    key:'da',num:'01',name:'Day-Ahead SCUC',time:'D-1 · 24h horizon',short:'DA SCUC',sub:'Network-constrained commitment',tag:'MIP + network',
-    title:'Day-Ahead SCUC engine room',
-    body:'The day-ahead market clears a 24-hour network-constrained unit commitment. Binary on/off, startup, and shutdown decisions are coupled with ramp limits, startup/shutdown trajectories, piecewise energy offers, and co-optimized reserves. Production engines use a linearized transmission model with N-1 limits; full AC feasibility is handled separately by EMS and contingency analysis.',
-    security:'N-1 Secure',binding:'DA export path',badges:[['24 hourly intervals','good'],['u_on / u_su / u_sd','good'],['Linear network + N-1','warn'],['Co-optimized reserves','good']],
-    metricsSub:'24-hour commitment horizon',
-    cards:[
-      ['Decision kernel','Mixed-integer commitment','Binary online, startup, and shutdown states drive no-load, startup, shutdown, and min up/down logic.'],
-      ['Energy economics','Piecewise offer blocks','Convex offer blocks stack MW by marginal cost; the accepted marginal block anchors the energy component of LMP.'],
-      ['Reserve layers','Reg · spin · ramp','Regulation, synchronized, and ramping reserves are co-optimized with energy as market products in the clear.'],
-      ['Network security','PTDF and N-1 limits','A linearized DC-style transmission model and monitored N-1 branches shape commitment; AC voltage feasibility is checked downstream by EMS.']
-    ],
-    constraints:[
-      ['Binary commitment u_on, startup u_su, shutdown u_sd evolve hour to hour.','good'],
-      ['Minimum up/down time and maximum-start constraints lock units after transitions.','warn'],
-      ['Startup/shutdown trajectories consume ramp capability before units reach Pmin.','warn'],
-      ['Piecewise energy blocks, no-load, startup, shutdown, and reserve costs enter the surplus objective.','good'],
-      ['Production clearing uses a linear network with N-1 limits; full AC-SCUC is a research formulation (ARPA-E GOC3), not standard practice.','hot']
-    ],
-    events:[
-      ['DA offer stack and topology snapshot accepted by market system.','good'],
-      ['Long-start steam unit held online through morning ramp due to min-up obligation.','warn'],
-      ['EMS voltage study flags reactive support need near Metro; reliability commitment added outside the energy clear.','warn']
-    ]
-  },
-  {
-    key:'iruc',num:'02',name:'Intraday Reliability UC',time:'Same day · 4-8h look-ahead',short:'IRUC',sub:'Forecast repair / recommitment',tag:'Rolling MIP repair',
-    title:'Intraday UC forecast repair engine',
-    body:'Intraday reliability UC freezes what has already happened and recommits the future when forecasts change. A sudden renewable drop increases net load; future intervals can be repaired while past awards and physical startup trajectories remain locked.',
-    security:'Repairing',binding:'VRE forecast miss',badges:[['Past frozen','warn'],['Future recommitted','good'],['VRE -4.8 GW','hot'],['Ramp adequacy tested','warn']],
-    metricsSub:'rolling forecast repair',
-    cards:[
-      ['Freeze boundary','Past intervals locked','Telemetry and awarded dispatch before the current interval become immutable accounting and physics.'],
-      ['Forecast error','Renewable drop','Wind and solar actuals fall below DA forecast; net load ramps above the day-ahead plan.'],
-      ['Recommitment','Future intervals repaired','Fast-start CTs, batteries, and demand response are reselected for feasible ramp and reserve coverage.'],
-      ['Operator decision','Reliability before economics','The objective penalizes extra starts, but infeasible reserve and ramp shortages are worse.']
-    ],
-    constraints:[
-      ['All intervals at or before the current hour are frozen; only future t remain controllable.','warn'],
-      ['Updated wind/solar forecast lifts net load and may bind ramping reserve up.','hot'],
-      ['Minimum uptime/downtime from prior starts limits which units can be changed.','warn'],
-      ['Fast-start resources and storage repair short ramp windows without re-opening past awards.','good'],
-      ['Future commitment must still satisfy AC feasibility and reserve zones.','good']
-    ],
-    events:[
-      ['SCADA + forecast feed reports 4.8 GW renewable shortfall starting HE 17.','hot'],
-      ['IRUC freezes HE 00-14 and opens HE 15-23 for recommitment.','warn'],
-      ['CT-Fast-2 and battery discharge scheduled into the evening ramp.','good']
-    ]
-  },
-  {
-    key:'se',num:'03',name:'State Estimation & Telemetry',time:'Every few seconds',short:'State Estimation',sub:'SCADA to solved AC baseline',tag:'WLS + AC PF',
-    title:'State estimation and telemetry engine',
-    body:'Raw SCADA, RTU, PMU, breaker, and analog measurements contain noise, latency, and bad data. The estimator reconciles them into a physically consistent AC state: bus voltage magnitudes/angles and branch flows used as the real-time dispatch baseline.',
-    security:'Observable',binding:'Bad data filtered',badges:[['SCADA ingest','good'],['Residual screen','warn'],['AC baseline solved','good'],['Topology validated','good']],
-    metricsSub:'telemetry cleaning and observability',
-    cards:[
-      ['Measurement ingest','Noisy field data','MW, MVar, kV, breaker status, transformer taps, and shunt positions arrive with timestamps and quality flags.'],
-      ['Bad data filter','Residual tests','Outliers are down-weighted or removed before they contaminate base-case flows.'],
-      ['Solved state','V and theta baseline','The estimator returns an AC-consistent baseline from which SCED sensitivities and flows are initialized.'],
-      ['Topology processor','Breaker-to-bus model','Telemetry topology is mapped into the bus-branch network the market model understands.']
-    ],
-    constraints:[
-      ['Breaker/status telemetry builds the current bus-branch topology.','good'],
-      ['Analog MW/MVar/kV measurements feed weighted least-squares estimation.','good'],
-      ['Large residuals are flagged as bad data and excluded or deweighted.','warn'],
-      ['Solved AC baseline supplies voltage magnitudes, phase angles, and branch flows to RT SCED.','good'],
-      ['Unobservable islands or suspicious topology changes trigger operator review.','hot']
-    ],
-    events:[
-      ['PMU angle at North bus confirms post-contingency flow direction.','good'],
-      ['RTU measurement on East-Metro tie rejected: 4.1 sigma residual.','warn'],
-      ['AC state converged; base case exported to SCED cycle.','good']
-    ]
-  },
-  {
-    key:'rt',num:'04',name:'Real-Time SCED',time:'T+0 · 5-minute dispatch',short:'RT SCED',sub:'Locked commitment + LMP',tag:'LP/QP dispatch',
-    title:'Real-time SCED dispatch engine',
-    body:'Every 5 minutes, SCED redispatches the already-committed fleet from the state-estimated base point. Slow commitment is fixed; only qualified fast-start resources enter, and only when committed firm capacity cannot cover load within ramp limits. The marginal unit plus an active N-1 transmission constraint sets nodal LMP separation.',
-    security:'Binding N-1',binding:'East-Metro ~100%',badges:[['5-minute cycle','good'],['Commitment fixed','warn'],['Fast-start on shortfall','good'],['Congestion active','hot']],
-    metricsSub:'5-minute economic dispatch',
-    cards:[
-      ['Base point + ramp','Move within ramp band','Each committed unit is dispatched around its prior base point, bounded by max(LSL, base-ramp) and min(HSL, base+ramp), not freely from zero to cap.'],
-      ['Fast-start exception','Only when short','Quick-start CTs and storage are pulled in only if committed firm capacity falls short of load within ramp limits, not on every interval.'],
-      ['Marginal pricing','LMP = energy + loss + congestion','The marginal in-band unit sets the system energy price; the binding N-1 constraint adds a PTDF-weighted congestion component per bus.'],
-      ['N-1 constraint','Transmission security binds','When merit dispatch would overload the East-Metro branch, SCED shifts MW from high-shift-factor units to low ones, holding the limit and separating prices.']
-    ],
-    constraints:[
-      ['Commitment from DA/IRUC is fixed for slow-start resources; only base points move.','warn'],
-      ['Each unit moves within [max(LSL, base-ramp), min(HSL, base+ramp)] around its prior dispatch.','good'],
-      ['Fast-start resources enter only when committed firm capacity falls short within ramp.','good'],
-      ['East-Metro flow is the sum of unit injections times shift factors; it binds at the limit.','hot'],
-      ['Relief redispatch from high to low shift-factor units holds the limit and sets the congestion price.','hot']
-    ],
-    events:[
-      ['5-minute SCED cycle receives state-estimated base point.','good'],
-      ['East-Metro contingency constraint binds at 100% of emergency rating; SCED redispatches to hold the limit.','hot'],
-      ['LMP separates: West and Metro prices diverge under congestion.','warn']
-    ]
-  }
-];
-
-const units=[
-  {id:'nuc',name:'Nuclear-N1',type:'base',cap:10.5,pmin:7.8,cost:11,minUp:24,minDown:12,startCost:110,ramp:.5,zone:'North'},
-  {id:'coal',name:'Coal-W2',type:'thermal',cap:9.2,pmin:3.5,cost:29,minUp:10,minDown:8,startCost:64,ramp:1.1,zone:'West'},
-  {id:'ccgt1',name:'CCGT-Metro',type:'thermal',cap:8.4,pmin:2.6,cost:41,minUp:5,minDown:3,startCost:36,ramp:2.8,zone:'Metro'},
-  {id:'ccgt2',name:'CCGT-East',type:'thermal',cap:9.6,pmin:2.4,cost:46,minUp:4,minDown:3,startCost:28,ramp:2.4,zone:'East'},
-  {id:'hydro',name:'Hydro-Flex',type:'hydro',cap:4.8,pmin:0,cost:18,minUp:0,minDown:0,startCost:0,ramp:4.8,zone:'North'},
-  {id:'wind',name:'Wind-Ridge',type:'vre',cap:10.4,pmin:0,cost:0,minUp:0,minDown:0,startCost:0,ramp:9.0,zone:'West'},
-  {id:'solar',name:'Solar-South',type:'vre',cap:7.4,pmin:0,cost:0,minUp:0,minDown:0,startCost:0,ramp:7.4,zone:'South'},
-  {id:'battery',name:'Battery-4h',type:'fast',cap:2.8,pmin:-1.6,cost:57,minUp:0,minDown:0,startCost:0,ramp:2.8,zone:'Metro',fast:true},
-  {id:'ct1',name:'CT-Fast-1',type:'fast',cap:5.0,pmin:.4,cost:82,minUp:1,minDown:1,startCost:7,ramp:5.0,zone:'East',fast:true},
-  {id:'ct2',name:'CT-Fast-2',type:'fast',cap:4.5,pmin:.4,cost:97,minUp:1,minDown:1,startCost:8,ramp:4.5,zone:'Metro',fast:true},
-  {id:'dr',name:'DR-LoadBid',type:'load',cap:3.0,pmin:0,cost:140,minUp:1,minDown:1,startCost:0,ramp:3.0,zone:'Metro',fast:true}
-];
-
-const buses=[
-  {id:'W',name:'West',x:.16,y:.43,v:.997},
-  {id:'N',name:'North',x:.36,y:.22,v:1.022},
-  {id:'S',name:'South',x:.34,y:.74,v:1.010},
-  {id:'E',name:'East',x:.64,y:.33,v:.991},
-  {id:'M',name:'Metro',x:.79,y:.62,v:.978},
-  {id:'R',name:'Renew',x:.08,y:.78,v:1.018}
-];
-const lines=[
-  {a:'R',b:'S',name:'Renew-South 230',x:.090,base:5,limit:9.0},
-  {a:'W',b:'N',name:'West-North 345',x:.055,base:9,limit:20.0},
-  {a:'W',b:'S',name:'West-South 230',x:.075,base:7,limit:16.0},
-  {a:'N',b:'E',name:'North-East 345',x:.050,base:9,limit:18.0},
-  {a:'S',b:'M',name:'South-Metro 345',x:.062,base:8,limit:13.0},
-  {a:'E',b:'M',name:'East-Metro N-1',x:.042,base:6,limit:8.0,critical:true},
-  {a:'S',b:'E',name:'South-East 230',x:.080,base:6,limit:15.0}
-];
-const SLACK=0;
-const loadShare={W:.14,N:.13,S:.135,E:.15,M:.40,R:.06};
-(function(){const s=Object.values(loadShare).reduce((a,b)=>a+b,0);Object.keys(loadShare).forEach(k=>loadShare[k]/=s);})();
-const busOrder=buses.map(b=>b.id);
-const bIndex={};busOrder.forEach((id,i)=>bIndex[id]=i);
-const SHED={id:'shed',name:'Involuntary curtailment',zone:'Metro',cost:600};
-
-function matInv(M){
-  const n=M.length;const A=M.map((r,i)=>{const id=new Array(n).fill(0);id[i]=1;return r.slice().concat(id);});
-  for(let col=0;col<n;col++){
-    let piv=col;for(let r=col+1;r<n;r++) if(Math.abs(A[r][col])>Math.abs(A[piv][col])) piv=r;
-    const t=A[col];A[col]=A[piv];A[piv]=t;
-    const dv=A[col][col];for(let c=0;c<2*n;c++) A[col][c]/=dv;
-    for(let r=0;r<n;r++){ if(r!==col){ const f=A[r][col]; if(f!==0) for(let c=0;c<2*n;c++) A[r][c]-=f*A[col][c]; } }
-  }
-  return A.map(r=>r.slice(n));
-}
-function linSolve(Ain,bin){
-  const n=Ain.length;const A=Ain.map((r,i)=>r.slice().concat([bin[i]]));
-  for(let col=0,row=0;col<n&&row<n;col++,row++){
-    let piv=row;for(let r=row+1;r<n;r++) if(Math.abs(A[r][col])>Math.abs(A[piv][col])) piv=r;
-    if(Math.abs(A[piv][col])<1e-12){row--;continue;}
-    const t=A[row];A[row]=A[piv];A[piv]=t;
-    const dv=A[row][col];for(let c=col;c<=n;c++) A[row][c]/=dv;
-    for(let r=0;r<n;r++){ if(r!==row){ const f=A[r][col]; if(f!==0) for(let c=col;c<=n;c++) A[r][c]-=f*A[row][c]; } }
-  }
-  return A.map(r=>r[n]);
-}
-function buildPTDF(){
-  const n=busOrder.length;const B=Array.from({length:n},()=>new Array(n).fill(0));
-  lines.forEach(ln=>{const i=bIndex[ln.a],j=bIndex[ln.b],bb=1/ln.x;B[i][i]+=bb;B[j][j]+=bb;B[i][j]-=bb;B[j][i]-=bb;});
-  const keep=[];for(let i=0;i<n;i++) if(i!==SLACK) keep.push(i);
-  const Br=keep.map(r=>keep.map(c=>B[r][c]));
-  const Xr=matInv(Br);
-  const X=Array.from({length:n},()=>new Array(n).fill(0));
-  keep.forEach((r,ri)=>keep.forEach((c,ci)=>{X[r][c]=Xr[ri][ci];}));
-  return lines.map(ln=>busOrder.map((_,b)=>(X[bIndex[ln.a]][b]-X[bIndex[ln.b]][b])/ln.x));
-}
-const PTDF=buildPTDF();
-function lineFlows(inj){return PTDF.map(row=>row.reduce((s,v,b)=>s+v*inj[b],0));}
-function simplexLE(c,A,b){
-  const m=A.length,n=c.length;const rows=[];const needArt=[];
-  for(let i=0;i<m;i++){let coef=A[i].slice(),rhs=b[i],sign=1;if(rhs<0){coef=coef.map(v=>-v);rhs=-rhs;sign=-1;}rows.push({coef,rhs,sign});needArt.push(sign<0);}
-  const nArt=needArt.filter(Boolean).length;const total=n+m+nArt;let col=n+m;const artIdx=[];const T=[];const basis=[];
-  for(let i=0;i<m;i++){const r=new Array(total+1).fill(0);for(let j=0;j<n;j++) r[j]=rows[i].coef[j];r[n+i]=rows[i].sign;if(needArt[i]){r[col]=1;basis.push(col);artIdx.push(col);col++;}else basis.push(n+i);r[total]=rows[i].rhs;T.push(r);}
-  function pivot(pr,pc){const dv=T[pr][pc];for(let c=0;c<=total;c++) T[pr][c]/=dv;for(let r=0;r<m;r++){if(r!==pr){const f=T[r][pc];if(f!==0) for(let c=0;c<=total;c++) T[r][c]-=f*T[pr][c];}}basis[pr]=pc;}
-  function run(cost){for(let it=0;it<6000;it++){let enter=-1;for(let j=0;j<total;j++){let zj=0;for(let i=0;i<m;i++) zj+=cost[basis[i]]*T[i][j];if(cost[j]-zj<-1e-9){enter=j;break;}}if(enter<0) return true;let leave=-1,best=Infinity;for(let i=0;i<m;i++){if(T[i][enter]>1e-9){const ratio=T[i][total]/T[i][enter];if(ratio<best-1e-12||(Math.abs(ratio-best)<1e-12&&(leave<0||basis[i]<basis[leave]))){best=ratio;leave=i;}}}if(leave<0) return false;pivot(leave,enter);}return false;}
-  if(nArt>0){const c1=new Array(total).fill(0);artIdx.forEach(a=>c1[a]=1);run(c1);let inf=0;for(let i=0;i<m;i++) if(artIdx.indexOf(basis[i])>=0) inf+=T[i][total];if(inf>1e-6) return {status:'infeasible'};for(let i=0;i<m;i++){if(artIdx.indexOf(basis[i])>=0){for(let j=0;j<n+m;j++){if(Math.abs(T[i][j])>1e-9){pivot(i,j);break;}}}}}
-  const c2=new Array(total).fill(0);for(let j=0;j<n;j++) c2[j]=c[j];artIdx.forEach(a=>c2[a]=1e9);if(!run(c2)) return {status:'unbounded'};
-  const x=new Array(n).fill(0);for(let i=0;i<m;i++){if(basis[i]<n) x[basis[i]]=T[i][total];}return {status:'optimal',x};
-}
-function lstsq(M,rhs,k){const A=Array.from({length:k},()=>new Array(k).fill(0));const r2=new Array(k).fill(0);for(let r=0;r<M.length;r++) for(let a=0;a<k;a++){r2[a]+=M[r][a]*rhs[r];for(let b=0;b<k;b++) A[a][b]+=M[r][a]*M[r][b];}for(let a=0;a<k;a++) A[a][a]+=1e-9;return linSolve(A,r2);}
-
-function profile(hour){
-  const h=hour;
-  const load=44 + 6.2*Math.sin((h-7)/24*TAU) + 5.0*Math.sin((h-16)/24*TAU) + (h>=17&&h<=20?3.0:0) + (h>=7&&h<=9?2.0:0);
-  const windForecast=7.5 + 2.2*Math.sin((h+3)/24*TAU) + .9*Math.sin((h*2)/24*TAU);
-  const drop=(h>=16&&h<=20)?4.8*(1-Math.abs(h-18)/4):0;
-  const windActual=Math.max(1.2,windForecast-drop+.35*Math.sin(h*1.7));
-  const solar=Math.max(0,7.2*Math.sin((h-6)/12*Math.PI));
-  const daNet=Math.max(20,load-windForecast-solar);
-  const rtNet=Math.max(20,load-windActual-solar);
-  const vre=windActual+solar;
-  return {load,windForecast,windActual,solar,vre,daNet,rtNet,drop};
-}
-
-function isOn(unit,h,mode){
-  if(unit.id==='wind') return profile(h).windActual>.7;
-  if(unit.id==='solar') return profile(h).solar>.3;
-  if(unit.id==='nuc') return true;
-  if(unit.id==='hydro') return true;
-  if(unit.id==='coal') return true;
-  if(unit.id==='ccgt1') return true;
-  if(unit.id==='ccgt2') return h>=6 && h<=23;
-  if(unit.id==='battery') return true;
-  if(unit.id==='ct1') return h>=16 && h<=21;
-  if(unit.id==='ct2') return h>=16 && h<=20;
-  if(unit.id==='dr') return mode==='rt' ? (h>=17&&h<=20) : (mode==='iruc' ? h>=18&&h<=19 : false);
-  return false;
-}
-function wasOn(unit,h,mode){return h>0 && isOn(unit,h-1,mode)}
-function isStart(unit,h,mode){return isOn(unit,h,mode)&&!wasOn(unit,h,mode)}
-function isLocked(unit,h,mode){
-  if(mode==='iruc' && h<=state.hour) return true;
-  if(isStart(unit,h,mode)) return true;
-  const startHour=findPriorStart(unit,h,mode);
-  return startHour!==null && h-startHour<unit.minUp;
-}
-function findPriorStart(unit,h,mode){for(let k=h;k>=0;k--){if(isStart(unit,k,mode)) return k;}return null;}
-
-function availability(unit,h){
-  const p=profile(h);
-  if(unit.id==='wind') return Math.min(unit.cap,p.windActual);
-  if(unit.id==='solar') return Math.min(unit.cap,p.solar);
-  if(unit.id==='battery') return (h>=17&&h<=21)?unit.cap:1.0;
-  if(unit.id==='dr') return unit.cap;
-  return unit.cap;
-}
-function modeKey(){return stages[state.stage].key;}
-function grossLoad(){
-  const p=profile(state.hour);
-  if(state.demandOverride!==null) return state.demandOverride;
-  return p.load;
-}
-function vreInStack(){
-  const h=state.hour;
-  return availability(units.find(u=>u.id==='wind'),h)+availability(units.find(u=>u.id==='solar'),h);
-}
-function targetDemand(){return grossLoad();}
-function lsl(u,h){return u.type==='vre'?0:Math.max(0,u.pmin);}
-function hsl(u,h){return availability(u,h);}
-
-function buildResources(h,mode,demand,basePts){
-  const res=[];
-  units.forEach(u=>{
-    let on=isOn(u,h,mode), entering=false;
-    if(mode==='rt' && u.fast && !on){
-      let firm=0;units.forEach(v=>{ if(isOn(v,h,'rt') && !v.fast) firm+=hsl(v,h); });
-      if(demand-firm>0.5){ on=true; entering=true; }
-    }
-    if(!on) return;
-    const cap=hsl(u,h); if(cap<=.05 && u.type!=='fast') return;
-    let lo=lsl(u,h), hi=cap;
-    if(u.type==='fast' && u.pmin<0) lo=u.pmin;
-    if(mode==='rt' && basePts && basePts[u.id]!=null && !entering){
-      const base=basePts[u.id];
-      lo=Math.max(lo,base-u.ramp); hi=Math.min(hi,base+u.ramp); if(hi<lo) hi=lo;
-    }
-    res.push({unit:u,bus:u.zone[0],cap,lo,hi,cost:u.cost,vre:u.type==='vre',entering,accepted:0,marginal:false,start:0,end:0,base:basePts&&basePts[u.id]!=null?basePts[u.id]:null});
-  });
-  res.push({unit:SHED,bus:'M',cap:Math.max(8,demand*0.25),lo:0,hi:Math.max(8,demand*0.25),cost:SHED.cost,vre:false,entering:false,shed:true,accepted:0,marginal:false,start:0,end:0,base:null});
-  return res;
-}
-function solveLP(res,demand){
-  const eps=1e-4,n=res.length;
-  const c=res.map((r,i)=>r.cost+eps*i),lo=res.map(r=>r.lo),hi=res.map(r=>r.hi);
-  const sumLo=lo.reduce((a,b)=>a+b,0);const A=[],b=[];
-  A.push(res.map(()=>1));b.push(demand-sumLo);
-  A.push(res.map(()=>-1));b.push(-(demand-sumLo));
-  const K=lines.map((ln,l)=>{let k=0;busOrder.forEach((bs,bi)=>{const loB=res.reduce((s,r,i)=>s+(bIndex[r.bus]===bi?lo[i]:0),0);k+=PTDF[l][bi]*(loB-loadShare[bs]*demand);});return k;});
-  lines.forEach((ln,l)=>{const coef=res.map(r=>PTDF[l][bIndex[r.bus]]);A.push(coef.slice());b.push(ln.limit-K[l]);A.push(coef.map(v=>-v));b.push(ln.limit+K[l]);});
-  for(let i=0;i<n;i++){const row=new Array(n).fill(0);row[i]=1;A.push(row);b.push(hi[i]-lo[i]);}
-  const sol=simplexLE(c,A,b);
-  if(sol.status!=='optimal'){res.forEach((r,i)=>r.accepted=lo[i]);return {ok:false,flows:[],bind:[],mu:[],lambda:0,price:{}};}
-  res.forEach((r,i)=>r.accepted=lo[i]+sol.x[i]);
-  const inj=busOrder.map((bs,bi)=>res.reduce((s,r,i)=>s+(bIndex[r.bus]===bi?r.accepted:0),0)-loadShare[bs]*demand);
-  const f=lineFlows(inj);
-  const bind=[];lines.forEach((ln,l)=>{if(Math.abs(Math.abs(f[l])-ln.limit)<0.02+5e-3*ln.limit) bind.push({l,sigma:f[l]>=0?1:-1});});
-  const interior=[];res.forEach((r,i)=>{if(r.accepted>lo[i]+1e-3 && r.accepted<hi[i]-1e-3) interior.push(i);});
-  let lambda=0,mu=bind.map(()=>0);
-  if(interior.length>=1+bind.length){
-    const M=[],rhs=[];interior.forEach(i=>{const row=[1];bind.forEach(bd=>row.push(-PTDF[bd.l][bIndex[res[i].bus]]*bd.sigma));M.push(row);rhs.push(res[i].cost+eps*i);});
-    const z=lstsq(M,rhs,1+bind.length);lambda=z[0];mu=bind.map((_,k)=>z[k+1]);
-  } else {
-    let up=Infinity;res.forEach((r,i)=>{if(hi[i]-r.accepted>1e-3) up=Math.min(up,r.cost);});
-    if(!isFinite(up)){let mx=0;res.forEach((r,i)=>{if(r.accepted>lo[i]+1e-3) mx=Math.max(mx,r.cost);});up=mx||res[0].cost;}
-    lambda=up;
-  }
-  mu=mu.map(m=>Math.max(0,m));
-  const price={};busOrder.forEach((bs,bi)=>{let pr=lambda;bind.forEach((bd,k)=>{pr-=PTDF[bd.l][bi]*bd.sigma*mu[k];});price[bs]=pr;});
-  return {ok:true,flows:f,inj,bind,mu,lambda,price,interior};
-}
-function basePointsFor(h){
-  const ref=Math.max(20,profile(h).load);
-  const res=buildResources(h,'da',ref,null);
-  solveLP(res,ref);
-  const bp={};res.forEach(x=>{if(!x.shed) bp[x.unit.id]=x.accepted;});
-  return bp;
-}
-let dispCache=null, dispKey='';
-function computeDispatch(){
-  const key=state.stage+'|'+state.hour+'|'+(state.demandOverride===null?'auto':state.demandOverride.toFixed(3));
-  if(dispCache && dispKey===key) return dispCache;
-  const h=state.hour, mode=modeKey(), demand=grossLoad();
-  const basePts = mode==='rt' ? basePointsFor(h) : null;
-  const res=buildResources(h,mode,demand,basePts);
-  const r=solveLP(res,demand);
-  let marginal=null,best=-1;
-  res.forEach(b=>{if(!b.vre && !b.shed && b.accepted>b.lo+1e-4 && b.accepted<b.hi-1e-4 && b.cost>best){best=b.cost;marginal=b;}});
-  if(!marginal){res.forEach(b=>{if(!b.vre && !b.shed && b.accepted>1e-4 && b.cost>best){best=b.cost;marginal=b;}});}
-  if(marginal) marginal.marginal=true;
-  const emRatio = r.ok ? r.flows[5]/lines[5].limit : 0;
-  const severity = Math.abs(emRatio);
-  const emBind = r.bind.some(x=>x.l===5);
-  const muEM = emBind ? r.mu[r.bind.findIndex(x=>x.l===5)] : 0;
-  const lambda = r.lambda||0;
-  const lossAdder = Math.round((1+Math.min(severity,1.2)*1.6)*10)/10;
-  const metroCong = (r.price.M!=null?r.price.M:lambda) - lambda;
-  const shed = (res.find(x=>x.shed)||{accepted:0}).accepted;
-  const online = res.filter(b=>!b.shed).length;
-  const reserve = Math.max(0, res.filter(b=>!b.vre&&!b.shed).reduce((a,b)=>a+(b.hi-b.accepted),0));
-  const stack=res.filter(b=>!b.shed).slice().sort((a,b)=>a.cost-b.cost);
-  let cum=0;stack.forEach(b=>{b.start=cum;cum+=b.cap;b.end=cum;});
-  const ratios=r.ok?r.flows.map((fl,l)=>fl/lines[l].limit):lines.map(()=>0);
-  const congestion={active:emBind,severity,congPrice:Math.round(metroCong),lossAdder,shadow:Math.round(muEM),relief:0};
-  dispKey=key;
-  dispCache={stack,demand,lmp:lambda+lossAdder,energy:lambda,nodalCong:Math.round(metroCong),
-    shortage:Math.max(0,shed),reserve,online,marginal,congestion,needFast:res.some(b=>b.entering),
-    price:r.price||{},flows:r.flows||[],ratios,bind:r.bind||[],mu:r.mu||[],lambda,muEM};
-  return dispCache;
-}
-function nodalLmp(id,d){
-  const base = d.price && d.price[id]!=null ? d.price[id] : d.lmp;
-  return Math.round(base + (d.congestion?d.congestion.lossAdder:0));
-}
-
-function bindEls(){
-  ['timeline','heroStage','heroStageSub','heroHour','heroClock','heroSecurity','heroSecuritySub','heroPrice','heroPriceSub','timeReadout','engineTitle','engineSub','badgeRow','engineCanvas','hudLoad','hudVre','hudNet','hudReserve','hudBinding','microCards','stageTitle','stageBody','kpiUnits','kpiUnitsSub','kpiNet','kpiReserve','kpiLmp','kpiLmpSub','summaryMarginal','summaryCongestion','summaryAction','statusSummary','playBtn','prevStageBtn','nextStageBtn','resetDemandBtn','hourSlider','progressBar','modelLayerTag','constraintList','eventList','heatmap','stackCanvas','networkCanvas','stackTip','networkTip'].forEach(id=>el[id]=document.getElementById(id));
-}
-function renderTimeline(){
-  el.timeline.innerHTML='';
-  stages.forEach((s,i)=>{
-    const b=document.createElement('button');
-    b.className='stage-button'+(i===state.stage?' active':'')+(i<state.stage?' completed':'');
-    b.type='button';
-    b.setAttribute('aria-pressed',String(i===state.stage));
-    b.dataset.stage=i;
-    b.innerHTML='<div class="stage-kicker"><span class="stage-num">'+s.num+'</span><span class="stage-time">'+s.time+'</span></div><span class="stage-name">'+s.name+'</span><span class="stage-meta">'+s.sub+'</span>';
-    b.addEventListener('click',()=>setStage(i));
-    el.timeline.appendChild(b);
-  });
-}
-function renderLive(){
-  const p=profile(state.hour), d=computeDispatch();
-  const vre=vreInStack(), net=Math.max(0,d.demand-vre);
-  el.heroPrice.textContent='$'+Math.round(d.lmp);
-  el.heroPriceSub.textContent='/MWh reference; Metro $'+nodalLmp('M',d);
-  el.hudLoad.textContent=d.demand.toFixed(1)+' GW';
-  el.hudVre.textContent=vre.toFixed(1)+' GW';
-  el.hudNet.textContent=net.toFixed(1)+' GW';
-  el.hudReserve.textContent=d.reserve.toFixed(1)+' GW';
-  el.hudBinding.textContent=d.congestion.active?'N-1 active':d.congestion.severity>.9?'near limit':'none';
-  el.kpiUnits.textContent=d.online+' / '+units.length;
-  el.kpiNet.textContent=net.toFixed(1);
-  el.kpiReserve.textContent=Math.round(d.reserve/Math.max(1,d.demand)*100)+'%';
-  el.kpiLmp.textContent='$'+Math.round(d.lmp);
-  el.kpiLmpSub.textContent='$'+Math.round(d.energy)+' energy + $'+Math.round(d.congestion.lossAdder)+' loss; +$'+Math.round(d.nodalCong)+' cong @ Metro';
-  const marginalName=d.marginal?d.marginal.unit.name:'No in-band marginal unit';
-  const bindingText=d.congestion.active?'East-Metro N-1 binding':(d.congestion.severity>.9?'East-Metro near limit':'No binding line');
-  const actionText=currentActionText(d,marginalName,bindingText,net);
-  if(el.summaryMarginal) el.summaryMarginal.textContent=marginalName;
-  if(el.summaryCongestion) el.summaryCongestion.textContent=bindingText;
-  if(el.summaryAction) el.summaryAction.textContent=actionText;
-  if(el.statusSummary) el.statusSummary.textContent=stages[state.stage].name+', hour ending '+String(state.hour).padStart(2,'0')+', load '+d.demand.toFixed(1)+' gigawatts, net load '+net.toFixed(1)+' gigawatts, LMP $'+Math.round(d.lmp)+' per megawatt-hour, '+bindingText+'.';
-}
-function currentActionText(d,marginalName,bindingText,net){
-  const key=stages[state.stage].key;
-  if(key==='da') return 'Commit slow and flexible resources across the 24-hour horizon, leaving '+d.reserve.toFixed(1)+' GW of online headroom for uncertainty.';
-  if(key==='iruc') return 'Freeze the already-operated hours, repair future intervals, and use fast-start resources when the renewable miss lifts net load to '+net.toFixed(1)+' GW.';
-  if(key==='se') return 'Convert noisy telemetry into a solved AC base case so the next SCED cycle starts from physically consistent flows and voltages.';
-  return (d.congestion.active?'Redispatch around '+bindingText+'; ':'Dispatch within base-point ramp bands; ')+'the marginal resource is '+marginalName+' and Metro LMP reflects congestion when it binds.';
-}
-function renderStatic(){
-  const s=stages[state.stage];
-  el.heroStage.textContent=s.short;
-  el.heroStageSub.textContent=s.metricsSub;
-  el.heroHour.textContent='HE '+String(state.hour).padStart(2,'0');
-  el.heroClock.textContent=String(state.hour).padStart(2,'0')+':00 operating interval';
-  el.heroSecurity.textContent=s.security;
-  el.heroSecuritySub.textContent=s.binding;
-  el.timeReadout.textContent='T+'+String(state.hour).padStart(2,'0')+':00 · '+s.name;
-  el.engineTitle.textContent=s.title;
-  el.engineSub.textContent=s.body;
-  el.stageTitle.textContent=s.name;
-  el.stageBody.textContent=s.body;
-  el.modelLayerTag.textContent=s.tag;
-  el.progressBar.style.width=(state.hour/23*100).toFixed(1)+'%';
-  el.hourSlider.value=state.hour;
-  el.playBtn.textContent=state.playing?'Pause':'Play';
-  el.badgeRow.innerHTML=s.badges.map(([txt,cls])=>'<span class="badge '+cls+'">'+txt+'</span>').join('');
-  el.microCards.innerHTML=s.cards.map(c=>'<article class="micro-card"><p class="micro-label">'+c[0]+'</p><h3>'+c[1]+'</h3><p>'+c[2]+'</p></article>').join('');
-  el.constraintList.innerHTML=s.constraints.map(([txt,cls])=>'<div class="bullet '+cls+'"><span>'+txt+'</span></div>').join('');
-  el.eventList.innerHTML=s.events.map(([txt,cls])=>'<div class="bullet '+cls+'"><span>'+txt+'</span></div>').join('');
-  renderTimeline();
-  renderHeatmap();
-  renderLive();
-}
-function renderCanvases(){renderStack();renderNetwork();drawEngine();}
-function renderInteractive(){renderLive();renderCanvases();}
-function setStage(i){
-  state.stage=(i+stages.length)%stages.length;
-  state.demandOverride=null;
-  renderStatic();
-  renderCanvases();
-}
-function advanceHour(delta){
-  state.hour=(state.hour+delta+24)%24;
-  state.demandOverride=null;
-  renderStatic();
-  renderCanvases();
-}
-function renderHeatmap(){
-  const mode=modeKey();
-  let allowFast=false;
-  if(mode==='rt'){const h=state.hour,demand=grossLoad();let firm=0;units.forEach(u=>{if(isOn(u,h,'rt')&&!u.fast)firm+=hsl(u,h);});allowFast=demand-firm>0.5;}
-  let html='<div class="heat-head">Resource</div>';
-  for(let h=0;h<24;h++) html+='<div class="heat-head '+(h===state.hour?'now':'')+'">'+String(h).padStart(2,'0')+'</div>';
-  units.forEach(u=>{
-    html+='<div class="unit-name">'+u.name+'</div>';
-    for(let h=0;h<24;h++){
-      const on=isOn(u,h,mode), start=isStart(u,h,mode), locked=isLocked(u,h,mode);
-      let cls='heat-cell';
-      if(on) cls+=' on';
-      if(start) cls+=' start';
-      if((mode==='iruc' && h>state.hour && (u.id==='ct2'||u.id==='dr')) || (mode==='rt' && h>=18 && h<=20 && u.fast)) cls+=' recommit';
-      if(mode==='rt' && u.fast && h===state.hour && allowFast) cls+=' fast';
-      if(locked) cls+=' locked';
-      if(h>state.hour) cls+=' future';
-      if(h===state.hour) cls+=' now';
-      const label=start?'SU':(on?'ON':'');
-      const title=u.name+' HE '+h+' · '+(on?'online/available':'offline')+(start?' · startup trajectory':'')+(locked?' · locked by min time/freeze':'');
-      html+='<div class="'+cls+'" title="'+title+'">'+label+'</div>';
-    }
-  });
-  el.heatmap.innerHTML=html;
-}
-
-function setupCanvas(canvas){
-  const rect=canvas.getBoundingClientRect();
-  const ratio=Math.max(1,Math.min(2.5,window.devicePixelRatio||1));
-  const w=Math.max(320,Math.floor(rect.width*ratio));
-  const h=Math.max(240,Math.floor(rect.height*ratio));
-  if(canvas.width!==w||canvas.height!==h){canvas.width=w;canvas.height=h;}
-  const ctx=canvas.getContext('2d');
-  if(!ctx) return null;
-  ctx.setTransform(ratio,0,0,ratio,0,0);
-  return {ctx,w:rect.width,h:rect.height,ratio};
-}
-function clear(ctx,w,h){ctx.clearRect(0,0,w,h);}
-function rounded(ctx,x,y,w,h,r){
-  const rr=Math.min(r,w/2,h/2);
-  ctx.beginPath();ctx.moveTo(x+rr,y);ctx.arcTo(x+w,y,x+w,y+h,rr);ctx.arcTo(x+w,y+h,x,y+h,rr);ctx.arcTo(x,y+h,x,y,rr);ctx.arcTo(x,y,x+w,y,rr);ctx.closePath();
-}
-function fillRound(ctx,x,y,w,h,r,fill,stroke){rounded(ctx,x,y,w,h,r);if(fill){ctx.fillStyle=fill;ctx.fill();}if(stroke){ctx.strokeStyle=stroke;ctx.stroke();}}
-function line(ctx,x1,y1,x2,y2,color,width=2,dash=[]){ctx.save();ctx.strokeStyle=color;ctx.lineWidth=width;ctx.setLineDash(dash);ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();ctx.restore();}
-function text(ctx,t,x,y,opts={}){ctx.save();ctx.fillStyle=opts.color||C.white;ctx.font=(opts.weight||800)+' '+(opts.size||12)+'px '+(opts.mono?'ui-monospace,monospace':'ui-sans-serif,system-ui,sans-serif');ctx.textAlign=opts.align||'left';ctx.textBaseline=opts.base||'top';ctx.fillText(t,x,y);ctx.restore();}
-function wrap(ctx,str,x,y,maxWidth,lineHeight,opts={}){
-  const words=str.split(' ');let lineStr='',yy=y;
-  ctx.save();ctx.fillStyle=opts.color||'#cbd5e1';ctx.font=(opts.weight||700)+' '+(opts.size||12)+'px ui-sans-serif,system-ui,sans-serif';
-  for(let n=0;n<words.length;n++){
-    const test=lineStr+words[n]+' ';
-    if(ctx.measureText(test).width>maxWidth&&n>0){ctx.fillText(lineStr,x,yy);lineStr=words[n]+' ';yy+=lineHeight;}else lineStr=test;
-  }
-  ctx.fillText(lineStr,x,yy);ctx.restore();
-}
-function arrow(ctx,x1,y1,x2,y2,color,width=2){
-  line(ctx,x1,y1,x2,y2,color,width);
-  const a=Math.atan2(y2-y1,x2-x1);ctx.save();ctx.fillStyle=color;ctx.beginPath();ctx.moveTo(x2,y2);ctx.lineTo(x2-9*Math.cos(a-.45),y2-9*Math.sin(a-.45));ctx.lineTo(x2-9*Math.cos(a+.45),y2-9*Math.sin(a+.45));ctx.closePath();ctx.fill();ctx.restore();
-}
-function drawMiniHeat(ctx,x,y,w,h){
-  const rows=7,cols=24;const cw=w/cols,ch=h/rows;
-  for(let r=0;r<rows;r++) for(let c=0;c<cols;c++){
-    const u=units[r]; const on=isOn(u,c,modeKey());
-    ctx.fillStyle=on?'rgba(52,211,153,.75)':'rgba(51,65,85,.65)';
-    if(isStart(u,c,modeKey())) ctx.fillStyle='rgba(96,165,250,.92)';
-    ctx.fillRect(x+c*cw+1,y+r*ch+1,cw-2,ch-2);
-  }
-  line(ctx,x+state.hour*cw,y,x+state.hour*cw,y+h,C.cyan,2);
-}
-function drawEngine(){
-  const setup=setupCanvas(el.engineCanvas);if(!setup)return;
-  const {ctx,w,h}=setup;clear(ctx,w,h);
-  ctx.save();
-  ctx.fillStyle='rgba(255,255,255,.025)';
-  for(let x=-80;x<w+80;x+=48) line(ctx,x,0,x+140,h,'rgba(148,163,184,.035)',1);
-  for(let y=0;y<h;y+=38) line(ctx,0,y,w,y,'rgba(148,163,184,.025)',1);
-  const s=modeKey();
-  if(s==='da') drawDA(ctx,w,h);
-  else if(s==='iruc') drawIRUC(ctx,w,h);
-  else if(s==='se') drawSE(ctx,w,h);
-  else drawRT(ctx,w,h);
-  ctx.restore();
-}
-function drawDA(ctx,w,h){
-  const t=state.phase;
-  const left=Math.max(24,w*.045), top=82, mid=w*.50;
-  text(ctx,'PRODUCTION SCUC + EMS AC RELIABILITY VALIDATION',left,52,{color:C.cyan,size:13,weight:950,mono:true});
-  const inputs=[['Forecasts','load · VRE · outages'],['Offers','no-load · SU/SD · blocks'],['Network','buses · branches · contingencies'],['Reserves','reg · spin · ramp · reactive']];
-  inputs.forEach((it,i)=>{
-    const y=top+i*82;
-    fillRound(ctx,left,y,190,55,16,'rgba(15,23,42,.72)','rgba(125,211,252,.24)');
-    text(ctx,it[0],left+14,y+10,{size:13,weight:950});wrap(ctx,it[1],left+14,y+29,158,14,{size:11,color:'#9fb0c7',weight:700});
-    arrow(ctx,left+190,y+28,mid-116,y+28,'rgba(34,211,238,.56)',2);
-    const px=left+204+((t*58+i*37)%Math.max(24,mid-left-330));
-    ctx.fillStyle=i===0?C.sky:i===1?C.green:i===2?C.amber:C.violet;ctx.beginPath();ctx.arc(px,y+28,3.4,0,TAU);ctx.fill();
-  });
-  fillRound(ctx,mid-108,top+28,230,238,28,'rgba(2,6,23,.72)','rgba(34,211,238,.36)');
-  text(ctx,'SCUC',mid+7,top+54,{align:'center',size:34,weight:950,color:C.white});
-  text(ctx,'u_on  u_su  u_sd',mid+7,top+96,{align:'center',size:14,weight:950,color:C.blue,mono:true});
-  wrap(ctx,'min up/down · startup trajectories · ramp rates · P/Q balance · voltage · N-1 branch limits',mid-75,top+124,160,18,{size:12,color:'#cbd5e1'});
-  for(let i=0;i<4;i++){
-    const ang=t*.9+i*TAU/4;
-    ctx.strokeStyle=['rgba(52,211,153,.55)','rgba(56,189,248,.55)','rgba(245,158,11,.55)','rgba(139,92,246,.55)'][i];ctx.lineWidth=2;
-    ctx.beginPath();ctx.arc(mid+7,top+148,80+i*8,ang,ang+1.15);ctx.stroke();
-  }
-  const outX=Math.min(w-360,mid+200);
-  arrow(ctx,mid+130,top+148,outX,top+148,'rgba(52,211,153,.65)',3);
-  fillRound(ctx,outX+20,top+20,300,120,22,'rgba(15,23,42,.66)','rgba(52,211,153,.28)');
-  text(ctx,'24h unit commitment',outX+40,top+38,{size:16,weight:950});
-  drawMiniHeat(ctx,outX+40,top+68,250,55);
-  fillRound(ctx,outX+20,top+168,300,112,22,'rgba(15,23,42,.66)','rgba(139,92,246,.28)');
-  text(ctx,'Co-optimized reserves + voltage support',outX+40,top+185,{size:15,weight:950});
-  const layers=[['reg',.38,C.cyan],['spin',.56,C.green],['ramp',.74,C.amber],['voltage (EMS)',.46,'rgba(139,92,246,.5)']];
-  layers.forEach((l,i)=>{const y=top+215+i*15;text(ctx,l[0],outX+40,y-2,{size:10,color:'#aab8cb',mono:true});fillRound(ctx,outX+94,y,175,7,4,'rgba(51,65,85,.75)');fillRound(ctx,outX+94,y,175*l[1],7,4,l[2]);});
-  drawOfferBlocks(ctx,left,Math.max(365,h-128),Math.min(520,w*.36),82);
-  if(w>900){
-    fillRound(ctx,w-315,h-132,280,92,20,'rgba(127,29,29,.12)','rgba(251,113,133,.26)');
-    text(ctx,'Security note',w-292,h-111,{size:13,weight:950,color:C.red});
-    wrap(ctx,'A cheap schedule still has to pass EMS voltage and contingency review. Reactive and voltage support are reliability capability, checked outside the energy clear, not a co-optimized market reserve.',w-292,h-88,230,17,{size:12,color:'#f3c9cf'});
-  }
-}
-function drawOfferBlocks(ctx,x,y,w,h){
-  fillRound(ctx,x,y,w,h,22,'rgba(2,6,23,.48)','rgba(148,163,184,.16)');
-  text(ctx,'Piecewise energy offers',x+16,y+13,{size:14,weight:950});
-  const blocks=[.20,.18,.24,.16,.14,.08];const colors=[C.green,C.green,C.sky,C.blue,C.amber,C.red];let xx=x+17, maxw=w-34;
-  blocks.forEach((b,i)=>{fillRound(ctx,xx,y+45,maxw*b,h-58,8,colors[i]);text(ctx,'$'+[0,18,29,44,82,112][i],xx+4,y+49,{size:10,weight:950,color:i>3?'#111827':'#06281c'});xx+=maxw*b+2;});
-}
-function drawIRUC(ctx,w,h){
-  const m=44, chartY=112, chartH=190, chartW=w-m*2;
-  text(ctx,'ROLLING FORECAST REPAIR: FREEZE PAST, RECOMMIT FUTURE',m,52,{color:C.cyan,size:13,weight:950,mono:true});
-  fillRound(ctx,m,chartY,chartW,chartH,24,'rgba(2,6,23,.48)','rgba(148,163,184,.16)');
-  for(let i=0;i<=6;i++){const y=chartY+chartH-i*chartH/6;line(ctx,m+20,y,m+chartW-20,y,'rgba(148,163,184,.08)',1);}
-  const xFor=h=>m+30+h*(chartW-60)/23;
-  const yFor=val=>chartY+chartH-24-(val-24)*((chartH-52)/35);
-  ctx.beginPath();for(let h2=0;h2<24;h2++){const p=profile(h2);const x=xFor(h2),y=yFor(p.daNet);if(h2===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);}ctx.strokeStyle='rgba(96,165,250,.72)';ctx.lineWidth=3;ctx.stroke();
-  ctx.beginPath();for(let h2=0;h2<24;h2++){const p=profile(h2);const x=xFor(h2),y=yFor(p.rtNet);if(h2===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);}ctx.strokeStyle=C.red;ctx.lineWidth=3;ctx.setLineDash([7,6]);ctx.stroke();ctx.setLineDash([]);
-  const freeze=xFor(state.hour);fillRound(ctx,m+24,chartY+18,Math.max(0,freeze-m-24),chartH-38,18,'rgba(148,163,184,.09)','rgba(250,204,21,.18)');
-  line(ctx,freeze,chartY+12,freeze,chartY+chartH-16,C.amber,3,[6,7]);text(ctx,'freeze boundary',freeze+8,chartY+22,{size:11,weight:950,color:C.amber,mono:true});
-  text(ctx,'DA net load',m+42,chartY+28,{size:11,weight:950,color:C.blue});text(ctx,'Updated actual/forecast',m+128,chartY+28,{size:11,weight:950,color:C.red});
-  const alertX=xFor(18), alertY=yFor(profile(18).rtNet);ctx.fillStyle=C.red;ctx.beginPath();ctx.arc(alertX,alertY,7+Math.sin(state.phase*4)*2,0,TAU);ctx.fill();
-  text(ctx,'VRE shortfall',alertX+12,alertY-22,{size:13,weight:950,color:C.red});wrap(ctx,'Future intervals are re-solved with additional fast-start and storage capability.',alertX+12,alertY-4,210,16,{size:11,color:'#fecdd3'});
-  const baseY=chartY+chartH+40;
-  text(ctx,'Recommitment candidates',m,baseY-26,{size:14,weight:950});
-  [['CT-Fast-2',.82,C.amber],['Battery discharge',.64,C.pink],['DR load reduction',.43,C.red],['CCGT ramp hold',.74,C.sky]].forEach((r,i)=>{
-    const y=baseY+i*38;fillRound(ctx,m,y,chartW*.56,24,12,'rgba(15,23,42,.68)','rgba(148,163,184,.16)');text(ctx,r[0],m+14,y+6,{size:12,weight:900});fillRound(ctx,m+180,y+7,(chartW*.56-205)*r[1],10,6,r[2]);
-  });
-  fillRound(ctx,w-315,baseY-5,270,134,22,'rgba(2,6,23,.50)','rgba(245,158,11,.25)');
-  text(ctx,'Frozen vs. open intervals',w-292,baseY+14,{size:14,weight:950,color:C.amber});
-  wrap(ctx,'Past awards are accounting facts. Future intervals can be recommitted, but inherited min-up/min-down and startup power curves constrain repairs.',w-292,baseY+40,224,17,{size:12,color:'#fde68a'});
-}
-function drawSE(ctx,w,h){
-  const t=state.phase;
-  text(ctx,'STATE ESTIMATION: SCADA TO BAD-DATA FILTER TO SOLVED AC BASELINE',42,52,{color:C.cyan,size:13,weight:950,mono:true});
-  const left=54, mid=w*.47, right=w-310;
-  const meas=[['MW flow',C.sky],['MVar flow',C.violet],['kV bus',C.green],['Breaker',C.amber],['Tap/shunt',C.pink]];
-  meas.forEach((m,i)=>{
-    const y=112+i*62;
-    fillRound(ctx,left,y,166,42,14,'rgba(15,23,42,.68)','rgba(148,163,184,.16)');
-    text(ctx,m[0],left+14,y+12,{size:13,weight:950,color:m[1]});
-    const noise=Math.sin(t*3+i)*9;
-    ctx.fillStyle=m[1];ctx.beginPath();ctx.arc(left+130+noise,y+21,3.8,0,TAU);ctx.fill();
-    arrow(ctx,left+170,y+21,mid-58,230+(i-2)*18,'rgba(148,163,184,.36)',1.5);
-  });
-  fillRound(ctx,mid-58,172,140,156,28,'rgba(2,6,23,.70)','rgba(34,211,238,.34)');
-  text(ctx,'WLS',mid+12,197,{align:'center',size:30,weight:950,color:C.white});
-  text(ctx,'residual',mid+12,242,{align:'center',size:12,weight:950,color:C.cyan,mono:true});
-  text(ctx,'screen',mid+12,258,{align:'center',size:12,weight:950,color:C.cyan,mono:true});
-  for(let i=0;i<5;i++){ctx.strokeStyle=i===3?'rgba(251,113,133,.9)':'rgba(52,211,153,.65)';ctx.lineWidth=2;ctx.beginPath();ctx.arc(mid+12,250,50+i*4,t+i,t+i+.85);ctx.stroke();}
-  arrow(ctx,mid+88,250,right-22,250,'rgba(52,211,153,.60)',3);
-  fillRound(ctx,right,112,250,286,26,'rgba(15,23,42,.62)','rgba(52,211,153,.26)');
-  text(ctx,'Solved AC state',right+22,134,{size:18,weight:950,color:C.green});
-  const coords=[['W',.22,.55],['N',.42,.25],['S',.42,.78],['E',.66,.38],['M',.78,.70]];
-  coords.forEach((a,i)=>{for(let j=i+1;j<coords.length;j++){if(Math.abs(i-j)<=2){line(ctx,right+coords[i][1]*210,rightTop(coords[i][2],112,286),right+coords[j][1]*210,rightTop(coords[j][2],112,286),'rgba(56,189,248,.22)',2);}}});
-  coords.forEach((b,i)=>{const x=right+b[1]*210,y=rightTop(b[2],112,286);ctx.fillStyle='rgba(34,211,238,.18)';ctx.beginPath();ctx.arc(x,y,18,0,TAU);ctx.fill();ctx.strokeStyle='rgba(34,211,238,.62)';ctx.stroke();text(ctx,b[0],x,y-5,{align:'center',size:12,weight:950});});
-  text(ctx,'V, theta, P, Q consistent',right+22,354,{size:12,weight:950,color:'#cbd5e1',mono:true});
-  fillRound(ctx,48,h-105,Math.min(610,w-96),58,18,'rgba(127,29,29,.12)','rgba(251,113,133,.25)');
-  text(ctx,'Bad data action',70,h-88,{size:13,weight:950,color:C.red});
-  wrap(ctx,'Reject East-Metro RTU flow at 4.1 sigma residual. Preserve PMU angle and adjacent MW/MVar measurements.',180,h-90,410,17,{size:12,color:'#fecdd3'});
-}
-function rightTop(v,y,h){return y+v*h;}
-function drawRT(ctx,w,h){
-  text(ctx,'REAL-TIME SCED: 5-MINUTE DISPATCH WITH LOCKED COMMITMENT',42,52,{color:C.cyan,size:13,weight:950,mono:true});
-  const d=computeDispatch();
-  const left=46, top=103, stackW=Math.min(w*.54,650), stackH=230;
-  fillRound(ctx,left,top,stackW,stackH,24,'rgba(2,6,23,.48)','rgba(148,163,184,.16)');
-  text(ctx,'Economic dispatch stack',left+22,top+18,{size:16,weight:950});
-  const maxCap=Math.max(1,d.stack.reduce((a,b)=>a+b.cap,0));
-  let x=left+28; const baseY=top+stackH-38, heightScale=1.65;
-  d.stack.forEach(b=>{
-    const bw=(stackW-56)*b.cap/maxCap;
-    const acceptedW=bw*(b.accepted/b.cap);
-    const bh=Math.min(stackH-90,b.cost*heightScale);
-    ctx.fillStyle='rgba(51,65,85,.62)';ctx.fillRect(x,baseY-bh,bw-2,bh);
-    ctx.fillStyle=b.marginal?C.red:(b.accepted>0?C.green:'rgba(100,116,139,.55)');ctx.fillRect(x,baseY-bh,Math.max(0,acceptedW-2),bh);
-    if(b.marginal){line(ctx,x,baseY-bh-12,x+acceptedW,baseY-bh-12,C.red,2);text(ctx,'marginal '+b.unit.name,x+3,baseY-bh-31,{size:11,weight:950,color:C.red});}
-    if(bw>42) text(ctx,b.unit.id.toUpperCase(),x+5,baseY+7,{size:9,weight:950,color:'#94a3b8',mono:true});
-    x+=bw;
-  });
-  const dx=left+28+(stackW-56)*Math.min(d.demand,maxCap)/maxCap;
-  line(ctx,dx,top+44,dx,baseY+8,C.red,3,[8,5]);
-  text(ctx,'Demand '+d.demand.toFixed(1)+' GW',dx+8,top+52,{size:12,weight:950,color:C.red});
-  line(ctx,left+28,baseY,left+stackW-28,baseY,'rgba(148,163,184,.30)',1);
-  line(ctx,left+28,top+42,left+28,baseY,'rgba(148,163,184,.30)',1);
-  const right=Math.max(left+stackW+34,w-355);
-  fillRound(ctx,right,top,300,230,24,'rgba(2,6,23,.48)','rgba(251,113,133,.26)');
-  text(ctx,'Active N-1 constraint',right+22,top+20,{size:17,weight:950,color:C.red});
-  wrap(ctx,'East-Metro contingency branch is binding. SCED redispatches around the constraint, creating congestion components in Metro and East LMPs.',right+22,top+52,246,18,{size:12,color:'#fecdd3'});
-  const gaugeX=right+42,gaugeY=top+150,gaugeW=214;
-  fillRound(ctx,gaugeX,gaugeY,gaugeW,18,10,'rgba(51,65,85,.75)');fillRound(ctx,gaugeX,gaugeY,gaugeW*Math.min(1,d.congestion.severity),18,10,d.congestion.active?C.red:C.amber);
-  text(ctx,(d.congestion.severity>1.001?'OVERLOAD '+Math.round(d.congestion.severity*100)+'%':d.congestion.active?'binding at 100% rating':Math.round(d.congestion.severity*100)+'% of rating'),gaugeX,gaugeY+28,{size:12,weight:950,color:d.congestion.active?C.red:C.amber});
-  fillRound(ctx,42,h-122,Math.min(740,w-84),76,22,'rgba(15,23,42,.55)','rgba(125,211,252,.22)');
-  text(ctx,'LMP decomposition',64,h-101,{size:14,weight:950,color:C.cyan});
-  const parts=[['Energy',d.energy,C.green],['Loss',d.congestion.lossAdder,C.sky],['Congestion',d.nodalCong,C.red],['Metro LMP',d.lmp+d.nodalCong,C.white]];
-  parts.forEach((p,i)=>{const x=210+i*135;if(x<w-80){text(ctx,p[0],x,h-103,{size:10,weight:950,color:'#94a3b8',mono:true});text(ctx,'$'+Math.round(p[1]),x,h-83,{size:22,weight:950,color:p[2]});}});
-}
-
-function renderStack(){
-  const setup=setupCanvas(el.stackCanvas);if(!setup)return;
-  const {ctx,w,h}=setup;clear(ctx,w,h);
-  const d=computeDispatch();const pad={l:44,r:20,t:26,b:42};
-  const plotW=w-pad.l-pad.r, plotH=h-pad.t-pad.b;
-  fillRound(ctx,10,10,w-20,h-20,18,'rgba(2,6,23,.18)','rgba(148,163,184,.10)');
-  for(let i=0;i<=5;i++){const y=pad.t+plotH-i*plotH/5;line(ctx,pad.l,y,w-pad.r,y,'rgba(148,163,184,.08)',1);text(ctx,'$'+(i*25),12,y-6,{size:10,color:'#64748b',weight:800,mono:true});}
-  const maxCap=Math.max(58,d.stack.reduce((a,b)=>a+b.cap,0));
-  const maxPrice=130;
-  let x=pad.l;d.stack.forEach(b=>{
-    const bw=plotW*b.cap/maxCap;const y=pad.t+plotH-(b.cost/maxPrice)*plotH;
-    ctx.fillStyle='rgba(51,65,85,.64)';ctx.fillRect(x,y,bw-1,plotH-(y-pad.t));
-    if(b.accepted>0){ctx.fillStyle=b.marginal?C.red:C.green;ctx.fillRect(x,y,Math.max(0,bw*b.accepted/b.cap-1),plotH-(y-pad.t));}
-    ctx.strokeStyle=b.marginal?C.red:'rgba(148,163,184,.16)';ctx.strokeRect(x,y,bw-1,plotH-(y-pad.t));
-    if(bw>34) text(ctx,b.unit.id.toUpperCase(),x+4,h-32,{size:9,color:'#94a3b8',weight:950,mono:true});
-    b._x=x;b._w=bw;b._y=y;
-    x+=bw;
-  });
-  const dx=pad.l+plotW*Math.min(d.demand,maxCap)/maxCap;
-  line(ctx,dx,pad.t,dx,pad.t+plotH+4,C.red,3,[8,5]);
-  ctx.fillStyle=C.red;ctx.beginPath();ctx.arc(dx,pad.t+plotH+4,5,0,TAU);ctx.fill();
-  text(ctx,'Demand '+d.demand.toFixed(1)+' GW',Math.min(dx+8,w-150),pad.t+8,{size:12,color:C.red,weight:950});
-  text(ctx,'Price $/MWh',10,10,{size:10,color:'#64748b',weight:950,mono:true});
-  text(ctx,'Capacity GW',w-105,h-19,{size:10,color:'#64748b',weight:950,mono:true});
-  if(d.shortage>0){text(ctx,'Shortage '+d.shortage.toFixed(1)+' GW',w-170,30,{size:12,color:C.red,weight:950});}
-}
-function stackPoint(evt){const r=el.stackCanvas.getBoundingClientRect();return {x:evt.clientX-r.left,y:evt.clientY-r.top};}
-function demandFromX(x){const d=computeDispatch();const maxCap=Math.max(58,d.stack.reduce((a,b)=>a+b.cap,0));const padL=44,padR=20;const w=el.stackCanvas.getBoundingClientRect().width;return Math.max(20,Math.min(maxCap,(x-padL)/(w-padL-padR)*maxCap));}
-function stackMove(evt){
-  const p=stackPoint(evt);
-  if(state.dragDemand){state.demandOverride=demandFromX(p.x);renderInteractive();return;}
-  const d=computeDispatch();
-  const block=d.stack.find(b=>b._x!=null && p.x>=b._x&&p.x<=b._x+b._w&&p.y>=b._y);
-  const maxCap=Math.max(58,d.stack.reduce((a,b)=>a+b.cap,0));
-  const rect=el.stackCanvas.getBoundingClientRect();const padL=44,padR=20;
-  const dx=padL+(rect.width-padL-padR)*Math.min(d.demand,maxCap)/maxCap;
-  if(block){showTip(el.stackTip,evt,'<b>'+block.unit.name+'</b><br>'+block.cap.toFixed(1)+' GW @ $'+Math.round(block.cost)+'/MWh<br>Accepted '+block.accepted.toFixed(1)+' GW'+(block.marginal?'<br><span style="color:#fb7185">Marginal unit</span>':''));}
-  else if(Math.abs(p.x-dx)<12){showTip(el.stackTip,evt,'Drag to stress demand<br><b>'+d.demand.toFixed(1)+' GW</b> target');}
-  else hideTip(el.stackTip);
-}
-function showTip(tip,evt,html){tip.style.display='block';tip.innerHTML=html;const r=tip.parentElement.getBoundingClientRect();tip.style.left=Math.min(evt.clientX-r.left+12,r.width-260)+'px';tip.style.top=Math.max(10,evt.clientY-r.top+12)+'px';}
-function hideTip(tip){tip.style.display='none';}
-function renderNetwork(){
-  const setup=setupCanvas(el.networkCanvas);if(!setup)return;
-  const {ctx,w,h}=setup;clear(ctx,w,h);
-  const d=computeDispatch();
-  fillRound(ctx,10,10,w-20,h-20,18,'rgba(2,6,23,.18)','rgba(148,163,184,.10)');
-  const pos={};buses.forEach(b=>pos[b.id]={x:b.x*w,y:b.y*h});
-  lines.forEach((ln,idx)=>{
-    const a=pos[ln.a],b=pos[ln.b];
-    const flow=d.flows&&d.flows[idx]!=null?d.flows[idx]:0;
-    const ratio=Math.max(.04,Math.min(1.15,Math.abs(flow)/ln.limit));
-    const color=ratio>.985?C.red:ratio>.84?C.amber:C.sky;
-    line(ctx,a.x,a.y,b.x,b.y,color,2+ratio*4);
-    const mx=(a.x+b.x)/2,my=(a.y+b.y)/2;
-    const dir=flow>=0?1:-1;
-    ctx.fillStyle=color;for(let k=0;k<2;k++){const q=((state.phase*.18*dir+k*.5+idx*.07)%1+1)%1;ctx.beginPath();ctx.arc(a.x+(b.x-a.x)*q,a.y+(b.y-a.y)*q,2.7,0,TAU);ctx.fill();}
-    ln._mx=mx;ln._my=my;ln._ratio=ratio;ln._color=color;ln._flow=flow;
-    if(ln.critical||ratio>.84){const lab=ratio>1.001?Math.round(ratio*100)+'% OVER':ratio>=.99?'100%':Math.round(ratio*100)+'%';text(ctx,lab,mx+6,my-18,{size:11,weight:950,color:color,mono:true});}
-  });
-  buses.forEach(b=>{
-    const p=pos[b.id];const lmp=nodalLmp(b.id,d);
-    const fill=b.id==='M'&&d.congestion.active?'rgba(251,113,133,.24)':'rgba(34,211,238,.18)';
-    ctx.fillStyle=fill;ctx.beginPath();ctx.arc(p.x,p.y,20,0,TAU);ctx.fill();ctx.strokeStyle=b.id==='M'&&d.congestion.active?C.red:'rgba(125,211,252,.70)';ctx.lineWidth=2;ctx.stroke();
-    text(ctx,b.id,p.x,p.y-7,{align:'center',size:14,weight:950});
-    text(ctx,'$'+lmp,p.x,p.y+21,{align:'center',size:10,weight:950,color:'#cbd5e1',mono:true});
-    b._x=p.x;b._y=p.y;b._lmp=lmp;
-  });
-  text(ctx,'N-1 monitored AC network',22,20,{size:12,weight:950,color:C.cyan,mono:true});
-  if(d.congestion.active) text(ctx,'CONGESTION ACTIVE',w-150,20,{size:12,weight:950,color:C.red,mono:true});
-}
-function networkMove(evt){
-  const r=el.networkCanvas.getBoundingClientRect();const x=evt.clientX-r.left,y=evt.clientY-r.top;
-  const bus=buses.find(b=>b._x!=null && Math.hypot(x-b._x,y-b._y)<24);
-  if(bus){const d=computeDispatch();const pr=d.price&&d.price[bus.id]!=null?d.price[bus.id]:d.lambda;const cong=pr-d.lambda;showTip(el.networkTip,evt,'<b>'+bus.name+' bus</b><br>LMP $'+bus._lmp+'/MWh<br>energy $'+Math.round(d.lambda)+(Math.abs(cong)>=.5?' · congestion '+(cong>=0?'+':'')+Math.round(cong):'')+'<br>Voltage '+bus.v.toFixed(3)+' pu (nominal)');return;}
-  const ln=lines.find(l=>l._mx!=null && Math.hypot(x-l._mx,y-l._my)<18);
-  if(ln){const r=ln._ratio;const f=ln._flow||0;const arrow=f>=0?(ln.a+'\u2192'+ln.b):(ln.b+'\u2192'+ln.a);const disp=r>1.001?Math.round(r*100)+'% OVERLOAD':r>=.99?'100% binding':Math.round(r*100)+'%';const note=r>1.001?'<span style="color:#fb7185">Overload alarm</span>':r>=.99?'<span style="color:#fb7185">Binding, sets congestion price</span>':r>.84?'Near thermal limit':'Within limit';showTip(el.networkTip,evt,'<b>'+ln.name+'</b><br>'+Math.abs(f).toFixed(1)+' / '+ln.limit.toFixed(0)+' GW ('+arrow+')<br>'+disp+' of rating · '+note);return;}
-  hideTip(el.networkTip);
-}
-function tick(ts){
-  if(!state.last) state.last=ts;
-  const dt=(ts-state.last)/1000;state.last=ts;state.phase+=dt;
-  if(state.playing && !state.dragDemand && dt<1){
-    state.acc+=dt;
-    if(state.acc>1.8){state.acc=0;advanceHour(1);}
-  }
-  drawEngine();renderStack();renderNetwork();
-  state.raf=requestAnimationFrame(tick);
-}
-function startLoop(){if(state.raf) return;state.last=0;state.raf=requestAnimationFrame(tick);}
-function stopLoop(){if(!state.raf) return;cancelAnimationFrame(state.raf);state.raf=0;}
-function bindEvents(){
-  el.playBtn.addEventListener('click',()=>{
-    state.playing=!state.playing;
-    if(state.playing) startLoop(); else if(reduceMotion) stopLoop();
-    renderStatic();renderCanvases();
-  });
-  el.prevStageBtn.addEventListener('click',()=>setStage(state.stage-1));
-  el.nextStageBtn.addEventListener('click',()=>setStage(state.stage+1));
-  el.resetDemandBtn.addEventListener('click',()=>{state.demandOverride=null;renderInteractive();});
-  el.hourSlider.addEventListener('input',e=>{state.hour=+e.target.value;state.demandOverride=null;renderStatic();renderCanvases();});
-  window.addEventListener('resize',()=>{renderStatic();renderCanvases();});
-
-  el.stackCanvas.addEventListener('pointerdown',e=>{
-    try{el.stackCanvas.setPointerCapture(e.pointerId);}catch(_){}
-    state.dragDemand=true;state.demandOverride=demandFromX(stackPoint(e).x);renderInteractive();
-  });
-  el.stackCanvas.addEventListener('pointermove',stackMove);
-  el.stackCanvas.addEventListener('pointerup',e=>{state.dragDemand=false;try{el.stackCanvas.releasePointerCapture(e.pointerId);}catch(_){}});
-  el.stackCanvas.addEventListener('pointercancel',()=>{state.dragDemand=false;});
-  el.stackCanvas.addEventListener('pointerleave',()=>{if(!state.dragDemand) hideTip(el.stackTip);});
-  el.stackCanvas.addEventListener('dblclick',()=>{state.demandOverride=null;renderInteractive();});
-  el.stackCanvas.addEventListener('keydown',e=>{
-    if(e.key==='ArrowUp'||e.key==='ArrowDown'){
-      e.preventDefault();
-      const d=computeDispatch();
-      const step=(e.shiftKey?2:.5)*(e.key==='ArrowUp'?1:-1);
-      const cur=state.demandOverride===null?d.demand:state.demandOverride;
-      state.demandOverride=Math.max(20,cur+step);
-      renderInteractive();
-    }
-  });
-
-  el.networkCanvas.addEventListener('pointermove',networkMove);
-  el.networkCanvas.addEventListener('pointerleave',()=>hideTip(el.networkTip));
-
-  window.addEventListener('keydown',e=>{
-    const tag=(e.target&&e.target.tagName)||'';
-    if(tag==='INPUT'||tag==='TEXTAREA') return;
-    if(e.key==='ArrowRight'){advanceHour(1);}
-    else if(e.key==='ArrowLeft'){advanceHour(-1);}
-    else if(e.key===' '){e.preventDefault();el.playBtn.click();}
-  });
-}
-function init(){
-  bindEls();bindEvents();
-  renderStatic();renderCanvases();
-  if(!reduceMotion) startLoop();
-}
-if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',init); else init();
-})();
-</script>
-</body>
+    <script id="grid-model">
+      const GridOpsModel = (() => {
+        "use strict";
+        const units = [
+          { id: "nuclear", name: "North nuclear fleet", bus: "N", cap: 10.5, min: 7.8, cost: 11, ramp: 0.5, minUp: 24 },
+          { id: "coal", name: "West thermal fleet", bus: "W", cap: 9.2, min: 3.5, cost: 29, ramp: 1.1, minUp: 10 },
+          { id: "metro", name: "Metro combined cycle", bus: "M", cap: 8.4, min: 2.6, cost: 41, ramp: 2.8, minUp: 5 },
+          { id: "east", name: "East combined cycle", bus: "E", cap: 9.6, min: 2.4, cost: 46, ramp: 2.4, minUp: 4 },
+          { id: "hydro", name: "North flexible hydro", bus: "N", cap: 4.8, min: 0, cost: 18, ramp: 4.8, minUp: 0 },
+          { id: "wind", name: "West wind portfolio", bus: "W", cap: 10.4, min: 0, cost: 0, ramp: 9, minUp: 0, renewable: true },
+          { id: "solar", name: "South solar portfolio", bus: "S", cap: 7.4, min: 0, cost: 0, ramp: 7.4, minUp: 0, renewable: true },
+          { id: "battery", name: "Metro storage discharge", bus: "M", cap: 2.8, min: 0, cost: 57, ramp: 2.8, minUp: 0 },
+          { id: "ctEast", name: "East fast-start fleet", bus: "E", cap: 5, min: 0.4, cost: 82, ramp: 5, minUp: 1, fast: true },
+          { id: "ctMetro", name: "Metro fast-start fleet", bus: "M", cap: 4.5, min: 0.4, cost: 97, ramp: 4.5, minUp: 1, fast: true },
+          { id: "dr", name: "Metro demand response", bus: "M", cap: 3, min: 0, cost: 140, ramp: 3, minUp: 1, fast: true },
+        ];
+        const buses = [
+          { id: "W", name: "West", x: 0.16, y: 0.4 },
+          { id: "N", name: "North", x: 0.4, y: 0.2 },
+          { id: "S", name: "South", x: 0.39, y: 0.72 },
+          { id: "E", name: "East", x: 0.69, y: 0.29 },
+          { id: "M", name: "Metro", x: 0.81, y: 0.7 },
+          { id: "R", name: "Riverside", x: 0.12, y: 0.79 },
+        ];
+        const branches = [
+          { a: "R", b: "S", name: "Riverside–South", x: 0.09, limit: 9 },
+          { a: "W", b: "N", name: "West–North", x: 0.055, limit: 20 },
+          { a: "W", b: "S", name: "West–South", x: 0.075, limit: 16 },
+          { a: "N", b: "E", name: "North–East", x: 0.05, limit: 18 },
+          { a: "S", b: "M", name: "South–Metro", x: 0.062, limit: 13 },
+          { a: "E", b: "M", name: "East–Metro", x: 0.042, limit: 8 },
+          { a: "S", b: "E", name: "South–East", x: 0.08, limit: 15 },
+        ];
+        const shares = { W: 0.14, N: 0.13, S: 0.135, E: 0.15, M: 0.4, R: 0.06 };
+        const shareTotal = Object.values(shares).reduce((a, b) => a + b, 0);
+        Object.keys(shares).forEach((b) => {
+          shares[b] /= shareTotal;
+        });
+        const index = Object.fromEntries(buses.map((b, i) => [b.id, i]));
+        const outageIndex = 6;
+        function linearSolve(matrix, rhs) {
+          const n = rhs.length,
+            a = matrix.map((r, i) => r.slice().concat(rhs[i]));
+          for (let k = 0; k < n; k++) {
+            let pivot = k;
+            for (let i = k + 1; i < n; i++) if (Math.abs(a[i][k]) > Math.abs(a[pivot][k])) pivot = i;
+            if (Math.abs(a[pivot][k]) < 1e-11) return null;
+            [a[k], a[pivot]] = [a[pivot], a[k]];
+            const divisor = a[k][k];
+            for (let j = k; j <= n; j++) a[k][j] /= divisor;
+            for (let i = 0; i < n; i++)
+              if (i !== k) {
+                const factor = a[i][k];
+                for (let j = k; j <= n; j++) a[i][j] -= factor * a[k][j];
+              }
+          }
+          return a.map((r) => r[n]);
+        }
+        function buildPTDF(outage = -1) {
+          const n = buses.length,
+            b = Array.from({ length: n }, () => Array(n).fill(0));
+          branches.forEach((line, l) => {
+            if (l === outage) return;
+            const i = index[line.a],
+              j = index[line.b],
+              weight = 1 / line.x;
+            b[i][i] += weight;
+            b[j][j] += weight;
+            b[i][j] -= weight;
+            b[j][i] -= weight;
+          });
+          const reduced = b.slice(1).map((r) => r.slice(1));
+          const inverse = Array.from({ length: n }, () => Array(n).fill(0));
+          for (let j = 1; j < n; j++) {
+            const rhs = Array(n - 1).fill(0);
+            rhs[j - 1] = 1;
+            const column = linearSolve(reduced, rhs);
+            if (!column) throw new Error("The selected outage islands the model network.");
+            column.forEach((v, i) => {
+              inverse[i + 1][j] = v;
+            });
+          }
+          return branches.map((line, l) =>
+            buses.map((_, j) => (l === outage ? 0 : (inverse[index[line.a]][j] - inverse[index[line.b]][j]) / line.x))
+          );
+        }
+        const networkCases = [
+          { name: "Base network", outage: -1, ptdf: buildPTDF() },
+          { name: "South–East outage", outage: outageIndex, ptdf: buildPTDF(outageIndex) },
+        ];
+        // Two-phase simplex for min c*x subject to A*x <= b and x >= 0.
+        // Prices come from the final basis duals, including active bounds.
+        function simplexLE(c, a, b) {
+          const m = a.length,
+            n = c.length;
+          const signs = b.map((v) => (v < 0 ? -1 : 1));
+          const artificialCount = signs.filter((s) => s < 0).length;
+          const total = n + m + artificialCount,
+            artificial = [],
+            basis = [],
+            table = [],
+            original = [];
+          let nextArt = n + m;
+          for (let i = 0; i < m; i++) {
+            const row = Array(total).fill(0);
+            for (let j = 0; j < n; j++) row[j] = a[i][j] * signs[i];
+            row[n + i] = signs[i];
+            if (signs[i] < 0) {
+              row[nextArt] = 1;
+              basis.push(nextArt);
+              artificial.push(nextArt++);
+            } else basis.push(n + i);
+            original.push(row.slice());
+            table.push(row.concat(Math.abs(b[i])));
+          }
+          function pivot(r, column) {
+            const divisor = table[r][column];
+            for (let j = 0; j <= total; j++) table[r][j] /= divisor;
+            for (let i = 0; i < m; i++)
+              if (i !== r) {
+                const factor = table[i][column];
+                if (Math.abs(factor) < 1e-14) continue;
+                for (let j = 0; j <= total; j++) table[i][j] -= factor * table[r][j];
+              }
+            basis[r] = column;
+          }
+          function optimize(cost, allowArtificial) {
+            for (let iteration = 0; iteration < 10000; iteration++) {
+              let enter = -1;
+              for (let j = 0; j < total; j++) {
+                if (!allowArtificial && artificial.includes(j)) continue;
+                let reduced = cost[j];
+                for (let i = 0; i < m; i++) reduced -= cost[basis[i]] * table[i][j];
+                if (reduced < -1e-8) {
+                  enter = j;
+                  break;
+                }
+              }
+              if (enter < 0) return "optimal";
+              let leave = -1,
+                minimum = Infinity;
+              for (let i = 0; i < m; i++)
+                if (table[i][enter] > 1e-9) {
+                  const ratio = table[i][total] / table[i][enter];
+                  if (ratio < minimum - 1e-9 || (Math.abs(ratio - minimum) < 1e-9 && (leave < 0 || basis[i] < basis[leave]))) {
+                    leave = i;
+                    minimum = ratio;
+                  }
+                }
+              if (leave < 0) return "unbounded";
+              pivot(leave, enter);
+            }
+            return "iteration-limit";
+          }
+          if (artificialCount) {
+            const cost = Array(total).fill(0);
+            artificial.forEach((j) => {
+              cost[j] = 1;
+            });
+            const phase = optimize(cost, true);
+            if (phase !== "optimal") return { status: phase };
+            const remaining = basis.reduce((s, j, i) => s + (artificial.includes(j) ? table[i][total] : 0), 0);
+            if (remaining > 1e-7) return { status: "infeasible" };
+            for (let i = 0; i < m; i++)
+              if (artificial.includes(basis[i])) {
+                const column = table[i].findIndex((v, j) => j < n + m && !basis.includes(j) && Math.abs(v) > 1e-9);
+                if (column >= 0) pivot(i, column);
+              }
+          }
+          const cost = Array(total).fill(0);
+          c.forEach((v, j) => {
+            cost[j] = v;
+          });
+          const phase = optimize(cost, false);
+          if (phase !== "optimal") return { status: phase };
+          const x = Array(n).fill(0);
+          basis.forEach((j, i) => {
+            if (j < n) x[j] = Math.max(0, table[i][total]);
+          });
+          if (a.some((row, i) => row.reduce((s, v, j) => s + v * x[j], 0) > b[i] + 1e-6)) return { status: "numerical-error" };
+          const transposedBasis = basis.map((j) => original.map((row) => row[j]));
+          const dual = linearSolve(
+            transposedBasis,
+            basis.map((j) => cost[j])
+          );
+          return { status: "optimal", x, dual: dual && dual.map((v, i) => v * signs[i]) };
+        }
+        function profile(hour) {
+          const h = (hour + 24) % 24,
+            tau = Math.PI * 2;
+          const load =
+            44 +
+            6.2 * Math.sin(((h - 7) / 24) * tau) +
+            5 * Math.sin(((h - 16) / 24) * tau) +
+            (h >= 17 && h <= 20 ? 3 : 0) +
+            (h >= 7 && h <= 9 ? 2 : 0);
+          const windForecast = 7.5 + 2.2 * Math.sin(((h + 3) / 24) * tau) + 0.9 * Math.sin(((h * 2) / 24) * tau);
+          const drop = h >= 16 && h <= 20 ? 4.8 * (1 - Math.abs(h - 18) / 4) : 0;
+          const windActual = Math.max(1.2, windForecast - drop + 0.35 * Math.sin(h * 1.7));
+          const solar = Math.max(0, 7.2 * Math.sin(((h - 6) / 12) * Math.PI));
+          return { load, windForecast, windActual, solar };
+        }
+        function scheduled(unit, hour, mode) {
+          const h = (hour + 24) % 24;
+          if (unit.id === "solar") return profile(h).solar > 0.3;
+          if (unit.id === "east") return h >= 6;
+          if (unit.id === "ctEast") return h >= 16 && h <= 21;
+          if (unit.id === "ctMetro") return h >= (mode === "da" ? 18 : 16) && h <= 20;
+          if (unit.id === "dr") return mode !== "da" && h >= 18 && h <= 19;
+          return true;
+        }
+        function availability(unit, hour, mode) {
+          const p = profile(hour);
+          if (unit.id === "wind") return Math.min(unit.cap, mode === "da" ? p.windForecast : p.windActual);
+          if (unit.id === "solar") return Math.min(unit.cap, p.solar);
+          if (unit.id === "battery") return hour >= 17 && hour <= 21 ? unit.cap : 1;
+          return unit.cap;
+        }
+        function resourcesFor(hour, mode, fastStart, basePoints) {
+          return units
+            .filter((u) => scheduled(u, hour, mode) || (mode === "rt" && fastStart && u.fast))
+            .map((u) => {
+              const cap = availability(u, hour, mode),
+                base = basePoints && (basePoints[u.id] || 0);
+              const entering = !scheduled(u, hour, mode) && mode === "rt" && fastStart && u.fast;
+              let lo = u.min,
+                hi = cap;
+              if (mode === "rt" && basePoints && !entering) {
+                lo = Math.max(lo, base - u.ramp);
+                hi = Math.min(hi, base + u.ramp);
+              }
+              return { ...u, lo, hi, entering, base: basePoints ? base : null };
+            });
+        }
+        function solveInterval(resources, loads, checkOutage, allowCurtailment) {
+          const demand = Object.values(loads).reduce((s, v) => s + v, 0);
+          const all = resources.map((r) => ({ ...r }));
+          if (allowCurtailment)
+            buses.forEach((bus) => {
+              all.push({
+                id: "shed-" + bus.id,
+                name: bus.name + " load curtailment",
+                bus: bus.id,
+                lo: 0,
+                hi: loads[bus.id],
+                cost: 600,
+                cap: loads[bus.id],
+                shed: true,
+              });
+            });
+          const fail = (reason) => ({
+            status: "infeasible",
+            reason,
+            resources: all.map((r) => ({ ...r, accepted: null })),
+            flows: null,
+            binding: [],
+            prices: null,
+            lambda: null,
+            cost: null,
+            objective: null,
+            curtailment: null,
+            headroom: null,
+            demand,
+          });
+          if (all.some((r) => r.hi < r.lo - 1e-7)) return fail("A ramp band cannot reach a scheduled minimum output.");
+          const lower = all.reduce((s, r) => s + r.lo, 0),
+            upper = all.reduce((s, r) => s + r.hi, 0);
+          if (lower > demand + 1e-7) return fail("Minimum output within the ramp bands exceeds demand.");
+          if (upper < demand - 1e-7) return fail("Available output within the ramp bands cannot meet demand.");
+          const n = all.length,
+            costs = all.map((r) => r.cost),
+            a = [],
+            b = [];
+          a.push(Array(n).fill(1));
+          b.push(demand - lower);
+          a.push(Array(n).fill(-1));
+          b.push(lower - demand);
+          const activeCases = checkOutage ? networkCases : networkCases.slice(0, 1);
+          const flowRows = [];
+          activeCases.forEach((network, c) =>
+            branches.forEach((line, l) => {
+              if (network.outage === l) return;
+              const row = network.ptdf[l],
+                coefficients = all.map((r) => row[index[r.bus]]);
+              const constant = all.reduce((s, r) => s + row[index[r.bus]] * r.lo, 0) - buses.reduce((s, bus, i) => s + row[i] * loads[bus.id], 0);
+              const up = a.length;
+              a.push(coefficients);
+              b.push(line.limit - constant);
+              a.push(coefficients.map((v) => -v));
+              b.push(line.limit + constant);
+              flowRows.push({ c, l, up, down: up + 1 });
+            })
+          );
+          all.forEach((r, j) => {
+            const row = Array(n).fill(0);
+            row[j] = 1;
+            a.push(row);
+            b.push(Math.max(0, r.hi - r.lo));
+          });
+          const solved = simplexLE(costs, a, b);
+          if (solved.status !== "optimal") return fail("No dispatch satisfies balance, ramp bands, and the selected network limits.");
+          all.forEach((r, j) => {
+            r.accepted = r.lo + solved.x[j];
+          });
+          const injection = buses.map((bus) => all.filter((r) => r.bus === bus.id).reduce((s, r) => s + r.accepted, 0) - loads[bus.id]);
+          const flows = activeCases.map((network) => network.ptdf.map((row) => row.reduce((s, v, i) => s + v * injection[i], 0)));
+          const binding = flowRows
+            .filter((row) => Math.abs(Math.abs(flows[row.c][row.l]) - branches[row.l].limit) < 1e-5)
+            .map((row) => ({ ...row, name: branches[row.l].name, caseName: activeCases[row.c].name }));
+          const lambda = solved.dual ? solved.dual[0] - solved.dual[1] : null;
+          const prices =
+            solved.dual &&
+            Object.fromEntries(
+              buses.map((bus, j) => {
+                let price = lambda;
+                flowRows.forEach((row) => {
+                  price += activeCases[row.c].ptdf[row.l][j] * (solved.dual[row.up] - solved.dual[row.down]);
+                });
+                return [bus.id, Math.abs(price) < 1e-7 ? 0 : price];
+              })
+            );
+          const objective = all.reduce((s, r) => s + r.cost * r.accepted, 0);
+          return {
+            status: "optimal",
+            reason: "",
+            resources: all,
+            demand,
+            injection,
+            flows,
+            binding,
+            lambda,
+            prices,
+            objective,
+            cost: objective * 1000,
+            curtailment: all.filter((r) => r.shed).reduce((s, r) => s + r.accepted, 0),
+            headroom: all.filter((r) => !r.shed && !r.renewable).reduce((s, r) => s + Math.max(0, r.hi - r.accepted), 0),
+          };
+        }
+        function solveDispatch(options = {}) {
+          const hour = options.hour ?? 14,
+            mode = options.mode || "da",
+            checkOutage = options.contingency ?? true;
+          const demand = options.demand ?? profile(hour).load;
+          const loads = options.loads || Object.fromEntries(buses.map((bus) => [bus.id, shares[bus.id] * demand]));
+          let basePoints = null;
+          if (mode === "rt") {
+            const previousHour = (hour + 23) % 24,
+              previousDemand = profile(previousHour).load;
+            const previousLoads = Object.fromEntries(buses.map((bus) => [bus.id, shares[bus.id] * previousDemand]));
+            const previous = solveInterval(resourcesFor(previousHour, "iruc", false, null), previousLoads, false, false);
+            if (previous.status !== "optimal") {
+              const result = solveInterval(resourcesFor(hour, mode, options.fastStart, null), loads, checkOutage, !!options.curtailment);
+              return {
+                ...result,
+                status: "infeasible",
+                reason: "The illustrative prior-hour base point is unavailable. Choose another delivery hour.",
+                prices: null,
+                lambda: null,
+                flows: null,
+                cost: null,
+                objective: null,
+                headroom: null,
+                curtailment: null,
+                resources: result.resources.map((r) => ({ ...r, accepted: null })),
+                binding: [],
+                basePoints: null,
+              };
+            }
+            basePoints = Object.fromEntries(previous.resources.map((r) => [r.id, r.accepted]));
+          }
+          return { ...solveInterval(resourcesFor(hour, mode, options.fastStart, basePoints), loads, checkOutage, !!options.curtailment), basePoints };
+        }
+        return { units, buses, branches, networkCases, outageIndex, shares, profile, scheduled, availability, buildPTDF, simplexLE, solveDispatch };
+      })();
+    </script>
+    <script>
+      (() => {
+        "use strict";
+        const M = GridOpsModel;
+        const $ = (id) => document.getElementById(id);
+        const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+        const state = {
+          stage: 0,
+          hour: 14,
+          demand: null,
+          contingency: true,
+          fastStart: false,
+          curtailment: false,
+          playing: false,
+          timer: null,
+          frame: null,
+          phase: 0,
+          last: 0,
+          view: 0,
+          heatFocus: 14,
+          result: null,
+          stackHit: [],
+          networkHit: [],
+        };
+        const stages = [
+          {
+            name: "Day-ahead plan",
+            code: "da",
+            time: "The day before",
+            accent: "--accent",
+            tag: "Commitment illustrated",
+            body: "Decide which resources should be available through the next day. Real markets consider startup costs, minimum run times, forecasts, reserves, and network limits. Here, the online schedule is prescribed and the dispatch lab uses the wind forecast.",
+            nodes: [
+              ["Forecasts and offers", "Load, renewable output, resource costs"],
+              ["Commitment plan", "Which fleets are online · illustrated"],
+              ["Dispatch and review", "Network limits and reliability checks"],
+            ],
+            note: "Calculated below: a single-hour DC dispatch with that illustrated commitment. No 24-hour SCUC solve.",
+          },
+          {
+            name: "Intraday update",
+            code: "iruc",
+            time: "As forecasts change",
+            accent: "--amber",
+            tag: "Recommitment illustrated",
+            body: "A forecast miss can leave the original plan short of flexible generation. Operators review future commitments while preserving decisions already carried out. The example adds fast-start resources in the evening and uses updated wind availability.",
+            nodes: [
+              ["Updated forecasts", "Compare expected and available wind"],
+              ["Review future hours", "An illustrated reliability update"],
+              ["Revised schedule", "Future starts and flexible resources"],
+            ],
+            note: "Try the Forecast miss case. The heatmap shows a scripted addition; the dispatch and price changes are calculated.",
+          },
+          {
+            name: "State estimation",
+            code: "se",
+            time: "Alongside operations",
+            accent: "--green",
+            tag: "Telemetry workflow illustrated",
+            body: "Measurements need timestamps, a valid network topology, and checks for bad data. A state estimator reconciles measurements into a consistent AC baseline. This is a process illustration; the dispatch lab continues to use a lossless DC network.",
+            nodes: [
+              ["Field measurements", "Power, voltage, breaker status"],
+              ["Topology and estimation", "Quality checks and residual tests"],
+              ["Operational baseline", "An AC state in a real EMS · illustrated"],
+            ],
+            note: "State estimation and real-time dispatch repeat together. They are not a one-time pass through this guide.",
+          },
+          {
+            name: "Real-time dispatch",
+            code: "rt",
+            time: "A dispatch interval",
+            accent: "--violet",
+            tag: "DC dispatch calculated",
+            body: "Move the committed fleet within its output and ramp bounds. The lab calculates dispatch around an illustrative prior-hour base point. Network congestion can make an extra MWh cost more at one bus than another.",
+            nodes: [
+              ["Prior base point", "Calculated from the previous hour’s example"],
+              ["Constrained dispatch", "Balance, ramp bands, and branch limits"],
+              ["Output and prices", "Calculated dispatch and LP dual prices"],
+            ],
+            note: "Offline fast-start blocks enter only when you release them. This is an experiment control, not a universal market rule.",
+          },
+        ];
+        const number = (value, digits = 1) => (value === null || value === undefined || !Number.isFinite(value) ? "—" : value.toFixed(digits));
+        const price = (value) => (value === null || value === undefined || !Number.isFinite(value) ? "—" : "$" + number(value, 0));
+        const signed = (value) => (value === null || value === undefined ? "—" : (value > 0 ? "+" : "") + number(value, 1));
+        function palette() {
+          const styles = getComputedStyle(document.documentElement);
+          return Object.fromEntries(
+            ["ink", "muted", "faint", "accent", "green", "amber", "red", "blue", "line", "chart-grid", "surface-raised"].map((key) => [
+              key,
+              styles.getPropertyValue("--" + key).trim(),
+            ])
+          );
+        }
+        function themeLabel() {
+          const dark = document.documentElement.dataset.theme === "dark";
+          $("themeButton").textContent = dark ? "Light theme" : "Dark theme";
+          $("themeButton").setAttribute("aria-label", "Switch to " + (dark ? "light" : "dark") + " theme");
+        }
+        function buildNavigation() {
+          $("stageNav").innerHTML = stages
+            .map(
+              (s, i) =>
+                '<button class="step" data-stage="' +
+                i +
+                '" aria-controls="stageTitle processDiagram" aria-pressed="' +
+                (i === 0) +
+                '">' +
+                '<span class="step-number"><span>0' +
+                (i + 1) +
+                "</span><span>" +
+                s.time +
+                "</span></span><strong>" +
+                s.name +
+                "</strong><small>" +
+                (i === 3
+                  ? "Output bounds and nodal prices"
+                  : i === 2
+                    ? "Measurements to a baseline"
+                    : i === 1
+                      ? "Adjust the plan"
+                      : "Which resources run?") +
+                "</small></button>"
+            )
+            .join("");
+        }
+        function renderStage() {
+          const stage = stages[state.stage];
+          document.documentElement.style.setProperty("--stage", getComputedStyle(document.documentElement).getPropertyValue(stage.accent));
+          $("stageTitle").textContent = stage.name;
+          $("stageTag").textContent = stage.tag;
+          $("stageTag").className = "chip " + (state.stage === 3 ? "calculated" : "illustrated");
+          $("stageBody").textContent = stage.body;
+          $("processDiagram").innerHTML = stage.nodes
+            .map(
+              (node, i) =>
+                (i ? '<span class="process-arrow" aria-hidden="true">→</span>' : "") +
+                '<div class="process-node' +
+                (i === 1 ? " center" : "") +
+                '"><strong>' +
+                node[0] +
+                "</strong><span>" +
+                node[1] +
+                "</span></div>"
+            )
+            .join("");
+          $("stageNote").textContent = stage.note;
+          document.querySelectorAll("[data-stage]").forEach((button, i) => button.setAttribute("aria-pressed", String(i === state.stage)));
+          $("fastToggle").disabled = state.stage !== 3;
+        }
+        function calculate() {
+          state.result = M.solveDispatch({
+            hour: state.hour,
+            mode: stages[state.stage].code,
+            demand: state.demand,
+            contingency: state.contingency,
+            fastStart: state.fastStart,
+            curtailment: state.curtailment,
+          });
+        }
+        function setText(id, value) {
+          if ($(id).textContent !== value) $(id).textContent = value;
+        }
+        function renderResults() {
+          const d = state.result,
+            ok = d.status === "optimal",
+            p = M.profile(state.hour);
+          const wind = stages[state.stage].code === "da" ? p.windForecast : p.windActual;
+          $("hourValue").textContent = String(state.hour).padStart(2, "0") + ":00–" + String((state.hour + 1) % 24).padStart(2, "0") + ":00";
+          $("hourSlider").value = state.hour;
+          $("demandValue").textContent = number(d.demand) + " GW";
+          $("demandSlider").value = d.demand;
+          $("metricDemand").textContent = number(d.demand) + " GW";
+          $("metricVre").textContent = number(wind + p.solar) + " GW renewable availability";
+          $("metricHeadroom").textContent = ok ? number(d.headroom) + " GW" : "—";
+          $("metricPrice").textContent = price(d.lambda);
+          $("metricMetro").textContent = price(d.prices && d.prices.M);
+          $("metricCongestion").textContent =
+            ok && d.prices ? signed(d.prices.M - d.lambda) + " $/MWh congestion component" : "No valid price result";
+          $("dispatchTag").textContent = state.stage === 3 ? "Ramp bands active" : "Prescribed online fleet";
+          $("outageToggle").checked = state.contingency;
+          $("fastToggle").checked = state.fastStart;
+          $("curtailmentToggle").checked = state.curtailment;
+          $("networkView").options[1].disabled = !state.contingency;
+          if (!state.contingency) state.view = 0;
+          $("networkView").value = state.view;
+          const curtailed = ok && d.curtailment > 1e-6;
+          $("statusBanner").dataset.state = !ok ? "infeasible" : curtailed ? "curtailed" : "optimal";
+          $("statusSymbol").textContent = !ok ? "!" : curtailed ? "△" : "✓";
+          setText(
+            "statusTitle",
+            !ok
+              ? "No feasible dispatch"
+              : curtailed
+                ? "Load curtailment is required"
+                : d.binding.length
+                  ? "Feasible dispatch · a network limit is active"
+                  : "Feasible dispatch"
+          );
+          let message;
+          if (!ok)
+            message =
+              d.reason +
+              " Prices, flows, and headroom are unavailable. " +
+              (d.reason.includes("Minimum")
+                ? "Increase demand or select another hour."
+                : state.stage === 3
+                  ? "Try releasing fast-start blocks, reducing demand, or allowing emergency curtailment."
+                  : "Reduce demand or allow emergency curtailment.");
+          else if (curtailed)
+            message =
+              number(d.curtailment) +
+              " GW is curtailed at the selected penalty. This is an emergency outcome, not full service of the requested load.";
+          else if (d.binding.length)
+            message =
+              d.binding.map((b) => b.name + " (" + b.caseName + ")").join("; ") +
+              " is at its limit. " +
+              (state.contingency ? "Both the base network and the selected outage are checked." : "Only the base network is checked.");
+          else
+            message =
+              (state.contingency
+                ? "The base network and the selected South–East outage satisfy this model’s limits."
+                : "The base network satisfies this model’s limits.") + " The model does not check AC voltage feasibility or every possible outage.";
+          setText("statusText", message);
+          $("priceBreakdown").innerHTML =
+            "<span>Metro: <b>" +
+            price(d.prices && d.prices.M) +
+            "</b></span><span>Energy: <b>" +
+            price(d.lambda) +
+            "</b></span><span>Congestion: <b>" +
+            (d.prices ? signed(d.prices.M - d.lambda) : "—") +
+            "</b> $/MWh</span><span>Losses: omitted</span>";
+          $("resourceRows").innerHTML =
+            d.resources
+              .filter((r) => !r.shed)
+              .map(
+                (r) =>
+                  '<tr><th scope="row">' +
+                  r.name +
+                  "</th><td>" +
+                  r.cost +
+                  "</td><td>" +
+                  number(r.lo) +
+                  "–" +
+                  number(r.hi) +
+                  "</td><td>" +
+                  number(r.accepted) +
+                  "</td></tr>"
+              )
+              .join("") +
+            (curtailed
+              ? '<tr><th scope="row">Emergency curtailment</th><td>600</td><td>Up to load</td><td>' + number(d.curtailment) + "</td></tr>"
+              : "");
+          $("priceRows").innerHTML = M.buses
+            .map(
+              (bus) =>
+                '<tr><th scope="row">' +
+                bus.name +
+                "</th><td>" +
+                number(d.prices && d.prices[bus.id]) +
+                "</td><td>" +
+                (d.prices ? signed(d.prices[bus.id] - d.lambda) : "—") +
+                "</td></tr>"
+            )
+            .join("");
+          renderFlowRows();
+          $("stackInspect").textContent = ok
+            ? "Select an offer block to inspect its output bounds, or use the table below."
+            : "No accepted output is shown because the dispatch is infeasible.";
+          $("networkInspect").textContent = ok
+            ? "Select a bus or line for its values. Nodal prices include energy and congestion; losses are omitted."
+            : "Topology only: there is no feasible solution from which to report flows or prices.";
+        }
+        function renderFlowRows() {
+          const d = state.result,
+            outage = M.networkCases[state.view].outage;
+          $("flowRows").innerHTML = M.branches
+            .map(
+              (line, i) =>
+                '<tr><th scope="row">' +
+                line.name +
+                "</th><td>" +
+                (i === outage ? "Out of service" : d.flows ? number(d.flows[state.view][i]) : "—") +
+                "</td><td>" +
+                line.limit +
+                "</td></tr>"
+            )
+            .join("");
+        }
+        function renderHeatmap() {
+          const mode = stages[state.stage].code;
+          let html =
+            '<caption class="sr-only">Scripted resource commitment by delivery hour</caption><thead><tr><th scope="col">Aggregated resource</th>';
+          for (let h = 0; h < 24; h++)
+            html += '<th scope="col" class="' + (h === state.hour ? "current" : "") + '">' + String(h).padStart(2, "0") + "</th>";
+          html += "</tr></thead><tbody>";
+          M.units.forEach((unit, u) => {
+            html += '<tr><th scope="row">' + unit.name + "</th>";
+            for (let h = 0; h < 24; h++) {
+              const on = M.scheduled(unit, h, mode),
+                start = on && !M.scheduled(unit, h - 1, mode);
+              const added = mode !== "da" && on && !M.scheduled(unit, h, "da");
+              const text = start ? "SU" : on ? "ON" : "·",
+                label =
+                  unit.name +
+                  ", " +
+                  h +
+                  ":00, " +
+                  (on ? "online" : "offline") +
+                  (start ? ", illustrated start" : "") +
+                  (added ? ", illustrated intraday addition" : "");
+              html +=
+                '<td><button class="heat-cell' +
+                (on ? " on" : "") +
+                (start ? " start" : "") +
+                (added ? " added" : "") +
+                (h === state.hour ? " current" : "") +
+                '" data-cell="' +
+                (u * 24 + h) +
+                '" tabindex="' +
+                (state.heatFocus === u * 24 + h ? 0 : -1) +
+                '" aria-label="' +
+                label +
+                '">' +
+                text +
+                "</button></td>";
+            }
+            html += "</tr>";
+          });
+          const active = document.activeElement && document.activeElement.dataset.cell;
+          $("heatmapTable").innerHTML = html + "</tbody>";
+          if (active !== undefined)
+            $("heatmapTable")
+              .querySelector('[data-cell="' + active + '"]')
+              ?.focus({ preventScroll: true });
+        }
+        function inspectCell(cell, focus = false) {
+          state.heatFocus = Number(cell.dataset.cell);
+          document.querySelectorAll("[data-cell]").forEach((c) => {
+            c.tabIndex = c === cell ? 0 : -1;
+          });
+          $("heatInfo").textContent =
+            cell.getAttribute("aria-label") + ". This is a prescribed schedule; commitment, minimum run times, and starts are not optimized.";
+          if (focus) {
+            cell.focus({ preventScroll: true });
+            cell.scrollIntoView({ block: "nearest", inline: "nearest", behavior: "instant" });
+          }
+        }
+        function setupCanvas(canvas) {
+          const rect = canvas.getBoundingClientRect(),
+            scale = Math.min(2, devicePixelRatio || 1);
+          const width = Math.max(1, Math.round(rect.width * scale)),
+            height = Math.max(1, Math.round(rect.height * scale));
+          if (canvas.width !== width || canvas.height !== height) {
+            canvas.width = width;
+            canvas.height = height;
+          }
+          const ctx = canvas.getContext("2d");
+          if (!ctx) return null;
+          ctx.setTransform(scale, 0, 0, scale, 0, 0);
+          ctx.clearRect(0, 0, rect.width, rect.height);
+          return { ctx, w: rect.width, h: rect.height, c: palette() };
+        }
+        function text(ctx, value, x, y, color, size = 11, align = "left") {
+          ctx.save();
+          ctx.fillStyle = color;
+          ctx.font = "600 " + size + "px system-ui";
+          ctx.textAlign = align;
+          ctx.fillText(value, x, y);
+          ctx.restore();
+        }
+        function drawStack() {
+          const setup = setupCanvas($("stackCanvas"));
+          if (!setup) return;
+          const { ctx, w, h, c } = setup,
+            d = state.result;
+          const blocks = d.resources
+            .filter((r) => !r.shed)
+            .slice()
+            .sort((a, b) => a.cost - b.cost);
+          const left = 44,
+            right = 18,
+            top = 35,
+            bottom = 48,
+            pw = w - left - right,
+            ph = h - top - bottom;
+          const maximum = Math.max(
+            60,
+            d.demand,
+            blocks.reduce((s, r) => s + Math.max(0, r.hi), 0)
+          );
+          const maxPrice = 160;
+          for (let i = 0; i <= 4; i++) {
+            const y = top + ph - (ph * i) / 4;
+            ctx.strokeStyle = c["chart-grid"];
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(left, y);
+            ctx.lineTo(w - right, y);
+            ctx.stroke();
+            text(ctx, "$" + i * 40, left - 8, y + 3, c.faint, 10, "right");
+          }
+          let x = left;
+          state.stackHit = [];
+          blocks.forEach((block) => {
+            const bw = (pw * Math.max(0, block.hi)) / maximum,
+              bh = Math.max(3, (ph * block.cost) / maxPrice),
+              y = top + ph - bh;
+            ctx.globalAlpha = 0.25;
+            ctx.fillStyle = c.blue;
+            ctx.fillRect(x, y, Math.max(0, bw - 2), bh);
+            ctx.globalAlpha = 1;
+            if (block.accepted !== null) {
+              ctx.fillStyle = c.green;
+              ctx.fillRect(x, y, Math.max(0, (pw * Math.max(0, block.accepted)) / maximum - 2), bh);
+            }
+            if (block.lo > 0) {
+              ctx.strokeStyle = c.ink;
+              ctx.setLineDash([2, 3]);
+              ctx.beginPath();
+              const lx = x + (pw * block.lo) / maximum;
+              ctx.moveTo(lx, y);
+              ctx.lineTo(lx, top + ph);
+              ctx.stroke();
+              ctx.setLineDash([]);
+            }
+            const labels = {
+              nuclear: "Nuc",
+              coal: "Coal",
+              metro: "CC-M",
+              east: "CC-E",
+              hydro: "Hydro",
+              wind: "Wind",
+              solar: "Solar",
+              battery: "BESS",
+              ctEast: "CT-E",
+              ctMetro: "CT-M",
+              dr: "DR",
+            };
+            if (bw > 29) text(ctx, labels[block.id], x + bw / 2, top + ph + 16, c.muted, 9, "center");
+            state.stackHit.push({ x, end: x + bw, y, block });
+            x += bw;
+          });
+          const demandX = left + (pw * d.demand) / maximum;
+          ctx.strokeStyle = c.red;
+          ctx.lineWidth = 2;
+          ctx.setLineDash([6, 4]);
+          ctx.beginPath();
+          ctx.moveTo(demandX, top);
+          ctx.lineTo(demandX, top + ph);
+          ctx.stroke();
+          ctx.setLineDash([]);
+          text(ctx, number(d.demand) + " GW", Math.min(w - right - 4, Math.max(left + 55, demandX)), 20, c.red, 12, "right");
+          text(ctx, "Offer $/MWh", left, 20, c.muted, 10);
+          text(ctx, "0", left, h - 12, c.faint, 10);
+          text(ctx, number(maximum, 0) + " GW available axis", w - right, h - 12, c.faint, 10, "right");
+          $("stackCanvas").dataset.maximum = maximum;
+        }
+        function drawNetwork() {
+          const setup = setupCanvas($("networkCanvas"));
+          if (!setup) return;
+          const { ctx, w, h, c } = setup,
+            d = state.result,
+            view = state.view,
+            outage = M.networkCases[view].outage;
+          const positions = Object.fromEntries(M.buses.map((bus) => [bus.id, { x: bus.x * w, y: bus.y * h }]));
+          state.networkHit = [];
+          M.branches.forEach((branch, i) => {
+            const a = positions[branch.a],
+              b = positions[branch.b],
+              flow = d.flows ? d.flows[view][i] : null;
+            const ratio = flow === null ? 0 : Math.abs(flow) / branch.limit;
+            const color = i === outage || flow === null ? c.faint : ratio >= 1 - 1e-5 ? c.red : ratio > 0.85 ? c.amber : c.blue;
+            ctx.strokeStyle = color;
+            ctx.lineWidth = i === outage ? 1.5 : 2.5;
+            ctx.setLineDash(i === outage ? [5, 5] : []);
+            ctx.beginPath();
+            ctx.moveTo(a.x, a.y);
+            ctx.lineTo(b.x, b.y);
+            ctx.stroke();
+            ctx.setLineDash([]);
+            if (i !== outage && flow !== null && Math.abs(flow) > 0.05) {
+              const direction = flow >= 0 ? 1 : -1,
+                q = state.playing && !reduceMotion ? (state.phase * 0.12 * direction + 0.5 + i * 0.1 + 10) % 1 : 0.5;
+              const x = a.x + (b.x - a.x) * q,
+                y = a.y + (b.y - a.y) * q;
+              const angle = Math.atan2((b.y - a.y) * direction, (b.x - a.x) * direction);
+              ctx.save();
+              ctx.translate(x, y);
+              ctx.rotate(angle);
+              ctx.fillStyle = color;
+              ctx.beginPath();
+              ctx.moveTo(5, 0);
+              ctx.lineTo(-4, -4);
+              ctx.lineTo(-4, 4);
+              ctx.closePath();
+              ctx.fill();
+              ctx.restore();
+            }
+            if (i === outage) text(ctx, "out", (a.x + b.x) / 2, (a.y + b.y) / 2 - 8, c.faint, 10, "center");
+            state.networkHit.push({ type: "line", i, a, b });
+          });
+          M.buses.forEach((bus) => {
+            const point = positions[bus.id];
+            ctx.fillStyle = c["surface-raised"];
+            ctx.strokeStyle = c.accent;
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.arc(point.x, point.y, 16, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+            text(ctx, bus.id, point.x, point.y + 4, c.ink, 12, "center");
+            text(ctx, d.prices ? price(d.prices[bus.id]) : "—", point.x, point.y + 32, c.muted, 11, "center");
+            state.networkHit.push({ type: "bus", bus, point });
+          });
+          text(ctx, d.flows ? M.networkCases[view].name : "Topology only · no feasible dispatch", 14, 21, c.muted, w < 350 ? 10 : 11);
+        }
+        function renderAll() {
+          calculate();
+          renderStage();
+          renderResults();
+          renderHeatmap();
+          drawStack();
+          drawNetwork();
+        }
+        function setStage(stage) {
+          if (state.playing) playback(false);
+          state.stage = stage;
+          state.demand = null;
+          renderAll();
+        }
+        function setDemand(value) {
+          if (state.playing) playback(false);
+          state.demand = Math.min(75, Math.max(20, value));
+          calculate();
+          renderResults();
+          drawStack();
+          drawNetwork();
+        }
+        function scenario(name) {
+          state.contingency = true;
+          state.fastStart = false;
+          state.curtailment = false;
+          state.demand = null;
+          state.view = 0;
+          if (name === "normal") {
+            state.stage = 0;
+            state.hour = 14;
+          }
+          if (name === "evening") {
+            state.stage = 1;
+            state.hour = 18;
+          }
+          if (name === "congestion") {
+            state.stage = 3;
+            state.hour = 18;
+            state.view = 1;
+          }
+          if (name === "low") {
+            state.stage = 3;
+            state.hour = 14;
+            state.demand = 20;
+          }
+          renderAll();
+        }
+        function playback(playing) {
+          state.playing = playing;
+          $("playButton").textContent = playing ? "Pause hours" : "Play hours";
+          $("playButton").setAttribute("aria-pressed", String(playing));
+          clearInterval(state.timer);
+          if (state.frame) cancelAnimationFrame(state.frame);
+          state.frame = null;
+          state.last = 0;
+          if (playing) {
+            state.timer = setInterval(() => {
+              if (document.hidden) return;
+              state.hour = (state.hour + 1) % 24;
+              state.demand = null;
+              renderAll();
+            }, 1800);
+            if (!reduceMotion) {
+              const tick = (time) => {
+                if (!state.playing) return;
+                if (state.last) state.phase += Math.min(0.05, (time - state.last) / 1000);
+                state.last = time;
+                drawNetwork();
+                state.frame = requestAnimationFrame(tick);
+              };
+              state.frame = requestAnimationFrame(tick);
+            }
+          } else drawNetwork();
+        }
+        buildNavigation();
+        themeLabel();
+        renderAll();
+        $("stageNav").addEventListener("click", (e) => {
+          const button = e.target.closest("[data-stage]");
+          if (button) setStage(Number(button.dataset.stage));
+        });
+        document.querySelectorAll("[data-scenario]").forEach((button) =>
+          button.addEventListener("click", () => {
+            playback(false);
+            scenario(button.dataset.scenario);
+          })
+        );
+        $("themeButton").addEventListener("click", () => {
+          document.documentElement.dataset.theme = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+          try {
+            localStorage.setItem("gridOpsTheme", document.documentElement.dataset.theme);
+          } catch (_) {}
+          themeLabel();
+          renderStage();
+          drawStack();
+          drawNetwork();
+        });
+        $("hourSlider").addEventListener("input", (e) => {
+          if (state.playing) playback(false);
+          state.hour = Number(e.target.value);
+          state.demand = null;
+          renderAll();
+        });
+        $("demandSlider").addEventListener("input", (e) => setDemand(Number(e.target.value)));
+        [
+          ["outageToggle", "contingency"],
+          ["fastToggle", "fastStart"],
+          ["curtailmentToggle", "curtailment"],
+        ].forEach(([id, key]) =>
+          $(id).addEventListener("change", (e) => {
+            state[key] = e.target.checked;
+            renderAll();
+          })
+        );
+        $("playButton").addEventListener("click", () => playback(!state.playing));
+        $("resetButton").addEventListener("click", () => {
+          playback(false);
+          scenario("normal");
+        });
+        $("networkView").addEventListener("change", (e) => {
+          state.view = Number(e.target.value);
+          renderFlowRows();
+          drawNetwork();
+          $("networkInspect").textContent = state.result.flows
+            ? "Viewing " + M.networkCases[state.view].name + ". Select a bus or line for its values."
+            : "Topology only: no valid flows or prices are available.";
+        });
+        $("heatmapTable").addEventListener("click", (e) => {
+          const cell = e.target.closest("[data-cell]");
+          if (cell) inspectCell(cell);
+        });
+        $("heatmapTable").addEventListener("keydown", (e) => {
+          const cell = e.target.closest("[data-cell]");
+          if (!cell) return;
+          const offsets = { ArrowRight: 1, ArrowLeft: -1, ArrowUp: -24, ArrowDown: 24 };
+          if (!(e.key in offsets)) return;
+          e.preventDefault();
+          const next = Math.min(M.units.length * 24 - 1, Math.max(0, Number(cell.dataset.cell) + offsets[e.key]));
+          inspectCell($("heatmapTable").querySelector('[data-cell="' + next + '"]'), true);
+        });
+        const stack = $("stackCanvas");
+        let dragging = false;
+        function chartPoint(e, canvas) {
+          const rect = canvas.getBoundingClientRect();
+          return { x: e.clientX - rect.left, y: e.clientY - rect.top };
+        }
+        function demandAt(point) {
+          const width = stack.getBoundingClientRect().width;
+          return ((point.x - 44) / (width - 62)) * Number(stack.dataset.maximum);
+        }
+        stack.addEventListener("pointerdown", (e) => {
+          const point = chartPoint(e, stack),
+            width = stack.getBoundingClientRect().width;
+          const demandX = 44 + ((width - 62) * state.result.demand) / Number(stack.dataset.maximum);
+          if (Math.abs(point.x - demandX) < 20) {
+            dragging = true;
+            stack.setPointerCapture(e.pointerId);
+            setDemand(demandAt(point));
+          } else {
+            const hit = state.stackHit.find((b) => point.x >= b.x && point.x <= b.end && point.y >= b.y);
+            if (hit)
+              $("stackInspect").textContent =
+                hit.block.name +
+                ": $" +
+                hit.block.cost +
+                "/MWh; output range " +
+                number(hit.block.lo) +
+                "–" +
+                number(hit.block.hi) +
+                " GW; accepted " +
+                number(hit.block.accepted) +
+                " GW.";
+          }
+        });
+        stack.addEventListener("pointermove", (e) => {
+          if (dragging) setDemand(demandAt(chartPoint(e, stack)));
+        });
+        stack.addEventListener("pointerup", () => {
+          dragging = false;
+        });
+        stack.addEventListener("pointercancel", () => {
+          dragging = false;
+        });
+        stack.addEventListener("keydown", (e) => {
+          if (e.key !== "ArrowUp" && e.key !== "ArrowDown") return;
+          e.preventDefault();
+          setDemand(state.result.demand + (e.key === "ArrowUp" ? 1 : -1) * (e.shiftKey ? 2 : 0.5));
+        });
+        $("networkCanvas").addEventListener("pointerdown", (e) => {
+          const point = chartPoint(e, $("networkCanvas"));
+          const bus = state.networkHit.find((hit) => hit.type === "bus" && Math.hypot(point.x - hit.point.x, point.y - hit.point.y) < 23);
+          if (bus) {
+            const d = state.result;
+            $("networkInspect").textContent =
+              bus.bus.name +
+              ": price " +
+              price(d.prices && d.prices[bus.bus.id]) +
+              "/MWh; energy " +
+              price(d.lambda) +
+              "/MWh; congestion " +
+              (d.prices ? signed(d.prices[bus.bus.id] - d.lambda) : "—") +
+              " $/MWh. Voltage magnitude is not modeled.";
+            return;
+          }
+          const line = state.networkHit.find((hit) => {
+            if (hit.type !== "line") return false;
+            const dx = hit.b.x - hit.a.x,
+              dy = hit.b.y - hit.a.y;
+            const t = Math.min(1, Math.max(0, ((point.x - hit.a.x) * dx + (point.y - hit.a.y) * dy) / (dx * dx + dy * dy)));
+            return Math.hypot(point.x - hit.a.x - t * dx, point.y - hit.a.y - t * dy) < 10;
+          });
+          if (line) {
+            const branch = M.branches[line.i],
+              flow = state.result.flows && state.result.flows[state.view][line.i];
+            $("networkInspect").textContent =
+              branch.name +
+              (line.i === M.networkCases[state.view].outage
+                ? ": out of service."
+                : ": " + number(flow) + " GW (positive " + branch.a + " → " + branch.b + "); limit " + branch.limit + " GW.");
+          }
+        });
+        new ResizeObserver(() => {
+          drawStack();
+          drawNetwork();
+        }).observe($("dispatchLab"));
+        document.addEventListener("visibilitychange", () => {
+          if (document.hidden) state.last = 0;
+        });
+      })();
+    </script>
+  </body>
 </html>
