@@ -12,5 +12,5 @@ nav_order: 2
 {% include bib_search.liquid %}
 
 <div class="publications">
-{% bibliography --group_by type --group_order preprints,articles,inproceedings,incollection,phdthesis,mastersthesis %}
+{% bibliography --group_by type --group_order misc,article,inproceedings,incollection,phdthesis,mastersthesis %}
 </div>

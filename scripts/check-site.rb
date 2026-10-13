@@ -44,6 +44,13 @@ end
 
 home = Nokogiri::HTML(File.read('_site/index.html'))
 publications = Nokogiri::HTML(File.read('_site/publications/index.html'))
+cv = Nokogiri::HTML(File.read('_site/cv/index.html'))
+cv_download = cv.at_css('a.cv-download[download]')
+raise 'CV download link missing' unless cv_download
+unless cv_download['href'].include?('://')
+  pdf_path = File.join('_site', cv_download['href'].delete_prefix(config['baseurl']).delete_prefix('/'))
+  raise 'CV download must point to a real PDF' unless File.file?(pdf_path) && File.binread(pdf_path, 4) == '%PDF'
+end
 raise 'Publication search input missing' unless publications.at_css('input#bibsearch[aria-label]')
 raise 'Profile must remain eager' unless home.at_css('.profile img')['loading'] == 'eager'
 %w[blog books people repositories teaching].each do |path|

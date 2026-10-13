@@ -5,7 +5,7 @@
     "image": "",
     "email": "babaktaheri77@gmail.com",
     "url": "https://babaktaheri1.github.io",
-    "summary": "Research interests in Power Systems, Optimization, Machine Learning.",
+    "summary": "Research interests: power systems, optimization, and machine learning.",
     "location": {
       "city": "Raleigh",
       "region": "NC",
@@ -37,9 +37,7 @@
       "studyType": "Ph.D.",
       "startDate": "2021-08",
       "endDate": "2024-12",
-      "courses": [
-        "Minor in Industrial and Systems Engineering (ISyE)"
-      ]
+      "courses": ["Minor in Industrial and Systems Engineering (ISyE)"]
     },
     {
       "institution": "\uD83C\uDFDB\uFE0F Georgia Institute of Technology",
@@ -154,8 +152,8 @@
       "summary": "Reviewer for journals and conferences including IEEE (TPWRS, TSG, TPWRD, Power Engineering Letters, CDC), IET (GTD, RPG), EPSR, RESS, IJEPES"
     }
   ],
-    "languages": [
-      {
+  "languages": [
+    {
       "language": "Turkish",
       "fluency": "Native speaker",
       "icon": ""
@@ -165,7 +163,7 @@
       "fluency": "Native speaker",
       "icon": ""
     },
-      {
+    {
       "language": "Azerbaijani",
       "fluency": "Native speaker",
       "icon": ""
