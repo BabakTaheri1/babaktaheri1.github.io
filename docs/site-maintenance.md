@@ -42,6 +42,13 @@ The global math/zoom settings make the features available, while each page opts 
 Standalone demos manage their own scripts. When adding a page with equations or
 zoomable images, add the corresponding front-matter flag.
 
+All seven demos share `code/demo-theme.css` and `code/demo-theme.js`. The light
+palette uses white panels on a pale background; dark mode uses the matching navy
+palette. The site’s saved `theme` setting takes precedence, including `system`;
+an older `gridOpsTheme` preference is used only when no site setting exists.
+Demo theme buttons save the common site preference. Canvas, WebGL, and Chart.js
+renderers redraw their colors without resetting controls or experiment data.
+
 ## Accessibility checks
 
 Run `npm ci`, `npx playwright install chromium`, and `npm run check:a11y` after a
@@ -50,6 +57,13 @@ The audit covers five main pages in light/dark themes at 1280px and 390px widths
 Violations fail the check; `reports/accessibility.json` also records findings that
 need manual review. GitHub Actions runs these checks on pushes and pull requests.
 Automated checks do not replace keyboard and screen-reader review.
+
+Run `CHROME_CHANNEL=chrome npm run check:demo-themes` to check all seven demos
+in both themes at 1440, 390, and 320 px. The check exercises each demo, verifies
+that switching themes preserves its data, checks saved and system preferences,
+and runs accessibility scans. Use `SITE_DIR=_site` for production output and
+`DEMO_THEME_ARTIFACT_DIR=/tmp/demo-theme-checks` for screenshots and reports.
+The accessibility workflow runs this check after the site build.
 
 ## Power system demos
 

@@ -9,21 +9,21 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
     <style>
       :root {
-        --bg: #050816;
-        --bg2: #0b1020;
-        --card: rgba(15, 23, 42, 0.76);
-        --card2: rgba(15, 23, 42, 0.52);
-        --line: rgba(148, 163, 184, 0.22);
-        --text: #e5e7eb;
-        --muted: #94a3b8;
-        --blue: #60a5fa;
-        --sky: #38bdf8;
-        --green: #34d399;
-        --amber: #f59e0b;
-        --orange: #fb923c;
-        --red: #fb7185;
-        --purple: #a78bfa;
-        --white: #f8fafc;
+        --bg: var(--demo-bg);
+        --bg2: var(--demo-bg);
+        --card: color-mix(in srgb, var(--demo-surface) 76%, transparent);
+        --card2: color-mix(in srgb, var(--demo-surface) 52%, transparent);
+        --line: color-mix(in srgb, var(--demo-faint) 22%, transparent);
+        --text: var(--demo-ink);
+        --muted: var(--demo-faint);
+        --blue: var(--demo-blue);
+        --sky: var(--demo-accent);
+        --green: var(--demo-green);
+        --amber: var(--demo-amber);
+        --orange: var(--demo-orange);
+        --red: var(--demo-red);
+        --purple: var(--demo-purple);
+        --white: var(--demo-ink);
       }
       * {
         box-sizing: border-box;
@@ -42,9 +42,10 @@
           "Segoe UI",
           sans-serif;
         color: var(--text);
-        background: radial-gradient(circle at 9% 0%, rgba(56, 189, 248, 0.25), transparent 34rem),
-          radial-gradient(circle at 91% 6%, rgba(167, 139, 250, 0.22), transparent 34rem),
-          radial-gradient(circle at 50% 105%, rgba(52, 211, 153, 0.14), transparent 36rem), linear-gradient(135deg, var(--bg), var(--bg2));
+        background: radial-gradient(circle at 9% 0%, color-mix(in srgb, var(--demo-accent) 25%, transparent), transparent 34rem),
+          radial-gradient(circle at 91% 6%, color-mix(in srgb, var(--demo-purple) 22%, transparent), transparent 34rem),
+          radial-gradient(circle at 50% 105%, color-mix(in srgb, var(--demo-green) 14%, transparent), transparent 36rem),
+          linear-gradient(135deg, var(--bg), var(--bg2));
         overflow-x: hidden;
       }
       button,
@@ -60,8 +61,8 @@
         background: linear-gradient(180deg, var(--card), var(--card2));
         border: 1px solid var(--line);
         box-shadow:
-          0 28px 90px rgba(0, 0, 0, 0.34),
-          inset 0 1px 0 rgba(255, 255, 255, 0.04);
+          0 28px 90px color-mix(in srgb, var(--demo-raised) 34%, transparent),
+          inset 0 1px 0 color-mix(in srgb, var(--demo-surface) 4%, transparent);
         backdrop-filter: blur(18px);
       }
       .hero {
@@ -77,7 +78,7 @@
         display: flex;
         align-items: center;
         gap: 10px;
-        color: #bae6fd;
+        color: var(--demo-accent);
         text-transform: uppercase;
         letter-spacing: 0.24em;
         font-size: 12px;
@@ -89,11 +90,11 @@
         height: 10px;
         border-radius: 999px;
         background: var(--green);
-        box-shadow: 0 0 28px rgba(52, 211, 153, 0.9);
+        box-shadow: 0 0 28px color-mix(in srgb, var(--demo-green) 90%, transparent);
       }
       h1 {
         margin: 0;
-        color: white;
+        color: var(--demo-ink);
         font-size: clamp(34px, 5.2vw, 82px);
         line-height: 0.92;
         letter-spacing: -0.065em;
@@ -102,7 +103,7 @@
       .subtitle {
         margin: 16px 0 0;
         max-width: 930px;
-        color: #cbd5e1;
+        color: var(--demo-muted);
         font-size: clamp(15px, 1.4vw, 18px);
         line-height: 1.58;
       }
@@ -113,8 +114,8 @@
         min-width: min(460px, 100%);
       }
       .stat {
-        border: 1px solid rgba(148, 163, 184, 0.18);
-        background: rgba(2, 6, 23, 0.34);
+        border: 1px solid color-mix(in srgb, var(--demo-faint) 18%, transparent);
+        background: color-mix(in srgb, var(--demo-bg) 34%, transparent);
         border-radius: 26px;
         padding: 18px;
         overflow: hidden;
@@ -124,12 +125,12 @@
         content: "";
         position: absolute;
         inset: 0;
-        background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), transparent 45%);
+        background: linear-gradient(135deg, color-mix(in srgb, var(--demo-surface) 8%, transparent), transparent 45%);
         pointer-events: none;
       }
       .statLabel {
         margin: 0;
-        color: #94a3b8;
+        color: var(--demo-faint);
         text-transform: uppercase;
         letter-spacing: 0.13em;
         font-size: 11px;
@@ -144,11 +145,11 @@
       .statValue strong {
         font-size: clamp(28px, 3vw, 44px);
         line-height: 0.92;
-        color: white;
+        color: var(--demo-ink);
         letter-spacing: -0.055em;
       }
       .statValue span {
-        color: #94a3b8;
+        color: var(--demo-faint);
         font-weight: 900;
         font-size: 13px;
         margin-bottom: 2px;
@@ -160,9 +161,9 @@
         margin: 0 0 18px;
       }
       .tab {
-        border: 1px solid rgba(148, 163, 184, 0.24);
-        background: rgba(15, 23, 42, 0.66);
-        color: #e2e8f0;
+        border: 1px solid color-mix(in srgb, var(--demo-faint) 24%, transparent);
+        background: color-mix(in srgb, var(--demo-surface) 66%, transparent);
+        color: var(--demo-ink);
         border-radius: 999px;
         padding: 12px 16px;
         font-size: 13px;
@@ -175,11 +176,11 @@
       }
       .tab:hover {
         transform: translateY(-1px);
-        border-color: rgba(125, 211, 252, 0.65);
+        border-color: color-mix(in srgb, var(--demo-accent) 65%, transparent);
       }
       .tab.active {
-        background: linear-gradient(135deg, #0ea5e9, #6366f1);
-        border-color: rgba(125, 211, 252, 0.75);
+        background: linear-gradient(135deg, var(--demo-accent), var(--demo-purple));
+        border-color: color-mix(in srgb, var(--demo-accent) 75%, transparent);
       }
       .section {
         display: none;
@@ -209,8 +210,8 @@
         gap: 16px;
       }
       .canvasCard {
-        border: 1px solid rgba(148, 163, 184, 0.17);
-        background: rgba(2, 6, 23, 0.34);
+        border: 1px solid color-mix(in srgb, var(--demo-faint) 17%, transparent);
+        background: color-mix(in srgb, var(--demo-bg) 34%, transparent);
         border-radius: 28px;
         padding: 16px;
         min-width: 0;
@@ -226,14 +227,14 @@
       }
       .cardTitle {
         margin: 0;
-        color: white;
+        color: var(--demo-ink);
         font-size: 20px;
         letter-spacing: -0.025em;
         font-weight: 900;
       }
       .cardSub {
         margin: 4px 0 0;
-        color: #94a3b8;
+        color: var(--demo-faint);
         font-size: 13px;
         line-height: 1.45;
       }
@@ -241,11 +242,11 @@
         display: inline-flex;
         align-items: center;
         gap: 7px;
-        border: 1px solid rgba(148, 163, 184, 0.22);
+        border: 1px solid color-mix(in srgb, var(--demo-faint) 22%, transparent);
         border-radius: 999px;
         padding: 8px 10px;
-        background: rgba(15, 23, 42, 0.66);
-        color: #cbd5e1;
+        background: color-mix(in srgb, var(--demo-surface) 66%, transparent);
+        color: var(--demo-muted);
         font-size: 12px;
         font-weight: 900;
         white-space: nowrap;
@@ -254,8 +255,12 @@
         height: 430px;
         border-radius: 24px;
         overflow: hidden;
-        background: radial-gradient(circle at 50% 30%, rgba(30, 41, 59, 0.8), rgba(2, 6, 23, 0.86));
-        border: 1px solid rgba(148, 163, 184, 0.16);
+        background: radial-gradient(
+          circle at 50% 30%,
+          color-mix(in srgb, var(--demo-raised) 80%, transparent),
+          color-mix(in srgb, var(--demo-bg) 86%, transparent)
+        );
+        border: 1px solid color-mix(in srgb, var(--demo-faint) 16%, transparent);
       }
       .canvasBox.small {
         height: 380px;
@@ -271,14 +276,14 @@
         gap: 10px;
       }
       .mini {
-        border: 1px solid rgba(148, 163, 184, 0.14);
-        background: rgba(15, 23, 42, 0.56);
+        border: 1px solid color-mix(in srgb, var(--demo-faint) 14%, transparent);
+        background: color-mix(in srgb, var(--demo-surface) 56%, transparent);
         border-radius: 18px;
         padding: 12px;
       }
       .mini p {
         margin: 0;
-        color: #94a3b8;
+        color: var(--demo-faint);
         font-size: 11px;
         text-transform: uppercase;
         letter-spacing: 0.12em;
@@ -286,20 +291,20 @@
       }
       .mini strong {
         display: block;
-        color: white;
+        color: var(--demo-ink);
         font-size: 20px;
         letter-spacing: -0.04em;
         margin-top: 6px;
       }
       .box {
-        border: 1px solid rgba(148, 163, 184, 0.18);
-        background: rgba(2, 6, 23, 0.34);
+        border: 1px solid color-mix(in srgb, var(--demo-faint) 18%, transparent);
+        background: color-mix(in srgb, var(--demo-bg) 34%, transparent);
         border-radius: 26px;
         padding: 18px;
       }
       .boxTitle {
         margin: 0 0 14px;
-        color: white;
+        color: var(--demo-ink);
         font-size: 19px;
         font-weight: 900;
         letter-spacing: -0.025em;
@@ -318,12 +323,12 @@
         margin-bottom: 9px;
       }
       .controlHead label {
-        color: #e2e8f0;
+        color: var(--demo-ink);
         font-weight: 850;
         font-size: 14px;
       }
       .readout {
-        color: #bae6fd;
+        color: var(--demo-accent);
         font-weight: 950;
         font-size: 13px;
         white-space: nowrap;
@@ -334,31 +339,31 @@
         height: 10px;
         border-radius: 999px;
         outline: none;
-        background: #334155;
+        background: var(--demo-line);
       }
       .slider::-webkit-slider-thumb {
         appearance: none;
         width: 24px;
         height: 24px;
         border-radius: 50%;
-        background: white;
+        background: var(--demo-ink);
         border: 4px solid var(--sky);
-        box-shadow: 0 0 0 8px rgba(56, 189, 248, 0.14);
+        box-shadow: 0 0 0 8px color-mix(in srgb, var(--demo-accent) 14%, transparent);
         cursor: pointer;
       }
       .slider::-moz-range-thumb {
         width: 24px;
         height: 24px;
         border-radius: 50%;
-        background: white;
+        background: var(--demo-ink);
         border: 4px solid var(--sky);
-        box-shadow: 0 0 0 8px rgba(56, 189, 248, 0.14);
+        box-shadow: 0 0 0 8px color-mix(in srgb, var(--demo-accent) 14%, transparent);
         cursor: pointer;
       }
       .scale {
         display: flex;
         justify-content: space-between;
-        color: #64748b;
+        color: var(--demo-faint);
         text-transform: uppercase;
         letter-spacing: 0.1em;
         font-size: 10px;
@@ -368,7 +373,7 @@
       .noteList {
         display: grid;
         gap: 10px;
-        color: #cbd5e1;
+        color: var(--demo-muted);
         line-height: 1.5;
         font-size: 14px;
       }
@@ -383,19 +388,19 @@
         height: 8px;
         border-radius: 999px;
         background: var(--sky);
-        box-shadow: 0 0 18px rgba(56, 189, 248, 0.8);
+        box-shadow: 0 0 18px color-mix(in srgb, var(--demo-accent) 80%, transparent);
         margin-top: 7px;
       }
       .formula {
         display: grid;
         gap: 9px;
-        color: #e2e8f0;
+        color: var(--demo-ink);
         font-size: 13px;
         line-height: 1.45;
       }
       .formula div {
-        border: 1px solid rgba(148, 163, 184, 0.14);
-        background: rgba(15, 23, 42, 0.58);
+        border: 1px solid color-mix(in srgb, var(--demo-faint) 14%, transparent);
+        background: color-mix(in srgb, var(--demo-surface) 58%, transparent);
         border-radius: 16px;
         padding: 11px 13px;
         overflow: auto;
@@ -407,9 +412,9 @@
         flex-wrap: wrap;
       }
       .btn {
-        border: 1px solid rgba(148, 163, 184, 0.24);
-        background: rgba(30, 41, 59, 0.7);
-        color: #e2e8f0;
+        border: 1px solid color-mix(in srgb, var(--demo-faint) 24%, transparent);
+        background: color-mix(in srgb, var(--demo-raised) 70%, transparent);
+        color: var(--demo-ink);
         border-radius: 999px;
         padding: 10px 13px;
         font-size: 12px;
@@ -417,27 +422,31 @@
         cursor: pointer;
       }
       .btn:hover {
-        border-color: rgba(125, 211, 252, 0.65);
+        border-color: color-mix(in srgb, var(--demo-accent) 65%, transparent);
       }
       .btn.primary {
-        background: linear-gradient(135deg, #0ea5e9, #6366f1);
-        border-color: rgba(125, 211, 252, 0.75);
+        background: linear-gradient(135deg, var(--demo-accent), var(--demo-purple));
+        border-color: color-mix(in srgb, var(--demo-accent) 75%, transparent);
       }
       .statusBar {
         border-radius: 28px;
         padding: 18px;
         display: grid;
         gap: 8px;
-        background: linear-gradient(135deg, rgba(14, 165, 233, 0.17), rgba(99, 102, 241, 0.14));
-        border: 1px solid rgba(125, 211, 252, 0.22);
+        background: linear-gradient(
+          135deg,
+          color-mix(in srgb, var(--demo-accent) 17%, transparent),
+          color-mix(in srgb, var(--demo-purple) 14%, transparent)
+        );
+        border: 1px solid color-mix(in srgb, var(--demo-accent) 22%, transparent);
       }
       .statusBar strong {
-        color: white;
+        color: var(--demo-ink);
         font-size: 18px;
         letter-spacing: -0.02em;
       }
       .statusBar span {
-        color: #cbd5e1;
+        color: var(--demo-muted);
         line-height: 1.48;
         font-size: 14px;
       }
@@ -478,7 +487,7 @@
       }
       .backLink {
         display: inline-block;
-        color: #bae6fd;
+        color: var(--demo-accent);
         margin-bottom: 16px;
         text-decoration: none;
         font-size: 14px;
@@ -487,7 +496,7 @@
         text-decoration: underline;
       }
       :focus-visible {
-        outline: 3px solid #7dd3fc;
+        outline: 3px solid var(--demo-accent);
         outline-offset: 4px;
       }
       .section {
@@ -497,13 +506,13 @@
         margin: 0;
         font-size: 12px;
         line-height: 1.6;
-        color: #cbd5e1;
+        color: var(--demo-muted);
       }
       .flowList > div {
         display: flex;
         justify-content: space-between;
         gap: 8px;
-        border-bottom: 1px solid rgba(148, 163, 184, 0.14);
+        border-bottom: 1px solid color-mix(in srgb, var(--demo-faint) 14%, transparent);
         padding: 5px 0;
         flex-wrap: wrap;
       }
@@ -567,10 +576,14 @@
         }
       }
     </style>
+    <link rel="stylesheet" href="demo-theme.css" />
+    <script src="demo-theme.js"></script>
   </head>
-  <body>
+  <body class="demo-page">
     <div class="shell">
-      <a class="backLink" href="/projects/">← All demos</a>
+      <nav class="demo-toolbar" aria-label="Page navigation">
+        <a href="/projects/">← All demos</a><button class="demo-theme-button" data-demo-theme aria-label="Switch to dark theme">Dark theme</button>
+      </nav>
       <header class="glass hero">
         <div>
           <div class="eyebrow"><span class="dot"></span><span>Network equilibrium laboratory</span></div>
@@ -838,20 +851,23 @@
           grid: null,
           inputs: { cars: 4000, load: 500, g1Cost: 10, g2Cost: 75, g1Max: 500, tieLimit: 100 },
         },
-        colors: {
-          blue: "#60a5fa",
-          sky: "#38bdf8",
-          green: "#34d399",
-          amber: "#f59e0b",
-          orange: "#fb923c",
-          red: "#fb7185",
-          purple: "#a78bfa",
-          white: "#f8fafc",
-          muted: "#94a3b8",
+        get colors() {
+          return {
+            blue: DemoTheme.colors.blue,
+            sky: DemoTheme.colors.accent,
+            green: DemoTheme.colors.green,
+            amber: DemoTheme.colors.amber,
+            orange: DemoTheme.colors.orange,
+            red: DemoTheme.colors.red,
+            purple: DemoTheme.colors.purple,
+            white: DemoTheme.colors.ink,
+            muted: DemoTheme.colors.faint,
+          };
         },
         trafficCoords: { S: [0.11, 0.5], A: [0.5, 0.22], B: [0.5, 0.78], E: [0.89, 0.5] },
         gridCoords: { G1: [0.18, 0.19], G2: [0.18, 0.7], J: [0.57, 0.19], L: [0.82, 0.7] },
         init() {
+          document.addEventListener("demothemechange", () => this.update());
           this.ids([
             "trafficPenaltyHero",
             "gridSavingsHero",
@@ -1456,12 +1472,12 @@
         },
         bg(ctx, w, h) {
           const g = ctx.createRadialGradient(w * 0.5, h * 0.32, 40, w * 0.5, h * 0.5, Math.max(w, h) * 0.78);
-          g.addColorStop(0, "rgba(30,41,59,.5)");
-          g.addColorStop(1, "rgba(2,6,23,.9)");
+          g.addColorStop(0, DemoTheme.alpha("raised", 0.5));
+          g.addColorStop(1, DemoTheme.alpha("bg", 0.9));
           ctx.fillStyle = g;
           ctx.fillRect(0, 0, w, h);
           ctx.save();
-          ctx.fillStyle = "rgba(148,163,184,.14)";
+          ctx.fillStyle = DemoTheme.alpha("faint", 0.14);
           for (let x = 18; x < w; x += 30)
             for (let y = 18; y < h; y += 30) {
               ctx.beginPath();
@@ -1474,17 +1490,17 @@
           ctx.save();
           ctx.lineCap = "round";
           ctx.lineJoin = "round";
-          ctx.strokeStyle = "rgba(148,163,184,.22)";
+          ctx.strokeStyle = DemoTheme.alpha("faint", 0.22);
           ctx.lineWidth = 24;
           this.strokePath(ctx, path);
-          ctx.strokeStyle = "#0b1220";
+          ctx.strokeStyle = DemoTheme.colors.raised;
           ctx.lineWidth = 18;
           this.strokePath(ctx, path);
           if (heat > 0.02) {
             ctx.save();
             ctx.strokeStyle = `rgba(251,113,133,${0.5 * heat})`;
             ctx.lineWidth = 18;
-            ctx.shadowColor = "rgba(251,113,133,.7)";
+            ctx.shadowColor = DemoTheme.alpha("red", 0.7);
             ctx.shadowBlur = 15 * heat;
             this.strokePath(ctx, path);
             ctx.restore();
@@ -1494,7 +1510,7 @@
           ctx.lineWidth = Math.max(5, Math.min(16, 5 + flow / 380));
           this.strokePath(ctx, path);
           ctx.globalAlpha = 1;
-          ctx.strokeStyle = "rgba(255,255,255,.5)";
+          ctx.strokeStyle = DemoTheme.alpha("surface", 0.5);
           ctx.lineWidth = 2;
           ctx.setLineDash([10, 13]);
           ctx.lineDashOffset = -this.state.t * 42;
@@ -1506,22 +1522,22 @@
           ctx.save();
           ctx.lineCap = "round";
           ctx.lineJoin = "round";
-          ctx.strokeStyle = "rgba(148,163,184,.2)";
+          ctx.strokeStyle = DemoTheme.alpha("faint", 0.2);
           ctx.lineWidth = 20;
           this.strokePath(ctx, path);
-          ctx.strokeStyle = "#0b1220";
+          ctx.strokeStyle = DemoTheme.colors.raised;
           ctx.lineWidth = 14;
           this.strokePath(ctx, path);
           const wd = Math.max(4, Math.min(18, 4 + Math.abs(flow) / 35));
           if (congested) {
             ctx.save();
-            ctx.shadowColor = "rgba(251,113,133,.85)";
+            ctx.shadowColor = DemoTheme.alpha("red", 0.85);
             ctx.shadowBlur = 16;
             ctx.strokeStyle = color;
             ctx.lineWidth = wd;
             this.strokePath(ctx, path);
             ctx.restore();
-            ctx.strokeStyle = "rgba(255,255,255,.85)";
+            ctx.strokeStyle = DemoTheme.alpha("surface", 0.85);
             ctx.lineWidth = 2;
             ctx.setLineDash([7, 9]);
             ctx.lineDashOffset = -this.state.t * 30;
@@ -1534,7 +1550,7 @@
             this.strokePath(ctx, path);
             ctx.globalAlpha = 1;
             if (isTie) {
-              ctx.strokeStyle = "rgba(245,158,11,.55)";
+              ctx.strokeStyle = DemoTheme.alpha("amber", 0.55);
               ctx.lineWidth = 2;
               ctx.setLineDash([4, 6]);
               this.strokePath(ctx, path);
@@ -1546,13 +1562,13 @@
         removedLine(ctx, path) {
           ctx.save();
           ctx.lineCap = "round";
-          ctx.strokeStyle = "rgba(100,116,139,.32)";
+          ctx.strokeStyle = DemoTheme.alpha("faint", 0.32);
           ctx.lineWidth = 8;
           ctx.setLineDash([10, 12]);
           this.strokePath(ctx, path);
           ctx.setLineDash([]);
           const m = this.pointAt(path, 0.5);
-          ctx.strokeStyle = "rgba(251,113,133,.8)";
+          ctx.strokeStyle = DemoTheme.alpha("red", 0.8);
           ctx.lineWidth = 2.6;
           ctx.beginPath();
           ctx.moveTo(m.x - 7, m.y - 7);
@@ -1560,7 +1576,7 @@
           ctx.moveTo(m.x + 7, m.y - 7);
           ctx.lineTo(m.x - 7, m.y + 7);
           ctx.stroke();
-          this.pill(ctx, m.x, m.y - 20, "line removed", "#cbd5e1");
+          this.pill(ctx, m.x, m.y - 20, "line removed", DemoTheme.colors.muted);
           ctx.restore();
         },
         strokePath(ctx, path) {
@@ -1581,13 +1597,13 @@
             ctx.save();
             ctx.translate(p.x, p.y);
             ctx.rotate(ang);
-            ctx.fillStyle = "rgba(2,6,23,.5)";
+            ctx.fillStyle = DemoTheme.alpha("bg", 0.5);
             this.round(ctx, -6.5, -4, 13, 8, 3);
             ctx.fill();
             ctx.fillStyle = color;
             this.round(ctx, -6, -3.4, 12, 6.8, 2.6);
             ctx.fill();
-            ctx.fillStyle = "rgba(255,255,255,.85)";
+            ctx.fillStyle = DemoTheme.alpha("surface", 0.85);
             this.round(ctx, 0.4, -2.4, 3.6, 4.8, 1.4);
             ctx.fill();
             ctx.restore();
@@ -1658,7 +1674,7 @@
         arrows(ctx, path, color, positions) {
           ctx.save();
           ctx.fillStyle = color;
-          ctx.strokeStyle = "rgba(2,6,23,.7)";
+          ctx.strokeStyle = DemoTheme.alpha("bg", 0.7);
           ctx.lineWidth = 1;
           positions.forEach((t) => {
             const p = this.pointAt(path, t),
@@ -1680,27 +1696,27 @@
         },
         node(ctx, p, label, color, caption) {
           ctx.save();
-          ctx.fillStyle = "rgba(2,6,23,.5)";
+          ctx.fillStyle = DemoTheme.alpha("bg", 0.5);
           ctx.beginPath();
           ctx.arc(p.x, p.y + 4, 27, 0, Math.PI * 2);
           ctx.fill();
           const g = ctx.createRadialGradient(p.x - 9, p.y - 11, 3, p.x, p.y, 27);
-          g.addColorStop(0, "rgba(255,255,255,.5)");
+          g.addColorStop(0, DemoTheme.alpha("surface", 0.5));
           g.addColorStop(1, color);
           ctx.fillStyle = g;
           ctx.beginPath();
           ctx.arc(p.x, p.y, 26, 0, Math.PI * 2);
           ctx.fill();
-          ctx.strokeStyle = "rgba(255,255,255,.82)";
+          ctx.strokeStyle = DemoTheme.alpha("surface", 0.82);
           ctx.lineWidth = 2.5;
           ctx.stroke();
-          ctx.fillStyle = "white";
+          ctx.fillStyle = DemoTheme.colors.ink;
           ctx.font = "900 18px Inter";
           ctx.textAlign = "center";
           ctx.textBaseline = "middle";
           ctx.fillText(label, p.x, p.y);
           if (caption) {
-            ctx.fillStyle = "#cbd5e1";
+            ctx.fillStyle = DemoTheme.colors.muted;
             ctx.font = "800 10px Inter";
             ctx.fillText(caption, p.x, p.y + 40);
           }
@@ -1708,21 +1724,21 @@
         },
         generator(ctx, p, color) {
           ctx.save();
-          ctx.fillStyle = "rgba(2,6,23,.5)";
+          ctx.fillStyle = DemoTheme.alpha("bg", 0.5);
           ctx.beginPath();
           ctx.arc(p.x, p.y + 4, 24, 0, Math.PI * 2);
           ctx.fill();
           const g = ctx.createRadialGradient(p.x - 8, p.y - 10, 3, p.x, p.y, 24);
-          g.addColorStop(0, "rgba(255,255,255,.5)");
+          g.addColorStop(0, DemoTheme.alpha("surface", 0.5));
           g.addColorStop(1, color);
           ctx.fillStyle = g;
           ctx.beginPath();
           ctx.arc(p.x, p.y, 22, 0, Math.PI * 2);
           ctx.fill();
-          ctx.strokeStyle = "rgba(255,255,255,.82)";
+          ctx.strokeStyle = DemoTheme.alpha("surface", 0.82);
           ctx.lineWidth = 2.4;
           ctx.stroke();
-          ctx.strokeStyle = "white";
+          ctx.strokeStyle = DemoTheme.colors.ink;
           ctx.lineWidth = 2.4;
           ctx.lineCap = "round";
           ctx.beginPath();
@@ -1736,7 +1752,7 @@
         junction(ctx, p, color) {
           ctx.save();
           ctx.lineCap = "round";
-          ctx.strokeStyle = "rgba(2,6,23,.5)";
+          ctx.strokeStyle = DemoTheme.alpha("bg", 0.5);
           ctx.lineWidth = 12;
           ctx.beginPath();
           ctx.moveTo(p.x - 20, p.y + 4);
@@ -1758,20 +1774,20 @@
         },
         load(ctx, p, color) {
           ctx.save();
-          ctx.fillStyle = "rgba(2,6,23,.5)";
+          ctx.fillStyle = DemoTheme.alpha("bg", 0.5);
           this.round(ctx, p.x - 22, p.y - 14, 44, 40, 11);
           ctx.fill();
           const g = ctx.createLinearGradient(p.x, p.y - 20, p.x, p.y + 20);
-          g.addColorStop(0, "rgba(255,255,255,.42)");
+          g.addColorStop(0, DemoTheme.alpha("surface", 0.42));
           g.addColorStop(0.22, color);
           g.addColorStop(1, color);
           ctx.fillStyle = g;
           this.round(ctx, p.x - 22, p.y - 18, 44, 38, 11);
           ctx.fill();
-          ctx.strokeStyle = "rgba(255,255,255,.82)";
+          ctx.strokeStyle = DemoTheme.alpha("surface", 0.82);
           ctx.lineWidth = 2.2;
           ctx.stroke();
-          ctx.fillStyle = "rgba(255,255,255,.92)";
+          ctx.fillStyle = DemoTheme.alpha("surface", 0.92);
           ctx.beginPath();
           ctx.moveTo(p.x, p.y + 13);
           ctx.lineTo(p.x - 8, p.y + 2);
@@ -1781,9 +1797,9 @@
           ctx.restore();
         },
         gridLabel(ctx, p, title, sub, value, dy) {
-          const lines = [{ t: title, c: "#f8fafc", f: "900 13px Inter" }];
-          if (sub) lines.push({ t: sub, c: "#94a3b8", f: "800 10px Inter" });
-          if (value) lines.push({ t: value, c: "#e2e8f0", f: "900 11px Inter" });
+          const lines = [{ t: title, c: DemoTheme.colors.ink, f: "900 13px Inter" }];
+          if (sub) lines.push({ t: sub, c: DemoTheme.colors.faint, f: "800 10px Inter" });
+          if (value) lines.push({ t: value, c: DemoTheme.colors.ink, f: "900 11px Inter" });
           ctx.save();
           let maxW = 0;
           lines.forEach((l) => {
@@ -1794,8 +1810,8 @@
             bh = 12 + lines.length * 14,
             bx = p.x - bw / 2,
             by = p.y + dy;
-          ctx.fillStyle = "rgba(2,6,23,.82)";
-          ctx.strokeStyle = "rgba(148,163,184,.22)";
+          ctx.fillStyle = DemoTheme.alpha("bg", 0.82);
+          ctx.strokeStyle = DemoTheme.alpha("faint", 0.22);
           ctx.lineWidth = 1;
           this.round(ctx, bx, by, bw, bh, 12);
           ctx.fill();
@@ -1818,17 +1834,17 @@
           ctx.font = "800 12px Inter";
           const w = Math.max(ctx.measureText(text).width, ctx.measureText(sub).width) + 20,
             h = 39;
-          ctx.fillStyle = "rgba(2,6,23,.78)";
-          ctx.strokeStyle = "rgba(148,163,184,.22)";
+          ctx.fillStyle = DemoTheme.alpha("bg", 0.78);
+          ctx.strokeStyle = DemoTheme.alpha("faint", 0.22);
           ctx.lineWidth = 1;
           this.round(ctx, x - w / 2, y - h / 2, w, h, 12);
           ctx.fill();
           ctx.stroke();
-          ctx.fillStyle = "#f8fafc";
+          ctx.fillStyle = DemoTheme.colors.ink;
           ctx.textAlign = "center";
           ctx.textBaseline = "middle";
           ctx.fillText(text, x, y - 6);
-          ctx.fillStyle = "#94a3b8";
+          ctx.fillStyle = DemoTheme.colors.faint;
           ctx.font = "800 10px Inter";
           ctx.fillText(sub, x, y + 10);
           ctx.restore();
@@ -1837,10 +1853,10 @@
           ctx.font = "900 11px Inter";
           const w = ctx.measureText(text).width + 18,
             h = 26;
-          ctx.fillStyle = "rgba(2,6,23,.82)";
+          ctx.fillStyle = DemoTheme.alpha("bg", 0.82);
           this.round(ctx, x - w / 2, y - h / 2, w, h, 999);
           ctx.fill();
-          ctx.strokeStyle = "rgba(148,163,184,.24)";
+          ctx.strokeStyle = DemoTheme.alpha("faint", 0.24);
           ctx.stroke();
           ctx.fillStyle = color;
           ctx.textAlign = "center";

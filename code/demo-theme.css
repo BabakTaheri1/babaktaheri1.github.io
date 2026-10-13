@@ -1,0 +1,291 @@
+:root {
+  color-scheme: light;
+  --demo-bg: #eef3f9;
+  --demo-surface: #ffffff;
+  --demo-raised: #f3f7fc;
+  --demo-ink: #142841;
+  --demo-muted: #4a607a;
+  --demo-faint: #566f8c;
+  --demo-line: #d0dcec;
+  --demo-grid: #d9e3f0;
+  --demo-accent: #006e87;
+  --demo-accent-soft: #e0f2f7;
+  --demo-blue: #1d5ca4;
+  --demo-green: #047857;
+  --demo-amber: #8c5800;
+  --demo-orange: #a54412;
+  --demo-purple: #6d28d9;
+  --demo-red: #be123c;
+  --demo-shadow: 0 16px 45px rgba(29, 55, 90, 0.07);
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --demo-bg: #08111f;
+  --demo-surface: #111e30;
+  --demo-raised: #17283e;
+  --demo-ink: #eaf1fb;
+  --demo-muted: #b0bfd2;
+  --demo-faint: #8196b0;
+  --demo-line: #2c405b;
+  --demo-grid: #273b53;
+  --demo-accent: #64dcf3;
+  --demo-accent-soft: #143d50;
+  --demo-blue: #7dbbff;
+  --demo-green: #6ee7b7;
+  --demo-amber: #fcd34d;
+  --demo-orange: #fdba74;
+  --demo-purple: #c4b5fd;
+  --demo-red: #fda4af;
+  --demo-shadow: 0 18px 50px rgba(0, 0, 0, 0.16);
+}
+
+/* Keep the existing demonstrations' named colors on the common palette. */
+html[data-theme] {
+  --bg: var(--demo-bg);
+  --bg0: var(--demo-bg);
+  --bg1: var(--demo-bg);
+  --bg2: var(--demo-bg);
+  --card: var(--demo-surface);
+  --card2: var(--demo-surface);
+  --line: var(--demo-line);
+  --text: var(--demo-ink);
+  --muted: var(--demo-muted);
+  --white: var(--demo-ink);
+  --green: var(--demo-green);
+  --sky: var(--demo-accent);
+  --blue: var(--demo-blue);
+  --amber: var(--demo-amber);
+  --orange: var(--demo-orange);
+  --purple: var(--demo-purple);
+  --red: var(--demo-red);
+  --primary-color: var(--demo-ink);
+  --secondary-color: var(--demo-blue);
+  --accent-color: var(--demo-green);
+  --warning-color: var(--demo-amber);
+  --danger-color: var(--demo-red);
+  --background-color: var(--demo-bg);
+  --canvas-bg-color: var(--demo-raised);
+  --text-color: var(--demo-muted);
+  --shadow-color: rgba(29, 55, 90, 0.07);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body.demo-page {
+  color: var(--demo-ink);
+  background: radial-gradient(ellipse at 90% 0, color-mix(in srgb, var(--demo-accent) 6%, transparent), transparent 40%), var(--demo-bg);
+  font-family:
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+  line-height: 1.55;
+}
+
+.demo-page h1,
+.demo-page h2,
+.demo-page h3 {
+  color: var(--demo-ink);
+}
+
+.demo-page h1 {
+  font-size: clamp(28px, 4.1vw, 58px);
+  font-weight: 750;
+  line-height: 1.08;
+}
+
+.demo-page a {
+  color: var(--demo-accent);
+}
+
+.demo-page input,
+.demo-page select {
+  accent-color: var(--demo-accent);
+}
+
+.demo-page :focus-visible {
+  outline: 3px solid var(--demo-accent);
+  outline-offset: 4px;
+}
+
+.demo-toolbar {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.demo-toolbar a {
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.demo-page .demo-theme-button,
+.demo-page .btn,
+.demo-page .control-button,
+.demo-page .tab {
+  color: var(--demo-ink);
+  background: var(--demo-surface);
+  border: 1px solid var(--demo-line);
+  border-radius: 10px;
+  min-height: 42px;
+  padding: 9px 14px;
+  font:
+    650 13px/1.4 system-ui,
+    sans-serif;
+  cursor: pointer;
+  box-shadow: none;
+}
+
+.demo-page .btn.primary,
+.demo-page .btn[aria-pressed="true"],
+.demo-page .tab.active,
+.demo-page .control-button.active,
+.demo-page .control-button[aria-pressed="true"] {
+  color: var(--demo-accent);
+  background: var(--demo-accent-soft);
+  border-color: var(--demo-accent);
+}
+
+.demo-page .demo-theme-button:hover,
+.demo-page .btn:hover,
+.demo-page .control-button:hover,
+.demo-page .tab:hover {
+  background: var(--demo-raised);
+  border-color: var(--demo-accent);
+}
+
+.demo-page .glass,
+.demo-page .glass-panel,
+.demo-page .stat-card,
+.demo-page .chart-container,
+.demo-page .controls-container,
+.demo-page .math-section,
+.demo-page .equation-box {
+  background: var(--demo-surface);
+  border-color: var(--demo-line);
+  box-shadow: var(--demo-shadow);
+  backdrop-filter: none;
+}
+
+.demo-page mjx-container[display="true"] {
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 4px 0;
+}
+
+.demo-page .canvasWrap,
+.demo-page .chartBox,
+.demo-page .canvas-wrapper,
+.demo-page .visualization-container {
+  background: var(--demo-raised);
+  border-color: var(--demo-line);
+  box-shadow: none;
+}
+
+.demo-page .badge {
+  color: var(--demo-ink);
+  background: color-mix(in srgb, var(--demo-surface) 96%, transparent);
+  border-color: var(--demo-line);
+}
+
+/* The urn's utility classes use the same surfaces and readable text. */
+.demo-page .text-white,
+.demo-page .text-gray-200,
+.demo-page .text-gray-300 {
+  color: var(--demo-ink);
+}
+
+.demo-page .text-gray-400,
+.demo-page .text-gray-500 {
+  color: var(--demo-muted);
+}
+
+.demo-page .text-red-400 {
+  color: var(--demo-red);
+}
+
+.demo-page .text-blue-400 {
+  color: var(--demo-blue);
+}
+
+.demo-page .bg-gray-900,
+.demo-page .bg-gray-700 {
+  background: var(--demo-raised);
+}
+
+.demo-page .border-gray-600,
+.demo-page .border-gray-700 {
+  border-color: var(--demo-line);
+}
+
+.demo-page #final-message {
+  background: color-mix(in srgb, var(--demo-surface) 90%, transparent);
+  color: var(--demo-ink);
+}
+
+.demo-page #chaosCanvas {
+  max-width: 100%;
+  height: auto;
+  border: 1px solid var(--demo-line);
+  border-radius: 13px;
+}
+
+.demo-page .controls #play-btn,
+.demo-page .controls #pause-btn,
+.demo-page .controls #next-btn,
+.demo-page .controls #reset-btn,
+.demo-page .controls #toggle-line-btn {
+  color: var(--demo-ink);
+  background: var(--demo-surface);
+  border: 1px solid var(--demo-line);
+  min-height: 42px;
+  border-radius: 10px;
+}
+
+.demo-page #main-vis {
+  min-width: 0;
+  flex-basis: 300px;
+}
+
+.demo-page .equation-box {
+  overflow-x: auto;
+}
+
+@media (max-width: 560px) {
+  .demo-page .container {
+    padding: 0;
+  }
+  .euler-demo .container {
+    padding: 16px;
+  }
+  .demo-page .math-section {
+    padding: 18px;
+  }
+  .demo-page .equation-box {
+    padding: 20px 12px;
+    font-size: clamp(1.2rem, 6vw, 2.5rem);
+  }
+  .demo-page #wave-vis {
+    min-width: 0;
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .demo-page *,
+  .demo-page *::before,
+  .demo-page *::after {
+    scroll-behavior: auto !important;
+    transition: none !important;
+    animation: none !important;
+  }
+}

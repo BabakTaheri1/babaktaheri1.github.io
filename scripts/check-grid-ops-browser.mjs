@@ -10,13 +10,19 @@ const project = fileURLToPath(new URL("../", import.meta.url));
 const root = resolve(process.env.SITE_DIR || project);
 const artifactDir = process.env.GRID_OPS_ARTIFACT_DIR;
 const html = await readFile(resolve(root, "code/grid-ops-architecture.html"));
-const server = createServer((req, res) => {
-  if (req.url !== "/") {
+const server = createServer(async (req, res) => {
+  try {
+    const assets = { "/demo-theme.css": "text/css", "/demo-theme.js": "text/javascript" };
+    if (req.url === "/") {
+      res.setHeader("Content-Type", "text/html; charset=utf-8");
+      res.end(html);
+    } else if (assets[req.url]) {
+      res.setHeader("Content-Type", assets[req.url]);
+      res.end(await readFile(resolve(root, "code" + req.url)));
+    } else res.writeHead(404).end();
+  } catch {
     res.writeHead(404).end();
-    return;
   }
-  res.setHeader("Content-Type", "text/html; charset=utf-8");
-  res.end(html);
 });
 await new Promise((done) => server.listen(0, "127.0.0.1", done));
 const url = "http://127.0.0.1:" + server.address().port + "/";

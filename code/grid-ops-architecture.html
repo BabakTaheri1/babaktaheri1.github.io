@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="light">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -8,13 +8,6 @@
       name="description"
       content="An interactive guide to grid operations, with a lossless DC dispatch lab, nodal prices, and a selected line-outage study."
     />
-    <script>
-      try {
-        const saved = localStorage.getItem("gridOpsTheme") || localStorage.getItem("theme");
-        document.documentElement.dataset.theme =
-          saved === "light" || saved === "dark" ? saved : matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-      } catch (_) {}
-    </script>
     <style>
       :root {
         color-scheme: dark;
@@ -931,8 +924,10 @@
         }
       }
     </style>
+    <link rel="stylesheet" href="demo-theme.css" />
+    <script src="demo-theme.js"></script>
   </head>
-  <body>
+  <body class="demo-page">
     <a class="skip-link" href="#dispatchLab">Skip to dispatch lab</a>
     <div class="shell">
       <nav class="topbar" aria-label="Page navigation">
@@ -2317,12 +2312,7 @@
             scenario(button.dataset.scenario);
           })
         );
-        $("themeButton").addEventListener("click", () => {
-          document.documentElement.dataset.theme = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
-          try {
-            localStorage.setItem("gridOpsTheme", document.documentElement.dataset.theme);
-          } catch (_) {}
-          themeLabel();
+        document.addEventListener("demothemechange", () => {
           renderStage();
           drawStack();
           drawNetwork();

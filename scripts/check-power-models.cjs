@@ -6,7 +6,8 @@ const vm = require("node:vm");
 function loadApp(name) {
   const html = readFileSync(resolve(__dirname, `../code/${name}.html`), "utf8");
   const script = html.match(/<script>\s*([\s\S]*?)<\/script>/)[1];
-  const context = { window: { matchMedia: () => ({ matches: false }) } };
+  // Display colors do not affect the model; provide the browser palette contract.
+  const context = { window: { matchMedia: () => ({ matches: false }) }, DemoTheme: { colors: {} } };
   vm.createContext(context);
   vm.runInContext(script.replace("App.init();", "globalThis.app = App;"), context);
   return context.app;

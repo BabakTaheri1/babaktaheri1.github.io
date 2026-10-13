@@ -9,6 +9,7 @@
     "check:demos": "node scripts/check-power-models.cjs && node scripts/check-grid-ops-model.cjs",
     "check:a11y": "node scripts/check-accessibility.mjs",
     "measure:scripts": "node scripts/measure-scripts.cjs",
-    "check:grid-ops": "node scripts/check-grid-ops-browser.mjs"
+    "check:grid-ops": "node scripts/check-grid-ops-browser.mjs",
+    "check:demo-themes": "node scripts/check-demo-themes.mjs"
   }
 }

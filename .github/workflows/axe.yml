@@ -39,6 +39,11 @@ jobs:
         env:
           SITE_DIR: _site
           GRID_OPS_ARTIFACT_DIR: reports/grid-ops
+      - name: Check all demo themes and experiment continuity
+        run: npm run check:demo-themes
+        env:
+          SITE_DIR: _site
+          DEMO_THEME_ARTIFACT_DIR: reports/demo-themes
       - name: Upload accessibility report
         if: always()
         uses: actions/upload-artifact@v4
@@ -47,3 +52,4 @@ jobs:
           path: |
             reports/accessibility.json
             reports/grid-ops/
+            reports/demo-themes/
