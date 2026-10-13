@@ -38,6 +38,16 @@ try {
       assert.deepEqual(errors, []);
       assert.equal(await page.locator("html").getAttribute("data-theme"), theme);
       assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
+      assert(
+        await page.locator('[data-cell="14"]').evaluate((cell) => {
+          const table = cell.closest("table"),
+            region = table.parentElement.getBoundingClientRect();
+          const label = table.querySelector("tbody th").getBoundingClientRect(),
+            rect = cell.getBoundingClientRect();
+          return rect.left >= label.right && rect.right <= region.right;
+        }),
+        "Selected hour must be visible beside the sticky resource label"
+      );
       const scan = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"]).analyze();
       reports.push({ width, theme, violations: scan.violations });
       assert.equal(scan.violations.length, 0, JSON.stringify(scan.violations));
@@ -46,6 +56,8 @@ try {
 
       if (width === 1440 && theme === "dark") {
         await page.locator('[data-scenario="congestion"]').click();
+        assert.equal(await page.locator('[data-scenario="congestion"]').getAttribute("aria-pressed"), "true");
+        assert.match(await page.locator("#caseNote").innerText(), /preventive plan/);
         assert.match(await page.locator("#statusTitle").innerText(), /limit/);
         assert.match(await page.locator("#statusText").innerText(), /outage/);
         assert.equal(await page.locator("#networkView").inputValue(), "1");
@@ -63,6 +75,36 @@ try {
         assert.equal(await page.locator("#metricPrice").innerText(), "—");
         await page.locator("#curtailmentToggle").check();
         assert.equal(await page.locator("#statusTitle").innerText(), "No feasible dispatch");
+        // Process comparisons must preserve a manually selected demand.
+        await page.locator('[data-stage="0"]').click();
+        assert.equal(await page.locator("#demandSlider").inputValue(), "20");
+        assert.match(await page.locator("#statusTitle").innerText(), /Feasible dispatch/);
+
+        await page.locator('[data-scenario="shortage"]').click();
+        assert.match(await page.locator("#caseNote").innerText(), /75 GW/);
+        assert.equal(await page.locator("#statusTitle").innerText(), "No feasible dispatch");
+        await page.locator("#curtailmentToggle").check();
+        assert.match(await page.locator("#statusTitle").innerText(), /curtailment/);
+        await page.locator("#fastToggle").check();
+        assert.equal(await page.locator('[data-cell="206"]').innerText(), "REL");
+        assert.equal(await page.locator('[data-cell="230"]').innerText(), "REL");
+        assert.equal(await page.locator('[data-cell="254"]').innerText(), "·", "Demand response is not a fast-start generator");
+        await page.locator("#fastToggle").uncheck();
+        assert.equal(await page.locator('[data-cell="206"]').innerText(), "·");
+
+        const emergencyScan = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"]).analyze();
+        assert.equal(emergencyScan.violations.length, 0, JSON.stringify(emergencyScan.violations));
+
+        await page.locator("#resetButton").click();
+        await page.locator("#hourSlider").evaluate((input) => {
+          input.value = "3";
+          input.dispatchEvent(new Event("input", { bubbles: true }));
+        });
+        assert.equal(
+          await page.locator("#metricVre").innerText(),
+          "10.4 GW renewable availability",
+          "Wind availability must respect nameplate capacity"
+        );
 
         await page.locator("#resetButton").click();
         await page.locator('[data-stage="3"]').focus();
@@ -81,6 +123,10 @@ try {
         await page.keyboard.press("ArrowRight");
         assert.equal(await page.evaluate(() => document.activeElement.dataset.cell), "15");
         assert.match(await page.locator("#heatInfo").innerText(), /15:00/);
+        await page.locator('[data-cell="23"]').focus();
+        await page.keyboard.press("ArrowRight");
+        assert.equal(await page.evaluate(() => document.activeElement.dataset.cell), "23");
+        await page.locator('[data-cell="14"]').focus();
 
         await page.locator("#themeButton").click();
         assert.equal(await page.locator("html").getAttribute("data-theme"), "light");
@@ -99,6 +145,17 @@ try {
           assert.equal(stageScan.violations.length, 0, JSON.stringify(stageScan.violations));
         }
         assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
+      }
+      if (width === 320) {
+        await page.locator('[data-scenario="shortage"]').click();
+        await page.locator("#curtailmentToggle").check();
+        for (const details of await page.locator("details").all())
+          await details.evaluate((element) => {
+            element.open = true;
+          });
+        assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
+        const expandedScan = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"]).analyze();
+        assert.equal(expandedScan.violations.length, 0, JSON.stringify(expandedScan.violations));
       }
       assert.deepEqual(errors, []);
       await context.close();

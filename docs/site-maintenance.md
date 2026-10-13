@@ -70,18 +70,25 @@ the demos. Update them when the main visuals change.
 The Grid Operations & Dispatch guide adds a fourth power-system card. Its
 commitment and state-estimation sections are illustrations; its dispatch lab
 solves a lossless DC LP with a selected South–East outage. Prices come from LP
-duals, and infeasible solves expose no prices, flows, or accepted output. The
+duals after primal/dual optimality checks, and infeasible solves expose no
+prices, flows, or accepted output. Solver failures are reported separately.
+The ramp example uses fictional GW/hour limits and a one-hour interval;
+playback steps through independent snapshots rather than simulating a trajectory. The
 illustrative prior-hour base point uses the intact grid and stays fixed when
 the current-interval outage check changes.
 
 `npm run check:demos` also checks 2,400 grid-operations cases for balance,
 resource bounds, base/outage branch limits, Kirchhoff's laws, and infeasibility.
-Nodal prices are checked against numerical objective sensitivities.
+The LP solver is also compared with 128 independently enumerated two-variable
+problems. Nodal prices pass resource optimality conditions and 360 forward/backward
+objective sensitivity checks, including congestion and emergency curtailment.
 Run `CHROME_CHANNEL=chrome npm run check:grid-ops` locally, or omit the channel
 to use Playwright Chromium. Set `SITE_DIR=_site` to test the built page and
 `GRID_OPS_ARTIFACT_DIR=/tmp/grid-ops-checks` to save screenshots and scan results.
 The browser check covers both themes, four widths, all process stages on mobile,
-keyboard controls, saved theme preference, and both playback modes.
+keyboard controls, fixed-demand process comparisons, manually released resources,
+visibility of the selected schedule hour, expanded mobile tables, saved theme
+preference, and both playback modes.
 
 The main stylesheet is compressed by Sass and excluded from the second CSS
 compression pass in `jekyll-minifier`. That redundant pass is very slow on the

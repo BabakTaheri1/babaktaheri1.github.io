@@ -394,6 +394,18 @@
         gap: 8px;
         flex-wrap: wrap;
       }
+      .case-note {
+        margin: 16px 0 0;
+        padding: 12px 14px;
+        border-left: 3px solid var(--stage);
+        background: var(--surface-raised);
+        border-radius: 0 10px 10px 0;
+        color: var(--muted);
+        font-size: 13px;
+      }
+      .case-note strong {
+        color: var(--ink);
+      }
       .control-grid {
         display: grid;
         grid-template-columns: 1fr 1fr 1.1fr;
@@ -697,6 +709,13 @@
         z-index: 1;
         font-size: 11px;
       }
+      .heatmap-table thead th:first-child {
+        position: sticky;
+        left: 0;
+        z-index: 2;
+        text-align: left;
+        background: var(--surface);
+      }
       .heat-cell {
         display: block;
         width: 100%;
@@ -951,7 +970,7 @@
         <div class="lab-heading">
           <div>
             <h2>The dispatch lab</h2>
-            <p>A small, fictional grid. All capacities and loads are in GW.</p>
+            <p>A small, fictional grid. Power is in GW; energy offers and nodal prices are in $/MWh.</p>
           </div>
           <span class="chip calculated">Lossless DC model</span>
         </div>
@@ -964,18 +983,20 @@
                 <button class="btn" data-scenario="evening">Forecast miss</button>
                 <button class="btn" data-scenario="congestion">Congestion</button>
                 <button class="btn" data-scenario="low">Low demand</button>
+                <button class="btn" data-scenario="shortage">Supply shortage</button>
               </div>
             </div>
             <div class="playback">
               <button class="btn primary" id="playButton" aria-pressed="false">Play hours</button><button class="btn" id="resetButton">Reset</button>
             </div>
           </div>
+          <p class="case-note" id="caseNote"></p>
           <div class="control-grid">
             <div>
               <label class="control-label" for="hourSlider">Delivery hour <output id="hourValue" for="hourSlider"></output></label>
               <input id="hourSlider" type="range" min="0" max="23" step="1" value="14" aria-describedby="hourHint" />
               <div class="scale"><span>00:00</span><span>23:00</span></div>
-              <p class="control-hint" id="hourHint">Play steps through delivery hours in the selected process.</p>
+              <p class="control-hint" id="hourHint">Each hour is a separate snapshot. Play does not simulate a continuous operating trajectory.</p>
             </div>
             <div>
               <label class="control-label" for="demandSlider">System demand <output id="demandValue" for="demandSlider"></output></label>
@@ -988,7 +1009,9 @@
                 ><input id="outageToggle" type="checkbox" checked /><span>Check the South–East line outage as well as the base network.</span></label
               >
               <label class="switch"
-                ><input id="fastToggle" type="checkbox" /><span id="fastHint">Release offline fast-start blocks in real-time dispatch.</span></label
+                ><input id="fastToggle" type="checkbox" /><span id="fastHint"
+                  >Release offline fast-start blocks for this real-time snapshot.</span
+                ></label
               >
               <label class="switch"
                 ><input id="curtailmentToggle" type="checkbox" /><span
@@ -1011,8 +1034,8 @@
             <dd><span id="metricDemand"></span><small id="metricVre"></small></dd>
           </div>
           <div class="metric">
-            <dt>Available headroom</dt>
-            <dd><span id="metricHeadroom"></span><small>Within output bounds; not a reserve award</small></dd>
+            <dt>Dispatchable headroom</dt>
+            <dd><span id="metricHeadroom"></span><small>Output slack; network delivery not checked</small></dd>
           </div>
           <div class="metric">
             <dt>West reference price</dt>
@@ -1030,8 +1053,8 @@
               <span class="chip" id="dispatchTag"></span>
             </div>
             <p class="chart-copy">
-              Offers are ordered by cost. Network constraints can change which blocks are accepted; dispatch is not always a simple cut through the
-              stack.
+              Block width is available output; height is the energy offer. Green shows accepted output. Network and ramp constraints can make a
+              higher-cost block run before a cheaper one is full.
             </p>
             <div class="chart-frame">
               <canvas
@@ -1046,10 +1069,11 @@
               <span class="legend-item"><i class="swatch green"></i>Accepted output</span
               ><span class="legend-item"><i class="swatch"></i>Available output</span
               ><span class="legend-item"><i class="swatch red"></i>Demand</span>
+              <span class="legend-item">Dashed block marks: minimum output</span>
             </div>
             <p class="chart-inspect" id="stackInspect">Select an offer block to inspect its output bounds, or use the table below.</p>
             <details>
-              <summary>Generator output and limits</summary>
+              <summary>Resource dispatch and limits</summary>
               <div class="data-scroll" tabindex="0" role="region" aria-label="Generator output table">
                 <table>
                   <thead>
@@ -1075,8 +1099,8 @@
               </select>
             </div>
             <p class="chart-copy">
-              Compare the intact grid with the selected outage. Select a bus or line to inspect it. The table gives the same values without using the
-              drawing.
+              Both views use the same dispatch. The outage check requires it to respect limits before and after the line is removed, without
+              corrective redispatch. Switching views changes the drawing, not the price calculation.
             </p>
             <div class="chart-frame">
               <canvas
@@ -1097,6 +1121,7 @@
             <details>
               <summary>Bus prices and line flows</summary>
               <div class="data-scroll" tabindex="0" role="region" aria-label="Nodal price and line-flow tables">
+                <p class="control-hint">Net injection includes any load reduction. Positive line flow goes from the first named bus to the second.</p>
                 <table>
                   <caption class="sr-only">
                     Nodal prices
@@ -1104,6 +1129,8 @@
                   <thead>
                     <tr>
                       <th scope="col">Bus</th>
+                      <th scope="col">Load GW</th>
+                      <th scope="col">Net injection GW</th>
                       <th scope="col">Price $/MWh</th>
                       <th scope="col">Congestion $/MWh</th>
                     </tr>
@@ -1146,6 +1173,7 @@
             <span class="legend-item"><i class="swatch"></i>Online</span
             ><span class="legend-item"><i class="swatch" style="background: var(--stage)"></i>Start</span
             ><span class="legend-item"><i class="swatch amber"></i>Illustrated intraday addition</span>
+            <span class="legend-item">REL: manually released for this snapshot</span>
           </div>
           <p class="heat-info" id="heatInfo">
             Select a cell, or use arrow keys within the schedule, for resource and hour details. The outlined column is the selected delivery hour.
@@ -1158,55 +1186,75 @@
               <div>
                 <h3>The dispatch calculation</h3>
                 <p>
-                  Minimize energy offer cost subject to generation–load balance, resource output bounds, and linear DC branch limits. Real-time bounds
-                  use ramp bands around an illustrative prior-hour dispatch on the intact grid. Prices come from the final linear-programming duals.
+                  Minimize energy offer cost and any emergency curtailment penalty subject to power balance, resource output bounds, and linear DC
+                  branch limits. Curtailment reduces load at its own bus. Demand response is a paid reduction in Metro load, represented as an
+                  equivalent injection.
                 </p>
                 <p class="equation">
-                  min Σ cᵢPᵢ<br />Σ Pᵢ + Σ shedᵦ = Σ loadᵦ<br />|PTDFᵏ(P − load)| ≤ branch limits<br />max(Pmin, base − ramp) ≤ P ≤ min(capacity, base
-                  + ramp)
+                  min Σ cᵢPᵢ + 600 Σ sᵦ<br />qᵦ = Σᵢ at bus b Pᵢ + sᵦ − dᵦ<br />Σ qᵦ = 0 · |Hᵏq| ≤ Fᵏ<br />Pᵢ,min ≤ Pᵢ ≤ Pᵢ,max · 0 ≤ sᵦ ≤ dᵦ
+                </p>
+                <p>
+                  P is resource dispatch, d is requested load, s is emergency load curtailment, and q is net bus injection. H maps injections to
+                  branch flows; k indexes the intact grid and, when enabled, the selected outage. One GW sustained for one hour is 1,000 MWh, so
+                  multiplying this objective by 1,000 gives the cost of the one-hour snapshot in dollars. Prices are reported in $/MWh.
+                </p>
+                <p>
+                  In the real-time example, Pmin = max(online minimum, prior output − ramp × Δt) and Pmax = min(available capacity, prior output +
+                  ramp × Δt). Ramp rates are fictional GW/hour values and Δt = 1 hour. Real systems dispatch on a much shorter interval; PJM’s
+                  real-time energy market uses five minutes. The prior output is calculated independently from the previous hour’s intact-grid
+                  intraday example and stays fixed while you change demand or the outage check. Startup and shutdown trajectories are omitted.
                 </p>
                 <p>
                   The outage check removes the South–East line and recomputes all remaining flows. It checks that selected contingency, not every
-                  possible N-1 outage. Redispatch after the outage is not modeled.
+                  possible N-1 outage. Dispatchable headroom is unused output capability, excluding wind and solar; it is neither a reserve award nor
+                  a guarantee that extra power can be delivered through the network.
+                </p>
+                <p>
+                  Nodal prices come from the dispatch problem’s linear-programming duals: the marginal offer cost of serving extra demand at each bus
+                  with commitment, availability, and ramp bounds held fixed. The energy/congestion split uses West as the reference bus; the total
+                  nodal price does not depend on that reference. At a change in the active constraints, a marginal price can be nonunique.
                 </p>
               </div>
               <div>
                 <h3>The illustrations</h3>
                 <p>
-                  Day-ahead and intraday schedules are prescribed examples. There is no mixed-integer commitment solve, no reserve co-optimization,
-                  and no weighted-least-squares state estimator. Minimum run times, startup costs, and AC voltage checks are explained in the guide
-                  but not enforced by this dispatch model.
+                  Day-ahead and intraday schedules are prescribed examples. There is no mixed-integer commitment solve, reserve co-optimization, or
+                  state-estimation calculation. Minimum up/down times and startup costs are not enforced. The state-estimation tab explains the
+                  measurement workflow; its dispatch example uses the same inputs as the intraday tab.
                 </p>
                 <p>
                   Losses, reactive power, voltage limits, storage energy balance, and market settlement rules are omitted. Storage is a discharge
-                  block. The fleets, offers, ramp rates, and curtailment penalty are fictional. Actual processes and fast-start rules vary by market.
+                  block, so playing hours does not charge or deplete a battery. Releasing fast-start blocks is a manual commitment change for the
+                  current snapshot, not an optimized start decision. The fleets, offers, ramp rates, and curtailment penalty are fictional. Actual
+                  processes and fast-start rules vary by market.
                 </p>
                 <p>
-                  Further reading: <a href="https://www.pjm.com/markets-and-operations/energy">PJM energy markets</a> and
-                  <a href="https://matpower.org/documentation/ref-manual/legacy/functions/makePTDF.html">MATPOWER’s DC transfer factors</a>.
+                  Further reading: <a href="https://www.pjm.com/markets-and-operations/energy">PJM energy markets</a>,
+                  <a href="https://matpower.app/manual/matpower/StandardDCOPF.html">MATPOWER’s DC optimal power flow</a>, and
+                  <a href="https://matpower.org/documentation/ref-manual/legacy/functions/makePTDF.html">DC transfer factors</a>.
                 </p>
               </div>
             </div>
           </details>
         </section>
       </main>
-      <footer><span>Created by Babak Taheri</span><span>Educational guide · fictional grid · no external libraries</span></footer>
+      <footer><span>Created by Babak Taheri</span><span>Educational guide · fictional grid</span></footer>
     </div>
     <script id="grid-model">
       const GridOpsModel = (() => {
         "use strict";
         const units = [
-          { id: "nuclear", name: "North nuclear fleet", bus: "N", cap: 10.5, min: 7.8, cost: 11, ramp: 0.5, minUp: 24 },
-          { id: "coal", name: "West thermal fleet", bus: "W", cap: 9.2, min: 3.5, cost: 29, ramp: 1.1, minUp: 10 },
-          { id: "metro", name: "Metro combined cycle", bus: "M", cap: 8.4, min: 2.6, cost: 41, ramp: 2.8, minUp: 5 },
-          { id: "east", name: "East combined cycle", bus: "E", cap: 9.6, min: 2.4, cost: 46, ramp: 2.4, minUp: 4 },
-          { id: "hydro", name: "North flexible hydro", bus: "N", cap: 4.8, min: 0, cost: 18, ramp: 4.8, minUp: 0 },
-          { id: "wind", name: "West wind portfolio", bus: "W", cap: 10.4, min: 0, cost: 0, ramp: 9, minUp: 0, renewable: true },
-          { id: "solar", name: "South solar portfolio", bus: "S", cap: 7.4, min: 0, cost: 0, ramp: 7.4, minUp: 0, renewable: true },
-          { id: "battery", name: "Metro storage discharge", bus: "M", cap: 2.8, min: 0, cost: 57, ramp: 2.8, minUp: 0 },
-          { id: "ctEast", name: "East fast-start fleet", bus: "E", cap: 5, min: 0.4, cost: 82, ramp: 5, minUp: 1, fast: true },
-          { id: "ctMetro", name: "Metro fast-start fleet", bus: "M", cap: 4.5, min: 0.4, cost: 97, ramp: 4.5, minUp: 1, fast: true },
-          { id: "dr", name: "Metro demand response", bus: "M", cap: 3, min: 0, cost: 140, ramp: 3, minUp: 1, fast: true },
+          { id: "nuclear", name: "North nuclear fleet", bus: "N", cap: 10.5, min: 7.8, cost: 11, ramp: 0.5 },
+          { id: "coal", name: "West thermal fleet", bus: "W", cap: 9.2, min: 3.5, cost: 29, ramp: 1.1 },
+          { id: "metro", name: "Metro combined-cycle fleet", bus: "M", cap: 8.4, min: 2.6, cost: 41, ramp: 2.8 },
+          { id: "east", name: "East combined-cycle fleet", bus: "E", cap: 9.6, min: 2.4, cost: 46, ramp: 2.4 },
+          { id: "hydro", name: "North flexible hydro", bus: "N", cap: 4.8, min: 0, cost: 18, ramp: 4.8 },
+          { id: "wind", name: "West wind portfolio", bus: "W", cap: 10.4, min: 0, cost: 0, ramp: 9, renewable: true },
+          { id: "solar", name: "South solar portfolio", bus: "S", cap: 7.4, min: 0, cost: 0, ramp: 7.4, renewable: true },
+          { id: "battery", name: "Metro storage discharge", bus: "M", cap: 2.8, min: 0, cost: 57, ramp: 2.8 },
+          { id: "ctEast", name: "East fast-start fleet", bus: "E", cap: 5, min: 0.4, cost: 82, ramp: 5, fast: true },
+          { id: "ctMetro", name: "Metro fast-start fleet", bus: "M", cap: 4.5, min: 0.4, cost: 97, ramp: 4.5, fast: true },
+          { id: "dr", name: "Metro demand response", bus: "M", cap: 3, min: 0, cost: 140, ramp: 3 },
         ];
         const buses = [
           { id: "W", name: "West", x: 0.16, y: 0.4 },
@@ -1373,11 +1421,24 @@
           });
           if (a.some((row, i) => row.reduce((s, v, j) => s + v * x[j], 0) > b[i] + 1e-6)) return { status: "numerical-error" };
           const transposedBasis = basis.map((j) => original.map((row) => row[j]));
-          const dual = linearSolve(
+          const basisDual = linearSolve(
             transposedBasis,
             basis.map((j) => cost[j])
           );
-          return { status: "optimal", x, dual: dual && dual.map((v, i) => v * signs[i]) };
+          if (!basisDual) return { status: "numerical-error" };
+          const dual = basisDual.map((v, i) => v * signs[i]);
+          const primalCost = c.reduce((sum, v, j) => sum + v * x[j], 0);
+          const dualCost = b.reduce((sum, v, i) => sum + v * dual[i], 0);
+          // A price is valid only if the final basis certifies the optimum.
+          if (
+            !x.every(Number.isFinite) ||
+            !dual.every(Number.isFinite) ||
+            dual.some((v) => v > 1e-6) ||
+            c.some((v, j) => v - a.reduce((sum, row, i) => sum + row[j] * dual[i], 0) < -1e-6) ||
+            Math.abs(primalCost - dualCost) > 1e-6 * Math.max(1, Math.abs(primalCost))
+          )
+            return { status: "numerical-error" };
+          return { status: "optimal", x, dual };
         }
         function profile(hour) {
           const h = (hour + 24) % 24,
@@ -1442,8 +1503,8 @@
                 shed: true,
               });
             });
-          const fail = (reason) => ({
-            status: "infeasible",
+          const fail = (reason, status = "infeasible") => ({
+            status,
             reason,
             resources: all.map((r) => ({ ...r, accepted: null })),
             flows: null,
@@ -1455,12 +1516,15 @@
             curtailment: null,
             headroom: null,
             demand,
+            loads: { ...loads },
           });
           if (all.some((r) => r.hi < r.lo - 1e-7)) return fail("A ramp band cannot reach a scheduled minimum output.");
           const lower = all.reduce((s, r) => s + r.lo, 0),
             upper = all.reduce((s, r) => s + r.hi, 0);
-          if (lower > demand + 1e-7) return fail("Minimum output within the ramp bands exceeds demand.");
-          if (upper < demand - 1e-7) return fail("Available output within the ramp bands cannot meet demand.");
+          const ramped = resources.some((r) => r.base !== null);
+          if (lower > demand + 1e-7) return fail(ramped ? "Minimum output within the ramp bands exceeds demand." : "Minimum output exceeds demand.");
+          if (upper < demand - 1e-7)
+            return fail(ramped ? "Available output within the ramp bands cannot meet demand." : "Available output cannot meet demand.");
           const n = all.length,
             costs = all.map((r) => r.cost),
             a = [],
@@ -1492,7 +1556,10 @@
             b.push(Math.max(0, r.hi - r.lo));
           });
           const solved = simplexLE(costs, a, b);
-          if (solved.status !== "optimal") return fail("No dispatch satisfies balance, ramp bands, and the selected network limits.");
+          if (solved.status !== "optimal")
+            return solved.status === "infeasible"
+              ? fail("No dispatch satisfies balance, output bounds, and the selected network limits.")
+              : fail("The solver could not certify a dispatch and valid prices. Try another case or reset the lab.", "solver-error");
           all.forEach((r, j) => {
             r.accepted = r.lo + solved.x[j];
           });
@@ -1519,6 +1586,7 @@
             reason: "",
             resources: all,
             demand,
+            loads: { ...loads },
             injection,
             flows,
             binding,
@@ -1587,9 +1655,11 @@
           last: 0,
           view: 0,
           heatFocus: 14,
+          heatHour: null,
           result: null,
           stackHit: [],
           networkHit: [],
+          scenario: "normal",
         };
         const stages = [
           {
@@ -1604,7 +1674,7 @@
               ["Commitment plan", "Which fleets are online · illustrated"],
               ["Dispatch and review", "Network limits and reliability checks"],
             ],
-            note: "Calculated below: a single-hour DC dispatch with that illustrated commitment. No 24-hour SCUC solve.",
+            note: "Calculated below: a single-hour DC dispatch with that illustrated commitment. The 24-hour commitment is not optimized.",
           },
           {
             name: "Intraday update",
@@ -1626,11 +1696,11 @@
             time: "Alongside operations",
             accent: "--green",
             tag: "Telemetry workflow illustrated",
-            body: "Measurements need timestamps, a valid network topology, and checks for bad data. A state estimator reconciles measurements into a consistent AC baseline. This is a process illustration; the dispatch lab continues to use a lossless DC network.",
+            body: "A conventional AC state estimator uses redundant measurements and the network topology to estimate bus voltage magnitudes and angles. Measurement quality, observability, and residual checks matter. This tab illustrates that workflow; it does not estimate a state or alter the intraday dispatch inputs below.",
             nodes: [
               ["Field measurements", "Power, voltage, breaker status"],
               ["Topology and estimation", "Quality checks and residual tests"],
-              ["Operational baseline", "An AC state in a real EMS · illustrated"],
+              ["Operational baseline", "A consistent state for the energy management system"],
             ],
             note: "State estimation and real-time dispatch repeat together. They are not a one-time pass through this guide.",
           },
@@ -1640,17 +1710,17 @@
             time: "A dispatch interval",
             accent: "--violet",
             tag: "DC dispatch calculated",
-            body: "Move the committed fleet within its output and ramp bounds. The lab calculates dispatch around an illustrative prior-hour base point. Network congestion can make an extra MWh cost more at one bus than another.",
+            body: "Dispatch sets resource output; commitment decides which resources are available. The lab moves the committed fleet within output limits and one-hour ramp bands around an illustrative prior dispatch. A transmission bottleneck can require more expensive local supply and separate prices across buses.",
             nodes: [
               ["Prior base point", "Calculated from the previous hour’s example"],
               ["Constrained dispatch", "Balance, ramp bands, and branch limits"],
               ["Output and prices", "Calculated dispatch and LP dual prices"],
             ],
-            note: "Offline fast-start blocks enter only when you release them. This is an experiment control, not a universal market rule.",
+            note: "Real-time dispatch usually runs every few minutes. This hourly teaching example does not simulate startup, shutdown, or a continuous trajectory.",
           },
         ];
         const number = (value, digits = 1) => (value === null || value === undefined || !Number.isFinite(value) ? "—" : value.toFixed(digits));
-        const price = (value) => (value === null || value === undefined || !Number.isFinite(value) ? "—" : "$" + number(value, 0));
+        const price = (value) => (value === null || value === undefined || !Number.isFinite(value) ? "—" : "$" + number(value, 1));
         const signed = (value) => (value === null || value === undefined ? "—" : (value > 0 ? "+" : "") + number(value, 1));
         function palette() {
           const styles = getComputedStyle(document.documentElement);
@@ -1734,13 +1804,52 @@
           const d = state.result,
             ok = d.status === "optimal",
             p = M.profile(state.hour);
-          const wind = stages[state.stage].code === "da" ? p.windForecast : p.windActual;
+          const mode = stages[state.stage].code;
+          const renewableAvailability = M.units
+            .filter((unit) => unit.renewable && M.scheduled(unit, state.hour, mode))
+            .reduce((sum, unit) => sum + M.availability(unit, state.hour, mode), 0);
+          const cases = {
+            normal: [
+              "Normal operation",
+              "Start with the available fleet, then raise demand. Watch which offers are accepted and whether a branch limit binds. The commitment schedule is prescribed; dispatch is calculated.",
+            ],
+            evening: [
+              "Forecast miss",
+              "Wind availability at this hour falls from " +
+                number(p.windForecast) +
+                " GW in the day-ahead forecast to " +
+                number(p.windActual) +
+                " GW in the update. Compare the day-ahead and intraday tabs at the same demand: both wind availability and the prescribed commitment change.",
+            ],
+            congestion: [
+              "Congestion",
+              "Compare the two network views, then uncheck the outage study to compare dispatch and prices. A limit in the outage case can affect the preventive plan and its nodal prices even when the intact grid has spare transmission capacity.",
+            ],
+            low: [
+              "Low demand",
+              "At 20 GW, the real-time fleet cannot reduce output far enough within its ramp bands. Compare with the day-ahead tab at the same load. Curtailing load cannot solve excess minimum generation; it would increase the imbalance.",
+            ],
+            shortage: [
+              "Supply shortage",
+              "At 75 GW, available output cannot meet the requested load. Enable emergency curtailment to see how much load must go unserved. Compare prices with the illustrative $600/MWh curtailment penalty.",
+            ],
+          };
+          const reading = cases[state.scenario] || [
+            "Your experiment",
+            state.stage === 2
+              ? "The state-estimation workflow is illustrated. These dispatch results use the intraday inputs; no telemetry, voltage magnitudes, or voltage angles are estimated."
+              : "Hold the hour and demand fixed when comparing operating processes. Resource bounds determine what can move; the network determines where that output can be delivered.",
+          ];
+          $("caseNote").innerHTML = "<strong>" + reading[0] + ".</strong> " + reading[1];
+          document
+            .querySelectorAll("[data-scenario]")
+            .forEach((button) => button.setAttribute("aria-pressed", String(button.dataset.scenario === state.scenario)));
           $("hourValue").textContent = String(state.hour).padStart(2, "0") + ":00–" + String((state.hour + 1) % 24).padStart(2, "0") + ":00";
           $("hourSlider").value = state.hour;
           $("demandValue").textContent = number(d.demand) + " GW";
           $("demandSlider").value = d.demand;
           $("metricDemand").textContent = number(d.demand) + " GW";
-          $("metricVre").textContent = number(wind + p.solar) + " GW renewable availability";
+          $("metricVre").textContent = number(renewableAvailability) + " GW renewable availability";
           $("metricHeadroom").textContent = ok ? number(d.headroom) + " GW" : "—";
           $("metricPrice").textContent = price(d.lambda);
           $("metricMetro").textContent = price(d.prices && d.prices.M);
@@ -1759,15 +1868,18 @@
           setText(
             "statusTitle",
             !ok
-              ? "No feasible dispatch"
+              ? d.status === "solver-error"
+                ? "Calculation unavailable"
+                : "No feasible dispatch"
               : curtailed
-                ? "Load curtailment is required"
+                ? "Dispatch includes load curtailment"
                 : d.binding.length
                   ? "Feasible dispatch · a network limit is active"
                   : "Feasible dispatch"
           );
           let message;
-          if (!ok)
+          if (d.status === "solver-error") message = d.reason + " Results are unavailable.";
+          else if (!ok)
             message =
               d.reason +
               " Prices, flows, and headroom are unavailable. " +
@@ -1794,7 +1906,7 @@
           $("priceBreakdown").innerHTML =
             "<span>Metro: <b>" +
             price(d.prices && d.prices.M) +
-            "</b></span><span>Energy: <b>" +
+            "</b></span><span>West energy: <b>" +
             price(d.lambda) +
             "</b></span><span>Congestion: <b>" +
             (d.prices ? signed(d.prices.M - d.lambda) : "—") +
@@ -1826,6 +1938,10 @@
                 '<tr><th scope="row">' +
                 bus.name +
                 "</th><td>" +
+                number(d.loads[bus.id]) +
+                "</td><td>" +
+                number(d.injection && d.injection[M.buses.indexOf(bus)]) +
+                "</td><td>" +
                 number(d.prices && d.prices[bus.id]) +
                 "</td><td>" +
                 (d.prices ? signed(d.prices[bus.id] - d.lambda) : "—") +
@@ -1834,10 +1950,10 @@
             .join("");
           renderFlowRows();
           $("stackInspect").textContent = ok
-            ? "Select an offer block to inspect its output bounds, or use the table below."
+            ? "Zero-price offers are drawn as thin strips. Select a block to inspect its bounds, or open the resource table."
             : "No accepted output is shown because the dispatch is infeasible.";
           $("networkInspect").textContent = ok
-            ? "Select a bus or line for its values. Nodal prices include energy and congestion; losses are omitted."
+            ? "Select a bus or line to inspect it, or open the tables. Positive net injection supplies the grid; negative injection draws from it. Prices include energy and congestion, with losses omitted."
             : "Topology only: there is no feasible solution from which to report flows or prices.";
         }
         function renderFlowRows() {
@@ -1856,6 +1972,16 @@
             )
             .join("");
         }
+        function revealHeatCell(cell) {
+          const scroll = $("heatmapTable").parentElement;
+          const region = scroll.getBoundingClientRect();
+          const labelWidth = $("heatmapTable").querySelector("tbody th").getBoundingClientRect().width;
+          const rect = cell.getBoundingClientRect();
+          const left = region.left + labelWidth + 10,
+            right = region.right - 8;
+          if (rect.left < left) scroll.scrollLeft -= left - rect.left;
+          else if (rect.right > right) scroll.scrollLeft += rect.right - right;
+        }
         function renderHeatmap() {
           const mode = stages[state.stage].code;
           let html =
@@ -1869,18 +1995,19 @@
               const on = M.scheduled(unit, h, mode),
                 start = on && !M.scheduled(unit, h - 1, mode);
               const added = mode !== "da" && on && !M.scheduled(unit, h, "da");
-              const text = start ? "SU" : on ? "ON" : "·",
+              const released = mode === "rt" && state.fastStart && unit.fast && h === state.hour && !on;
+              const text = released ? "REL" : start ? "SU" : on ? "ON" : "·",
                 label =
                   unit.name +
                   ", " +
                   h +
                   ":00, " +
-                  (on ? "online" : "offline") +
+                  (released ? "manually released for this snapshot" : on ? "online" : "offline") +
                   (start ? ", illustrated start" : "") +
                   (added ? ", illustrated intraday addition" : "");
               html +=
                 '<td><button class="heat-cell' +
-                (on ? " on" : "") +
+                (on || released ? " on" : "") +
                 (start ? " start" : "") +
                 (added ? " added" : "") +
                 (h === state.hour ? " current" : "") +
@@ -1898,6 +2025,10 @@
           });
           const active = document.activeElement && document.activeElement.dataset.cell;
           $("heatmapTable").innerHTML = html + "</tbody>";
+          if (state.heatHour !== state.hour) {
+            revealHeatCell($("heatmapTable").querySelector('[data-cell="' + state.hour + '"]'));
+            state.heatHour = state.hour;
+          }
           if (active !== undefined)
             $("heatmapTable")
               .querySelector('[data-cell="' + active + '"]')
@@ -1913,6 +2044,7 @@
           if (focus) {
             cell.focus({ preventScroll: true });
             cell.scrollIntoView({ block: "nearest", inline: "nearest", behavior: "instant" });
+            revealHeatCell(cell);
           }
         }
         function setupCanvas(canvas) {
@@ -1953,11 +2085,9 @@
             bottom = 48,
             pw = w - left - right,
             ph = h - top - bottom;
-          const maximum = Math.max(
-            60,
-            d.demand,
-            blocks.reduce((s, r) => s + Math.max(0, r.hi), 0)
-          );
+          // Keep the quantity axis fixed so changes in width remain comparable.
+          // All fictional nameplate capacities together are below 80 GW.
+          const maximum = 80;
           const maxPrice = 160;
           for (let i = 0; i <= 4; i++) {
             const y = top + ph - (ph * i) / 4;
@@ -2021,8 +2151,16 @@
           ctx.setLineDash([]);
           text(ctx, number(d.demand) + " GW", Math.min(w - right - 4, Math.max(left + 55, demandX)), 20, c.red, 12, "right");
           text(ctx, "Offer $/MWh", left, 20, c.muted, 10);
-          text(ctx, "0", left, h - 12, c.faint, 10);
-          text(ctx, number(maximum, 0) + " GW available axis", w - right, h - 12, c.faint, 10, "right");
+          for (let quantity = 0; quantity <= maximum; quantity += 20)
+            text(
+              ctx,
+              quantity + (quantity === maximum ? " GW" : ""),
+              left + (pw * quantity) / maximum,
+              h - 12,
+              c.faint,
+              10,
+              quantity === maximum ? "right" : "center"
+            );
           $("stackCanvas").dataset.maximum = maximum;
         }
         function drawNetwork() {
@@ -2095,18 +2233,19 @@
         function setStage(stage) {
           if (state.playing) playback(false);
           state.stage = stage;
-          state.demand = null;
           renderAll();
         }
         function setDemand(value) {
           if (state.playing) playback(false);
           state.demand = Math.min(75, Math.max(20, value));
+          state.scenario = null;
           calculate();
           renderResults();
           drawStack();
           drawNetwork();
         }
         function scenario(name) {
+          state.scenario = name;
           state.contingency = true;
           state.fastStart = false;
           state.curtailment = false;
@@ -2130,6 +2269,11 @@
             state.hour = 14;
             state.demand = 20;
           }
+          if (name === "shortage") {
+            state.stage = 3;
+            state.hour = 14;
+            state.demand = 75;
+          }
           renderAll();
         }
         function playback(playing) {
@@ -2145,6 +2289,7 @@
               if (document.hidden) return;
               state.hour = (state.hour + 1) % 24;
               state.demand = null;
+              state.scenario = null;
               renderAll();
             }, 1800);
             if (!reduceMotion) {
@@ -2186,6 +2331,7 @@
           if (state.playing) playback(false);
           state.hour = Number(e.target.value);
           state.demand = null;
+          state.scenario = null;
           renderAll();
         });
         $("demandSlider").addEventListener("input", (e) => setDemand(Number(e.target.value)));
@@ -2195,6 +2341,7 @@
           ["curtailmentToggle", "curtailment"],
         ].forEach(([id, key]) =>
           $(id).addEventListener("change", (e) => {
+            if (state.playing) playback(false);
             state[key] = e.target.checked;
             renderAll();
           })
@@ -2222,7 +2369,12 @@
           const offsets = { ArrowRight: 1, ArrowLeft: -1, ArrowUp: -24, ArrowDown: 24 };
           if (!(e.key in offsets)) return;
           e.preventDefault();
-          const next = Math.min(M.units.length * 24 - 1, Math.max(0, Number(cell.dataset.cell) + offsets[e.key]));
+          const current = Number(cell.dataset.cell);
+          const rowStart = Math.floor(current / 24) * 24;
+          const next =
+            e.key === "ArrowRight" || e.key === "ArrowLeft"
+              ? Math.min(rowStart + 23, Math.max(rowStart, current + offsets[e.key]))
+              : Math.min(M.units.length * 24 - 1, Math.max(0, current + offsets[e.key]));
           inspectCell($("heatmapTable").querySelector('[data-cell="' + next + '"]'), true);
         });
         const stack = $("stackCanvas");
@@ -2280,7 +2432,12 @@
             const d = state.result;
             $("networkInspect").textContent =
               bus.bus.name +
-              ": price " +
+              ": requested load " +
+              number(d.loads[bus.bus.id]) +
+              " GW; net injection " +
+              number(d.injection && d.injection[M.buses.indexOf(bus.bus)]) +
+              " GW;" +
+              " price " +
               price(d.prices && d.prices[bus.bus.id]) +
               "/MWh; energy " +
               price(d.lambda) +

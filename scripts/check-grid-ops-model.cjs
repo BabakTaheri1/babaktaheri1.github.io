@@ -28,6 +28,51 @@ const simple = model.simplexLE(
 close(simple.x[0], 2);
 close(simple.x[1], 2);
 
+// An independent 2D vertex-enumeration oracle checks the simplex objective.
+// These bounded, feasible LPs include negative costs/RHS and degenerate rows.
+let seed = 20261012;
+const random = () => {
+  seed = (1664525 * seed + 1013904223) >>> 0;
+  return seed / 4294967296;
+};
+function vertexMinimum(c, a, b) {
+  const rows = [...a, [-1, 0], [0, -1]],
+    rhs = [...b, 0, 0];
+  let minimum = Infinity;
+  for (let i = 0; i < rows.length; i++)
+    for (let j = i + 1; j < rows.length; j++) {
+      const determinant = rows[i][0] * rows[j][1] - rows[i][1] * rows[j][0];
+      if (Math.abs(determinant) < 1e-10) continue;
+      const x = [(rhs[i] * rows[j][1] - rows[i][1] * rhs[j]) / determinant, (rows[i][0] * rhs[j] - rhs[i] * rows[j][0]) / determinant];
+      if (rows.every((row, k) => row[0] * x[0] + row[1] * x[1] <= rhs[k] + 1e-7)) minimum = Math.min(minimum, c[0] * x[0] + c[1] * x[1]);
+    }
+  return minimum;
+}
+for (let test = 0; test < 128; test++) {
+  const anchor = [0.5 + random() * 3, 0.5 + random() * 3];
+  const c = [Math.floor(random() * 16) - 6, Math.floor(random() * 16) - 6];
+  const a = [
+      [1, 0],
+      [0, 1],
+    ],
+    b = [5, 5];
+  for (let row = 0; row < 6; row++) {
+    const coefficients = [Math.floor(random() * 9) - 4, Math.floor(random() * 9) - 4];
+    a.push(coefficients);
+    b.push(coefficients[0] * anchor[0] + coefficients[1] * anchor[1] + (row % 3 === 0 ? 0 : random() * 2));
+  }
+  const result = model.simplexLE(c, a, b);
+  assert.equal(result.status, "optimal", "Independent LP " + test);
+  const primal = sum(c.map((cost, j) => cost * result.x[j]));
+  close(primal, vertexMinimum(c, a, b));
+  close(primal, sum(b.map((rhs, i) => rhs * result.dual[i])));
+  result.dual.forEach((dual, i) => {
+    assert(dual <= 1e-7);
+    close(dual * (b[i] - sum(a[i].map((v, j) => v * result.x[j]))), 0);
+  });
+  c.forEach((cost, j) => assert(cost - sum(a.map((row, i) => row[j] * result.dual[i])) >= -1e-7));
+}
+
 let cases = 0;
 for (const mode of ["da", "iruc", "se", "rt"]) {
   for (let hour = 0; hour < 24; hour++) {
@@ -53,6 +98,13 @@ for (const mode of ["da", "iruc", "se", "rt"]) {
             for (const resource of result.resources) {
               assert(resource.accepted >= resource.lo - 1e-6);
               assert(resource.accepted <= resource.hi + 1e-6);
+              // Independent stationarity/complementarity checks at each bus.
+              const marginal = result.prices[resource.bus];
+              if (resource.hi - resource.lo > 1e-6) {
+                if (resource.accepted > resource.lo + 1e-6) assert(marginal >= resource.cost - 1e-6);
+                if (resource.accepted < resource.hi - 1e-6) assert(marginal <= resource.cost + 1e-6);
+              }
+              if (resource.shed) assert(resource.accepted <= result.loads[resource.bus] + 1e-6);
             }
             assert(result.curtailment >= -1e-6);
             if (!curtailment) close(result.curtailment, 0);
@@ -92,6 +144,33 @@ for (const mode of ["da", "iruc", "se", "rt"]) {
   }
 }
 
+// At a kink, a valid LP dual lies between the backward and forward cost slopes.
+// Hold commitment, wind, prior dispatch and ramps fixed for each perturbation.
+let sensitivityChecks = 0;
+for (const mode of ["da", "iruc", "rt"])
+  for (const hour of [0, 6, 14, 18, 22]) {
+    for (const contingency of [false, true])
+      for (const curtailment of [false, true]) {
+        const options = { mode, hour, contingency, curtailment, demand: curtailment ? 75 : undefined };
+        const base = model.solveDispatch(options);
+        if (base.status !== "optimal") continue;
+        for (const bus of model.buses) {
+          const epsilon = 1e-4;
+          const more = model.solveDispatch({ ...options, loads: { ...base.loads, [bus.id]: base.loads[bus.id] + epsilon } });
+          const less = model.solveDispatch({ ...options, loads: { ...base.loads, [bus.id]: base.loads[bus.id] - epsilon } });
+          assert.equal(more.status, "optimal");
+          assert.equal(less.status, "optimal");
+          const forward = (more.objective - base.objective) / epsilon;
+          const backward = (base.objective - less.objective) / epsilon;
+          assert(
+            base.prices[bus.id] >= backward - 1e-4 && base.prices[bus.id] <= forward + 1e-4,
+            "Invalid sensitivity at " + mode + "/" + hour + "/" + bus.id
+          );
+          sensitivityChecks++;
+        }
+      }
+  }
+
 // Prices must match a numerical change in cost for additional demand at each bus.
 for (const contingency of [false, true]) {
   const options = { mode: "rt", hour: 18, contingency };
@@ -130,6 +209,20 @@ const emergency = model.solveDispatch({ mode: "rt", hour: 14, demand: 75, curtai
 assert.equal(emergency.status, "optimal");
 assert(emergency.curtailment > 0);
 assert(emergency.prices.M > 500);
+const released = model.solveDispatch({ mode: "rt", hour: 14, demand: 75, curtailment: true, fastStart: true });
+assert(released.resources.some((r) => r.id === "ctEast" && r.entering));
+assert(!released.resources.some((r) => r.id === "dr"), "Releasing fast-start generation must not activate unscheduled demand response");
+
+// A failed numerical certificate is not proof that the physical case is infeasible.
+const faultyScript = script.replace("const solved = simplexLE(costs, a, b);", 'const solved = { status: "numerical-error" };');
+assert.notEqual(faultyScript, script);
+const faultyContext = {};
+vm.createContext(faultyContext);
+vm.runInContext(faultyScript + "\nglobalThis.model = GridOpsModel;", faultyContext);
+const solverFailure = faultyContext.model.solveDispatch();
+assert.equal(solverFailure.status, "solver-error");
+for (const key of ["prices", "lambda", "flows", "objective", "cost", "headroom", "curtailment"]) assert.equal(solverFailure[key], null);
+assert(solverFailure.resources.every((r) => r.accepted === null));
 
 // The day-ahead stack uses forecast wind; later processes use revised availability.
 const da = model.solveDispatch({ mode: "da", hour: 18 });
@@ -138,5 +231,8 @@ assert(da.resources.find((r) => r.id === "wind").hi > intraday.resources.find((r
 assert.equal(model.scheduled(model.units[0], -1, "da"), true);
 
 console.log(
-  cases + " grid-operations cases passed balance, bounds, base/outage flow, and infeasibility checks; nodal prices match cost sensitivities."
+  cases +
+    " dispatch cases, 128 independent LP comparisons, and " +
+    sensitivityChecks +
+    " nodal sensitivities passed physics, optimality and failure checks."
 );
