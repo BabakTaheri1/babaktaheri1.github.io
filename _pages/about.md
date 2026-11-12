@@ -4,7 +4,6 @@ layout: about
 title: about
 permalink: /
 subtitle: Senior Research Engineer at <a href="https://www.camus.energy/">Camus Energy</a>.
-research_intro: I work on optimization and machine learning for reliable, efficient power systems.
 
 profile:
   align: right
@@ -18,8 +17,8 @@ social: true # includes social icons at the bottom of the page
 
 announcements:
   enabled: true # includes a list of news items
-  scrollable: false
-  limit: 3
+  scrollable: true # adds a vertical scroll bar if there are more than 3 news items
+  limit:  # leave blank to include all the news in the `_news` folder
 
 latest_posts:
   enabled: false
@@ -27,8 +26,11 @@ latest_posts:
   limit: 3 # leave blank to include all the blog posts
 ---
 
-My goal is to help build a reliable, resilient, affordable, and sustainable energy future. My doctoral research used machine learning-inspired optimization to improve the accuracy of foundational power system approximations.
+
+Hello! I am a Senior Research Engineer at Camus Energy, where I focus on power system optimization.
 
 I received my Ph.D. and an M.Sc. in Electrical and Computer Engineering from the <a href="https://ece.gatech.edu/" target="_blank">School of Electrical and Computer Engineering</a> at the <a href="https://www.gatech.edu/" target="_blank">Georgia Institute of Technology</a>, where I was fortunate to be advised by Prof. <a href="https://molzahn.github.io" target="_blank">Daniel Molzahn</a>. Prior to that, I received an M.Sc. in Electrical Engineering from <a href="https://www.sharif.edu/en" target="_blank">Sharif University of Technology</a>.
 
-Outside of research, I enjoy traveling, hiking, watching movies, and playing soccer and volleyball.
+My research goal is to use mathematical optimization and machine learning techniques to help build a more reliable, resilient, affordable, and sustainable energy future. My doctoral research, for instance, focused on using ML-inspired optimization methods to improve the accuracy of foundational power system approximations.
+
+Outside of my work in research, I enjoy traveling, hiking, watching movies, and playing soccer and volleyball.

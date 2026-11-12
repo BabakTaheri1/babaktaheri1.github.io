@@ -11,7 +11,9 @@ last_name: Taheri
 description: >
   Babak Taheri is a Senior Research Engineer at Camus Energy, researching power system optimization, machine learning, and grid resilience.
 footer_text: >
-  Built with <a href="https://github.com/alshedivat/al-folio">al-folio</a>.
+  Powered by <a href="https://jekyllrb.com/" target="_blank">Jekyll</a> with <a href="https://github.com/alshedivat/al-folio">al-folio</a> theme.
+  Hosted by <a href="https://pages.github.com/" target="_blank">GitHub Pages</a>.
+  Photos from <a href="https://unsplash.com" target="_blank">Unsplash</a>.
 keywords: Babak Taheri, power systems, optimal power flow, mathematical optimization, machine learning, grid resilience, distribution networks
 lang: en # the language of your site (for example: en, fr, cn, ru, etc.)
 icon: prof_pic.jpg # the emoji used as the favicon (alternatively, provide image name in /assets/img/)
@@ -45,7 +47,7 @@ repo_trophies:
 # -----------------------------------------------------------------------------
 
 navbar_fixed: true
-footer_fixed: false
+footer_fixed: true
 search_enabled: false
 socials_in_search: false
 posts_in_search: false
@@ -266,8 +268,6 @@ scholar:
   query: "@*"
   group_by: year
   group_order: descending
-  type_names:
-    misc: Preprints
 
 # Display different badges withs stats for your publications
 # Customize badge behavior in _layouts/bib.liquid
@@ -617,8 +617,8 @@ jsonresume:
   - education
   - publications
   - projects
-  - awards
   - volunteer
+  - awards
   - certificates
   - skills
   - languages
