@@ -13,7 +13,7 @@
   <rect x="80" y="112" width="64" height="6" rx="3" fill="#53d4cc"/>
   <g font-family="Arial, Helvetica, sans-serif">
     <text x="80" y="223" font-size="76" font-weight="700" fill="#fff">Babak Taheri</text>
-    <text x="83" y="281" font-size="28" fill="#c8d8e2">Research Scientist · Hitachi Energy Research</text>
+    <text x="83" y="281" font-size="28" fill="#c8d8e2">Senior Research Engineer · Camus Energy</text>
     <text x="80" y="388" font-size="39" font-weight="600" fill="#fff">Power system optimization</text>
     <text x="82" y="441" font-size="29" fill="#c8d8e2">Machine learning · Grid resilience</text>
     <text x="82" y="551" font-size="23" fill="#53d4cc">babaktaheri1.github.io</text>

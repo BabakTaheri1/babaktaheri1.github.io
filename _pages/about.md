@@ -3,7 +3,7 @@ zoom: true
 layout: about
 title: about
 permalink: /
-subtitle: Research Scientist at <a href="https://www.hitachienergy.com/us/en">Hitachi Energy Research</a>.
+subtitle: Senior Research Engineer at <a href="https://www.camus.energy/">Camus Energy</a>.
 research_intro: I work on optimization and machine learning for reliable, efficient power systems.
 
 profile:
@@ -11,8 +11,7 @@ profile:
   image: prof_pic.jpg
   image_circular: false # crops the image to make it circular
   more_info: >
-    <p>901 Main Campus Dr</p>
-    <p>Raleigh, NC 27606, USA</p>
+    <p>Raleigh, NC, USA</p>
 
 selected_papers: true # includes a list of papers marked as "selected={true}"
 social: true # includes social icons at the bottom of the page
