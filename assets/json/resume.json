@@ -1,7 +1,7 @@
 {
   "basics": {
     "name": "Babak Taheri",
-    "label": "Research Scientist",
+    "label": "Senior Research Engineer",
     "image": "",
     "email": "babaktaheri77@gmail.com",
     "url": "https://babaktaheri1.github.io",
@@ -70,11 +70,19 @@
   ],
   "work": [
     {
+      "name": "Camus Energy",
+      "position": "Senior Research Engineer",
+      "startDate": "2026-11",
+      "endDate": "present",
+      "summary": "",
+      "highlights": []
+    },
+    {
       "name": "Hitachi Energy Research",
       "position": "Research Scientist - Power System Optimization",
       "location": "Raleigh, NC",
       "startDate": "2025-01",
-      "endDate": "present",
+      "endDate": "2026-11",
       "summary": "",
       "highlights": []
     },
