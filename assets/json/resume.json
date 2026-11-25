@@ -149,11 +149,22 @@
   ],
   "volunteer": [
     {
-      "organization": "IEEE, IET, EPSR, RESS, IJEPES Journals and Conferences",
-      "position": "Reviewer",
+      "organization": "Selected journals and conferences",
+      "position": "Peer Reviewer",
       "startDate": "2019-01",
       "endDate": "present",
-      "summary": "Reviewer for journals and conferences including IEEE (TPWRS, TSG, TPWRD, Power Engineering Letters, CDC), IET (GTD, RPG), EPSR, RESS, IJEPES"
+      "highlights": [
+        "<a href=\"https://ieee-pes.org/publications/transactions-on-power-systems/\">IEEE Transactions on Power Systems</a>",
+        "<a href=\"https://ieee-pes.org/publications/transactions-on-smart-grid/\">IEEE Transactions on Smart Grid</a>",
+        "<a href=\"https://ieee-pes.org/publications/transactions-on-power-delivery/\">IEEE Transactions on Power Delivery</a>",
+        "<a href=\"https://ieee-pes.org/publications/pes-letters/\">IEEE Power Engineering Letters</a>",
+        "<a href=\"https://ietresearch.onlinelibrary.wiley.com/hub/collections\">IET Generation, Transmission &amp; Distribution</a>",
+        "<a href=\"https://ietresearch.onlinelibrary.wiley.com/hub/collections\">IET Renewable Power Generation</a>",
+        "<a href=\"https://shop.elsevier.com/journals/electric-power-systems-research/0378-7796\">Electric Power Systems Research</a>",
+        "<a href=\"https://shop.elsevier.com/journals/reliability-engineering-and-system-safety/0951-8320\">Reliability Engineering &amp; System Safety</a>",
+        "<a href=\"https://shop.elsevier.com/journals/international-journal-of-electrical-power-and-energy-systems/0142-0615\">International Journal of Electrical Power &amp; Energy Systems</a>",
+        "<a href=\"https://www.ieeecss.org/conferences/general-information\">IEEE Conference on Decision and Control</a>"
+      ]
     }
   ],
     "languages": [
